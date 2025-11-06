@@ -39,7 +39,7 @@ export default function Hero() {
           className="object-cover object-center"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-blue-700/85 md:bg-blue-700/80" />
+        <div className="absolute inset-0 bg-blue-700/85 md:bg-blue-700/80 " />
       </div>
 
       <div className="container mx-auto px-4 lg:max-w-screen-2xl">

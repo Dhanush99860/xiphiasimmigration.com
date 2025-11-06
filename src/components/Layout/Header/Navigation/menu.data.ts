@@ -475,7 +475,7 @@ export const headerMenu: HeaderItem[] = [
     href: '/#resources',
     submenu: [
       { label: 'Guide', href: '/guide' },
-      { label: 'Free Eligibility Check', href: '/eligibility-check' },
+      { label: 'Free Eligibility Check', href: '/eligibility' },
       { label: 'Personal Advice', href: '/personal-booking' },
       { label: 'Media', href: '/media' },
       { label: 'News', href: '/news' },
