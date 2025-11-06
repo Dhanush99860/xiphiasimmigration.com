@@ -31,9 +31,7 @@ export default function ContactChannels({
   whatsapp,
   address = [],
   hours,
-  socials = [],
   className = "",
-  enquireHref,
 }: Props) {
   const telHref = phone ? `tel:${phone.replace(/\s+/g, "")}` : undefined;
   const altTelHref = altPhone ? `tel:${altPhone.replace(/\s+/g, "")}` : undefined;
@@ -116,26 +114,6 @@ export default function ContactChannels({
                 </div>
               </div>
             )}
-          </div>
-        )}
-
-        {socials.length > 0 && (
-          <div className="pt-3 border-t border-blue-100/70 dark:border-blue-900/30">
-            <div className="text-sm font-medium mb-2">Connect</div>
-            <div className="flex flex-wrap gap-2">
-              {socials.map((s) => (
-                <a
-                  key={s.href}
-                  href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-sm ring-1 ring-blue-200 backdrop-blur transition hover:bg-blue-50 dark:bg-white/5 dark:ring-blue-800/60 dark:hover:bg-blue-950/20"
-                >
-                  <Dot />
-                  {s.label}
-                </a>
-              ))}
-            </div>
           </div>
         )}
       </div>

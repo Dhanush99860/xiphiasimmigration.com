@@ -390,7 +390,7 @@ export default function Footer() {
               <div className="flex items-center gap-3">
                 {/* Make QR clickable → app landing */}
                 <a
-                  href="/app"
+                  href="/contact"
                   className="h-16 w-16 shrink-0 rounded-lg bg-white/20 flex items-center justify-center ring-1 ring-white/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
                   aria-label="Open the XIPHIAS app landing page"
                   title="Open the XIPHIAS app landing page"

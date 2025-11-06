@@ -232,7 +232,7 @@ export default function CookiesPage() {
                 </Link>
                 . Most browsers also let you block or delete cookies in settings. California
                 residents can also use the{" "}
-                <Link href="/privacy/ccpa-optout" className="underline">
+                <Link href="/contact" className="underline">
                   Do Not Sell/Share
                 </Link>{" "}
                 page to opt out of cross-context behavioral advertising.

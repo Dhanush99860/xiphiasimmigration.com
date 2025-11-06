@@ -43,7 +43,7 @@ export function AwardsMarquee({
         id="insights-top6-title"
         className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-zinc-950 dark:text-white break-words"
       >
-        testing
+        Awards & Recognition
       </h2>
 
       <div className="shrink-0">

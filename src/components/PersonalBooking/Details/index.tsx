@@ -34,7 +34,7 @@ const navItems = [
   { label: "Insights", href: "#articles", icon: FileText },
   { label: "Awards & Media", href: "#awards", icon: Award },
   { label: "Client Stories", href: "#testimonials", icon: MessageCircle },
-  { label: "Pricing", href: "#pricing", icon: DollarSign },
+  { label: "Reserve Your Consultation", href: "#consultation", icon: DollarSign },
 ] as const;
 
 const SECTION_IDS = navItems.map((n) => n.href.slice(1));
@@ -147,11 +147,10 @@ export default function Sections({ articles }: { articles: ArticleMeta[] }) {
                   key={item.href}
                   href={item.href}
                   onClick={() => handleNavClick(item.href)}
-                  className={`relative p-5 transition-all duration-300 ${
-                    isActive
+                  className={`relative p-5 transition-all duration-300 ${isActive
                       ? "text-black dark:text-white font-semibold"
                       : "text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white p-1"
-                  }`}
+                    }`}
                 >
                   {item.label}
                   {isActive && (
@@ -192,20 +191,18 @@ export default function Sections({ articles }: { articles: ArticleMeta[] }) {
                   snap-center shrink-0 grow-0 basis-[84px]
                   flex flex-col items-center justify-center
                   h-16 rounded-xl transition-all
-                  ${
-                    isActive
-                      ? "text-indigo-600 dark:text-indigo-400"
-                      : "text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white"
+                  ${isActive
+                    ? "text-indigo-600 dark:text-indigo-400"
+                    : "text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white"
                   }
                 `}
               >
                 <div
                   className={`
                     grid place-items-center h-9 w-9 rounded-xl
-                    ${
-                      isActive
-                        ? "bg-indigo-50 dark:bg-indigo-900/40 ring-1 ring-indigo-200/60 dark:ring-indigo-800/60"
-                        : ""
+                    ${isActive
+                      ? "bg-indigo-50 dark:bg-indigo-900/40 ring-1 ring-indigo-200/60 dark:ring-indigo-800/60"
+                      : ""
                     }
                   `}
                 >
@@ -233,12 +230,36 @@ export default function Sections({ articles }: { articles: ArticleMeta[] }) {
 
       <section id="articles" className="scroll-mt-28">
         <div className="container mx-auto lg:max-w-screen-2xl px-4 py-8">
-          <div className="flex items-center justify-between mb-10">
-            <h2 className="text-2xl font-semibold">Latest Articles</h2>
-            <a href="/articles" className="text-blue-600 hover:underline">
-              View all
-            </a>
+          {/* Header (card-style, keeps your structure & CTA) */}
+          <div className="mb-6 md:mb-8">
+            <div className="relative overflow-hidden rounded-2xl border border-[var(--c-border)] bg-[var(--c-card)] p-4 sm:p-5 md:p-6 shadow-sm ring-1 ring-black/[0.03] dark:ring-white/10">
+              {/* soft background accents (clipped inside) */}
+              <div aria-hidden className="pointer-events-none absolute inset-0">
+                <div className="absolute -top-20 -left-24 h-56 w-56 rounded-full bg-blue-300/20 blur-3xl dark:bg-blue-700/10" />
+                <div className="absolute -bottom-24 -right-20 h-64 w-64 rounded-full bg-indigo-300/20 blur-3xl dark:bg-indigo-700/10" />
+                <div className="absolute inset-0 opacity-40 dark:opacity-20 [mask-image:radial-gradient(70%_70%_at_10%_10%,black,transparent_75%)]">
+                  <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.06)_1px,transparent_1px)] bg-[size:22px_22px]" />
+                </div>
+              </div>
+
+              {/* content: responsive flex with title + CTA */}
+              <div className="relative flex flex-wrap items-center justify-between gap-3">
+                <h2
+                  id="insights-top6-title"
+                  className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-zinc-950 dark:text-white break-words"
+                >
+                  Latest Articles
+                </h2>
+
+                <div className="shrink-0">
+                  <a href="/articles" className="text-blue-600 hover:underline">
+                    View all
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
+
           {articles?.length ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {articles.map((a) => (
@@ -251,15 +272,17 @@ export default function Sections({ articles }: { articles: ArticleMeta[] }) {
         </div>
       </section>
 
-      <Awards variant="preview" />
+      <section id="awards">
+        <Awards variant="preview" />
+      </section>
 
       <section id="testimonials" className="scroll-mt-28">
         <TestimonialCarouselPro className="mt-2" />
       </section>
 
-      <section id="pricing" className="scroll-mt-28">
-        <section className="scroll-mt-28 max-w-screen-xl mx-auto py-6 px-4">
-        <AdvisorConsultationCard bookingHref="/booking?book=paid" />
+      <section id="consultation" className="scroll-mt-28">
+        <section className="scroll-mt-28 py-6 px-4">
+          <AdvisorConsultationCard bookingHref="/booking?book=paid" />
         </section>
       </section>
     </div>

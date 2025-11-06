@@ -50,7 +50,7 @@ export function HeroAwards() {
           </Link>
 
           <Link
-            href="/awards#awards-heading"
+            href="/contact"
             prefetch={false}
             className="inline-flex items-center gap-2 rounded-xl bg-white/90 px-4 py-2.5 text-blue-700 ring-1 ring-blue-300 hover:bg-blue-50 dark:bg-white/5 dark:text-blue-200 dark:ring-blue-800/60 dark:hover:bg-blue-950/20"
           >

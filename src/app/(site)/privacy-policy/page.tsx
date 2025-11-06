@@ -154,7 +154,7 @@ export default function PrivacyPolicyPage() {
                     <Link href="/cookies" className="inline-flex items-center justify-center rounded-lg border px-3 py-1.5 text-sm border-black/20 dark:border-white/30 hover:bg-black/5 dark:hover:bg-white/10 transition">
                       Manage Cookies
                     </Link>
-                    <Link href="/privacy/ccpa-optout" className="inline-flex items-center justify-center rounded-lg border px-3 py-1.5 text-sm border-black/20 dark:border-white/30 hover:bg-black/5 dark:hover:bg-white/10 transition">
+                    <Link href="/contact" className="inline-flex items-center justify-center rounded-lg border px-3 py-1.5 text-sm border-black/20 dark:border-white/30 hover:bg-black/5 dark:hover:bg-white/10 transition">
                       Do Not Sell/Share
                     </Link>
                   </div>

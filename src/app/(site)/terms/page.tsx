@@ -59,7 +59,7 @@ export default function TermsPage() {
     site: "https://www.xiphiasimmigration.com",
     legalEmail: "support@immigration.in", // keep in sync with your Cookies page until you update
     registeredOffice:
-      "8th Floor, BMTC Bus Depot Complex, 80 Feet Main Road, 6th Block, Koramangala, Bengaluru, Karnataka 560095, India",
+      "Aurbis Prime, 11, Kaveri Regent Coronet, 80 Feet Road, 3rd Block, Koramangala, Bangalore - 560034",
     jurisdiction: "Bengaluru, Karnataka, India",
   } as const;
 
@@ -175,7 +175,7 @@ export default function TermsPage() {
                       Cookies Policy
                     </Link>{" "}
                     and{" "}
-                    <Link href="/refund-policy" className="underline">
+                    <Link href="/refunds" className="underline">
                       Refund Policy
                     </Link>
                     .
@@ -337,7 +337,7 @@ export default function TermsPage() {
                 Our professional fees compensate time, expertise, and allocated resources, and are
                 generally non-refundable once work has commenced. Where permitted in your Engagement
                 Letter or under our{" "}
-                <Link href="/refund-policy" className="underline">
+                <Link href="/refunds" className="underline">
                   Refund Policy
                 </Link>
                 , we may provide a partial refund for unperformed portions of services that are

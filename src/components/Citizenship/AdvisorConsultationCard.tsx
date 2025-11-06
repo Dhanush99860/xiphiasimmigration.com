@@ -111,7 +111,7 @@ export default function AdvisorConsultationCard({
         "bg-gradient-to-br from-sky-50 via-white to-indigo-50 ring-1 ring-blue-100/80",
         "dark:from-blue-950/30 dark:via-transparent dark:to-indigo-950/20 dark:ring-blue-900/40",
         "text-black dark:text-white",
-        "container mx-auto",
+        "mx-auto max-w-screen-2xl px-4 py-5",
         className
       )}
     >
