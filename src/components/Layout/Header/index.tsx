@@ -24,7 +24,6 @@ export default function Header() {
   const [reducedMotion, setReducedMotion] = useState(false);
 
   const lastYRef = useRef(0);
-  const lastIntentAtRef = useRef(0);
   const rAFRef = useRef<number | null>(null);
   const burgerBtnRef = useRef<HTMLButtonElement>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
@@ -33,13 +32,15 @@ export default function Header() {
 
   const colorMode = useMemo(() => (resolvedTheme || theme) ?? 'light', [resolvedTheme, theme]);
   const isDark = colorMode === 'dark';
+  const toggleTheme = () => setTheme(isDark ? 'light' : 'dark');
 
-  // Direction-aware scroll (hide topbar on scroll down)
+  // Direction-aware scroll with hysteresis (prevents jitter)
   useEffect(() => {
     lastYRef.current = window.scrollY || 0;
-    const DELTA = 6;
-    const INTENT_MS = 120;
-    const COMPACT_MIN_Y = 8;
+    const DELTA = 12;
+    const HIDE_AT = 140;
+    const SHOW_AT = 40;
+    const COMPACT_AT = 80;
 
     const onScroll = () => {
       if (rAFRef.current) cancelAnimationFrame(rAFRef.current);
@@ -48,19 +49,14 @@ export default function Header() {
         const dy = y - lastYRef.current;
         if (Math.abs(dy) < DELTA) return;
 
-        const now = performance.now();
-        if (now - lastIntentAtRef.current < INTENT_MS) {
-          lastYRef.current = y;
-          return;
-        }
-
         const goingDown = dy > 0;
         const goingUp = dy < 0;
-        setCompact(goingDown && y > COMPACT_MIN_Y);
-        setShowTopBar(goingUp || y <= 0);
+
+        setCompact(y > COMPACT_AT);
+        if (goingDown && y > HIDE_AT) setShowTopBar(false);
+        if (goingUp && y < SHOW_AT) setShowTopBar(true);
 
         lastYRef.current = y <= 0 ? 0 : y;
-        lastIntentAtRef.current = now;
       });
     };
 
@@ -116,8 +112,13 @@ export default function Header() {
         const first = firstFocusableRef.current;
         const last = lastFocusableRef.current;
         if (!first || !last) return;
-        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
       }
     };
     window.addEventListener('keydown', onKey);
@@ -139,7 +140,9 @@ export default function Header() {
     const drawer = drawerRef.current;
     if (!drawer) return;
 
-    let startX = 0, currentX = 0, dragging = false;
+    let startX = 0,
+      currentX = 0,
+      dragging = false;
 
     const onStart = (e: TouchEvent) => {
       const touch = e.touches[0];
@@ -176,8 +179,6 @@ export default function Header() {
     };
   }, [drawerOpen]);
 
-  const toggleTheme = () => setTheme(isDark ? 'light' : 'dark');
-
   return (
     <>
       {/* Skip link */}
@@ -188,10 +189,11 @@ export default function Header() {
         Skip to content
       </a>
 
-      {/* Header wrapper */}
+      {/* STICKY header (in-flow, so content never overlaps) */}
       <header
         className={[
-          'fixed inset-x-0 top-0 z-50 w-full will-change-transform',
+          'sticky top-0 z-50 w-full overflow-visible',
+          'will-change-transform [transform:translateZ(0)]',
           'transition-[background-color,backdrop-filter,box-shadow,padding] ease-out',
           reducedMotion ? 'duration-0' : 'duration-300',
           'bg-primary/95 dark:bg-zinc-950',
@@ -199,21 +201,32 @@ export default function Header() {
           compact ? 'shadow-lg' : 'shadow-md',
         ].join(' ')}
       >
-        {/* Desktop TopBar */}
-        <div
-          aria-hidden={!showTopBar}
-          className={[
-            'overflow-hidden transition-[max-height,opacity] ease-out',
-            reducedMotion ? 'duration-0' : 'duration-300',
-            showTopBar ? 'max-h-[55px] opacity-100' : 'max-h-0 opacity-0',
-          ].join(' ')}
-        >
-          <TopBar />
+        {/* TopBar — keep overall header height constant; slide with translateY */}
+        <div className="relative h-[55px] overflow-visible">
+          <div
+            aria-hidden={!showTopBar}
+            className={[
+              'absolute inset-x-0 top-0 h-[55px]',
+              'transition-transform ease-out',
+              reducedMotion ? 'duration-0' : 'duration-300',
+              showTopBar ? 'translate-y-0' : '-translate-y-full',
+            ].join(' ')}
+          >
+            <TopBar />
+          </div>
         </div>
 
-        {/* Main row */}
+        {/* Main row — moves up when TopBar hides (no height collapse) */}
         <div className="mx-auto max-w-screen-2xl px-4">
-          <div className={[showTopBar ? 'mt-[10px]' : 'mt-1', compact ? 'mb-1' : 'mb-2'].join(' ')}>
+          <div
+            className={[
+              'transition-transform ease-out',
+              reducedMotion ? 'duration-0' : 'duration-300',
+              showTopBar ? 'translate-y-0' : '-translate-y-[55px]',
+              compact ? 'mb-1' : 'mb-2',
+              'mt-[10px]',
+            ].join(' ')}
+          >
             <div
               className={[
                 'relative flex items-center justify-between rounded-2xl ring-1 ring-white/10',
@@ -231,13 +244,16 @@ export default function Header() {
               {/* Left: logo */}
               <Logo />
 
-              {/* CENTER (mobile only): GlobalSearch trigger */}
-              <div className="absolute inset-x-0 flex justify-center lg:hidden px-12 pointer-events-none">
+              {/* CENTER (mobile only): GlobalSearch trigger (placeholder UI) */}
+              <div className="pointer-events-none absolute inset-x-0 flex justify-center px-12 lg:hidden">
                 <GlobalSearch className="max-w-[520px]" placeholder="Search…" />
               </div>
 
               {/* Desktop navigation */}
-              <nav className="hidden lg:flex flex-grow items-center justify-center gap-1 xl:gap-2" aria-label="Main navigation">
+              <nav
+                className="hidden lg:flex flex-grow items-center justify-center gap-1 xl:gap-2"
+                aria-label="Main navigation"
+              >
                 {headerMenu.map((item, i) => (
                   <HeaderLink key={i} item={item} />
                 ))}
@@ -251,9 +267,8 @@ export default function Header() {
                   onClick={toggleTheme}
                   className="hidden lg:inline-flex h-9 w-9 items-center justify-center rounded-xl text-white/90 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
                 >
-                  {/* Render both; CSS shows the right one */}
                   <Moon className="h-5 w-5 dark:hidden" aria-hidden />
-                  <Sun className="h-5 w-5 hidden dark:inline" aria-hidden />
+                  <Sun className="hidden h-5 w-5 dark:inline" aria-hidden />
                 </button>
 
                 {/* Desktop CTA */}
@@ -281,7 +296,7 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Backdrop — click outside to close */}
+        {/* Backdrop — click outside to close (mobile only) */}
         {drawerOpen && (
           <div
             className="fixed inset-0 z-[49] bg-black/50 backdrop-blur-[2px] lg:hidden"
@@ -307,7 +322,7 @@ export default function Header() {
           aria-label="Mobile navigation drawer"
           tabIndex={-1}
         >
-          <div className="flex h-dvh flex-col min-h-0 overscroll-contain">
+          <div className="flex h-dvh min-h-0 flex-col overscroll-contain">
             <div className="sticky top-0 z-10 flex items-center justify-between border-b border-zinc-200 bg-white p-4 dark:border-white/10 dark:bg-zinc-900">
               <Logo />
               <div className="flex items-center gap-1.5">
@@ -325,9 +340,8 @@ export default function Header() {
                   aria-label="Toggle theme"
                   className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-zinc-800 hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:text-white dark:hover:bg-white/10"
                 >
-                  {/* Render both; CSS shows the right one */}
                   <Moon className="h-5 w-5 dark:hidden" aria-hidden />
-                  <Sun className="h-5 w-5 hidden dark:inline" aria-hidden />
+                  <Sun className="hidden h-5 w-5 dark:inline" aria-hidden />
                 </button>
 
                 <button
@@ -341,10 +355,7 @@ export default function Header() {
             </div>
 
             {/* Scrollable MENU area */}
-            <nav
-              className="flex-1 min-h-0 overflow-y-auto px-4 py-3 bg-white dark:bg-zinc-900"
-              aria-label="Mobile navigation"
-            >
+            <nav className="flex-1 min-h-0 overflow-y-auto bg-white px-4 py-3 dark:bg-zinc-900" aria-label="Mobile navigation">
               <div className="rounded-xl bg-zinc-50 p-2 dark:bg-zinc-800">
                 {headerMenu.map((item, i) => (
                   <MobileHeaderLink key={i} item={item} closeMenuAction={() => setDrawerOpen(false)} />
@@ -357,18 +368,6 @@ export default function Header() {
           </div>
         </div>
       </header>
-
-      {/* Spacer to offset fixed header */}
-      <div
-        aria-hidden
-        className={[
-          'w-full',
-          showTopBar ? 'h-[calc(var(--header-h,70px)+var(--topbar-h,0px))]' : 'h-[var(--header-h,88px)]',
-          compact && !showTopBar ? 'md:h-[var(--header-h-compact,70px)]' : '',
-        ].join(' ')}
-      />
-
-      <div id="main" />
     </>
   );
 }

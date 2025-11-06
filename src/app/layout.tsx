@@ -2,6 +2,7 @@
 import type { Metadata, Viewport } from "next";
 import { Lato, Inter, Sora } from "next/font/google";
 import "./globals.css";
+import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import { ThemeProvider } from "next-themes";
 import ScrollToTop from "@/components/ScrollToTop";
@@ -17,52 +18,19 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://www.xiphiasimmigration.com"),
   applicationName: "XIPHIAS Immigration",
   generator: "Next.js",
-  title: {
-    default: "XIPHIAS Immigration – Residency, Citizenship & Global Mobility",
-    template: "%s | XIPHIAS Immigration",
-  },
-  description:
-    "Trusted advisors for Residency by Investment, Citizenship by Investment, Skilled Immigration, and Corporate Mobility across 25+ countries.",
-  // Global robots (page-level can override)
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-snippet": -1,
-      "max-image-preview": "large",
-      "max-video-preview": -1,
-    },
-  },
-  formatDetection: {
-    telephone: false,
-    email: false,
-    address: false,
-  },
-  alternates: {
-    canonical: "/",
-    languages: {
-      "en": "/",
-      "en-IN": "/",
-    },
-  },
+  title: { default: "XIPHIAS Immigration – Residency, Citizenship & Global Mobility", template: "%s | XIPHIAS Immigration" },
+  description: "Trusted advisors for Residency by Investment, Citizenship by Investment, Skilled Immigration, and Corporate Mobility across 25+ countries.",
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-snippet": -1, "max-image-preview": "large", "max-video-preview": -1 } },
+  formatDetection: { telephone: false, email: false, address: false },
+  alternates: { canonical: "/", languages: { en: "/", "en-IN": "/" } },
   openGraph: {
     title: "XIPHIAS Immigration",
-    description:
-      "Residency & Citizenship solutions for high-net-worth individuals and global enterprises.",
+    description: "Residency & Citizenship solutions for high-net-worth individuals and global enterprises.",
     url: "https://www.xiphiasimmigration.com",
     siteName: "XIPHIAS Immigration",
     locale: "en_US",
     type: "website",
-    images: [
-      {
-        url: "/og.jpg",
-        width: 1200,
-        height: 630,
-        alt: "XIPHIAS Immigration – Residency & Citizenship by Investment",
-      },
-    ],
+    images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "XIPHIAS Immigration – Residency & Citizenship by Investment" }],
   },
   twitter: {
     card: "summary_large_image",
@@ -84,14 +52,9 @@ export const metadata: Metadata = {
       { url: "/icons/safari-pinned-tab.svg", rel: "mask-icon", color: "#0f3a84" },
     ],
   },
-  appleWebApp: {
-    title: "XIPHIAS Immigration",
-    statusBarStyle: "default",
-    capable: true,
-  },
+  appleWebApp: { title: "XIPHIAS Immigration", statusBarStyle: "default", capable: true },
 };
 
-// ✅ Move viewport + themeColor into dedicated export to remove warnings
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
@@ -104,7 +67,6 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  // ---------- JSON-LD (Organization + Sitelinks Search) ----------
   const orgJsonLd = {
     "@context": "https://schema.org",
     "@type": ["Organization", "LegalService"],
@@ -121,22 +83,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     areaServed: "Worldwide",
     address: {
       "@type": "PostalAddress",
-      streetAddress:
-        "Aurbis Prime, 11, Kaveri Regent Coronet, 80 Feet Road, 3rd Block, Koramangala",
+      streetAddress: "Aurbis Prime, 11, Kaveri Regent Coronet, 80 Feet Road, 3rd Block, Koramangala",
       addressLocality: "Bengaluru",
       addressRegion: "KA",
       postalCode: "560034",
       addressCountry: "IN",
     },
-    contactPoint: [
-      {
-        "@type": "ContactPoint",
-        telephone: "+91 90194 00500",
-        contactType: "customer service",
-        areaServed: "IN",
-        availableLanguage: ["en", "hi"],
-      },
-    ],
+    contactPoint: [{ "@type": "ContactPoint", telephone: "+91 90194 00500", contactType: "customer service", areaServed: "IN", availableLanguage: ["en", "hi"] }],
     serviceType: ["Residency", "Citizenship", "Skilled", "Corporate"],
   };
 
@@ -145,12 +98,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     "@type": "WebSite",
     url: "https://www.xiphiasimmigration.com",
     name: "XIPHIAS Immigration",
-    potentialAction: {
-      "@type": "SearchAction",
-      target:
-        "https://www.xiphiasimmigration.com/search?q={search_term_string}",
-      "query-input": "required name=search_term_string",
-    },
+    potentialAction: { "@type": "SearchAction", target: "https://www.xiphiasimmigration.com/search?q={search_term_string}", "query-input": "required name=search_term_string" },
   };
 
   return (
@@ -160,12 +108,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
     >
       <head>
-        {/* Security/UX */}
         <meta name="referrer" content="strict-origin-when-cross-origin" />
       </head>
 
       <body className="antialiased">
-        {/* Accessible skip link */}
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:rounded-md focus:bg-black focus:text-white focus:px-3 focus:py-2"
@@ -176,9 +122,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <Aoscompo>
             <MDXProviders>
-              {/* Ensure pages put their main content inside <main id="main"> */}
-              {children}
+              {/* Global header on every page (sticky) */}
+              <Header />
+
+              {/* Main content area (NO extra padding needed with sticky header) */}
+              <main id="main" className="min-h-screen">
+                {children}
+              </main>
             </MDXProviders>
+
             <Footer />
             <BottomContactBar />
             <ScrollToTop />
@@ -186,16 +138,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </ThemeProvider>
 
         {/* JSON-LD (inline) */}
-        <script
-          id="org-jsonld"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
-        />
-        <script
-          id="website-jsonld"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
-        />
+        <script id="org-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
+        <script id="website-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
       </body>
     </html>
   );

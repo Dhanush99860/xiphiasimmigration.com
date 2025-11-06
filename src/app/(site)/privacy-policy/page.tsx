@@ -6,6 +6,7 @@
 import type { Metadata } from "next";
 import React from "react";
 import Link from "next/link";
+import Breadcrumb from "@/components/Common/Breadcrumb";
 
 // ---------------- SEO METADATA ----------------
 export const metadata: Metadata = {
@@ -126,8 +127,10 @@ export default function PrivacyPolicyPage() {
       <a href="#content" className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-black focus:text-white focus:px-3 focus:py-2">Skip to content</a>
 
       {/* Breadcrumbs slot (you have a reusable component) */}
-      {/* <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Privacy Policy' }]} className="mx-auto max-w-7xl px-4 sm:px-6 pt-6" /> */}
-
+      {/* breadcrumb under the card */}
+      <div className="mt-3">
+          <Breadcrumb />
+        </div>
       {/* Hero */}
       <header className="relative border-b border-black/10 dark:border-white/20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10 md:py-14">

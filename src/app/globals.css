@@ -7,6 +7,7 @@
 :root {
   --bg-header: #ffffff;
   --bg-modal: #ffffff;
+  --header-h: 72px;
 }
 
 .dark {
@@ -241,3 +242,8 @@ body {
     .animate-marquee-rtl { animation: none !important; transform: translateX(0) !important; }
   }
 }
+
+#main-banner { background-color: transparent !important; }
+#main > :first-child { margin-top: 0 !important; }
+/* Optional: only the collapsing TopBar is contained */
+.topbar-clip { contain: paint; }

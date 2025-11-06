@@ -74,26 +74,6 @@ const BottomContactBar: React.FC<Props> = ({
         >
           <div className="grid grid-cols-3 divide-x divide-neutral-200 dark:divide-neutral-800">
 
-              {/* Guide */}
-              <Link
-              href={guideHref}
-              className="flex items-center justify-center gap-2 py-3 text-sm font-medium text-neutral-900 dark:text-neutral-100 hover:bg-neutral-50 dark:hover:bg-neutral-900 transition"
-              aria-label="Open Guide"
-            >
-              <BookOpen className="h-5 w-5" aria-hidden="true" />
-              <span>Guide</span>
-            </Link>
-
-            {/* Home */}
-            <Link
-              href={homeHref}
-              className="flex items-center justify-center gap-2 py-3 text-sm font-medium text-neutral-900 dark:text-neutral-100 hover:bg-neutral-50 dark:hover:bg-neutral-900 transition"
-              aria-label="Go to Home"
-            >
-              <Home className="h-5 w-5" aria-hidden="true" />
-              <span>Home</span>
-            </Link>
-
             {/* Quick Connect (opens bottom sheet) */}
             <button
               type="button"

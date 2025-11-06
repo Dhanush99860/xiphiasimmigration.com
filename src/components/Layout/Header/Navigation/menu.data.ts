@@ -183,7 +183,7 @@ const residencyCountries: HeaderItem[] = [
 // Top-level header menu
 // ---------------------------
 export const headerMenu: HeaderItem[] = [
-  { label: 'Home', href: '/#main-banner' },
+  { label: 'Home', href: '/' },
 
   // Residency (flag-rich list)
   {
@@ -272,7 +272,7 @@ export const headerMenu: HeaderItem[] = [
         ],
       },
       {
-        label: 'Saintkitts',
+        label: 'Saint kitts',
         href: '/citizenship/saintkitts',
         // @ts-ignore
         meta: { code: 'KN' },
@@ -326,7 +326,7 @@ export const headerMenu: HeaderItem[] = [
         label: 'Cyprus',
         href: '/corporate/cyprus',
         // @ts-ignore
-        meta: { code: 'Ca' },
+        meta: { code: 'CY' },
         submenu: [
           { label: 'Company Setup', href: '/corporate/cyprus/company-setup' },
         ],
@@ -335,7 +335,7 @@ export const headerMenu: HeaderItem[] = [
         label: 'Portugal',
         href: '/corporate/portugal',
         // @ts-ignore
-        meta: { code: 'Ca' },
+        meta: { code: 'PT' },
         submenu: [
           { label: 'Portugal D2 Visa', href: '/corporate/portugal/portugal-d2-visa' },
         ],
@@ -344,7 +344,7 @@ export const headerMenu: HeaderItem[] = [
         label: 'Spain',
         href: '/corporate/spain',
         // @ts-ignore
-        meta: { code: 'Ca' },
+        meta: { code: 'SP' },
         submenu: [
           { label: 'Entrepreneur Company Formation', href: '/corporate/spain/entrepreneur-company-formation' },
         ],
@@ -353,7 +353,7 @@ export const headerMenu: HeaderItem[] = [
         label: 'UAE',
         href: '/corporate/uae',
         // @ts-ignore
-        meta: { code: 'Ca' },
+        meta: { code: 'AE' },
         submenu: [
           { label: 'Dubai Freezone Visa', href: '/corporate/uae/dubai-freezone-visa' },
           { label: 'Dubai Investor Visa', href: '/corporate/uae/dubai-investor-visa' },
@@ -364,7 +364,7 @@ export const headerMenu: HeaderItem[] = [
         label: 'United Kingdom',
         href: '/corporate/united-kingdom',
         // @ts-ignore
-        meta: { code: 'Ca' },
+        meta: { code: 'UK' },
         submenu: [
           { label: 'Expansion Worker Visa', href: '/corporate/united-kingdom/expansion-worker-visa' },
           { label: 'Self Sponsorship Visa', href: '/corporate/united-kingdom/self-sponsorship-visa' },
@@ -374,7 +374,7 @@ export const headerMenu: HeaderItem[] = [
         label: 'USA',
         href: '/corporate/usa',
         // @ts-ignore
-        meta: { code: 'Ca' },
+        meta: { code: 'US' },
         submenu: [
           { label: 'L1 Corporate Transfer Visa', href: '/corporate/usa/l1-corporate-transfer-visa' },
           { label: 'O1 Entrepreneur Visa', href: '/corporate/usa/o1-entrepreneur-visa' },
@@ -399,7 +399,7 @@ export const headerMenu: HeaderItem[] = [
           { label: 'Regional Sponsored Migration 187', href: '/skilled/australia/regional-sponsored-migration-187' },
           { label: 'Skilled Independent 189', href: '/skilled/australia/skilled-independent-189' },
           { label: 'Skilled Nominated 190', href: '/skilled/australia/skilled-nominated-190' },
-          { label: 'Skilled Work Regional 491', href: '/skilled/australia/skilled-nominated-190' },
+          { label: 'Skilled Work Regional 491', href: '/skilled/australia/skilled-work-regional-491' },
         ],
       },
       {
@@ -409,7 +409,7 @@ export const headerMenu: HeaderItem[] = [
         meta: { code: 'CA' },
         submenu: [
           { label: 'Canadian Experience Class', href: '/skilled/canada/canadian-experience-class' },
-          { label: 'express-entry', href: '/skilled/canada/Express Entry' },
+          { label: 'Express Entry', href: '/skilled/canada/Express Entry' },
           { label: 'Federal Skilled Trades', href: '/skilled/canada/federal-skilled-trades' },
           { label: 'Global Talent Stream', href: '/skilled/canada/global-talent-stream' },
           { label: 'Provincial Nominee Program', href: '/skilled/canada/provincial-nominee-program' },
@@ -457,12 +457,12 @@ export const headerMenu: HeaderItem[] = [
         // @ts-ignore
         meta: { code: 'USA' },
         submenu: [
-          { label: 'Eb1a Extraordinary Ability', href: '/skilled/usa/eb1a-extraordinary-ability' },
-          { label: 'Eb1b Outstanding Professors', href: '/skilled/usa/eb1b-outstanding-professors' },
-          { label: 'Eb1c Executive Manager', href: '/skilled/usa/eb1c-executive-manager' },
-          { label: 'Eb2 National Interest Waiver', href: '/skilled/usa/eb2-national-interest-waiver' },
-          { label: 'Eb3 Employment Based Green Card', href: '/skilled/usa/eb3-employment-based-green-card' },
-          { label: 'H1b Specialty Occupation', href: '/skilled/usa/h1b-specialty-occupation' },
+          { label: 'EB-1A Extraordinary Ability', href: '/skilled/usa/eb1a-extraordinary-ability' },
+          { label: 'EB-1B Outstanding Professors', href: '/skilled/usa/eb1b-outstanding-professors' },
+          { label: 'EB-1C Executive Manager', href: '/skilled/usa/eb1c-executive-manager' },
+          { label: 'EB-2 National Interest Waiver', href: '/skilled/usa/eb2-national-interest-waiver' },
+          { label: 'EB-3 Employment Based Green Card', href: '/skilled/usa/eb3-employment-based-green-card' },
+          { label: 'H1-B Specialty Occupation', href: '/skilled/usa/h1b-specialty-occupation' },
           { label: 'J1 Exchange Visitor Program', href: '/skilled/usa/j1-exchange-visitor-program' },
         ],
       },

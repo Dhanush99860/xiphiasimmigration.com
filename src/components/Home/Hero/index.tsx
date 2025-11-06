@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
 import dynamic from "next/dynamic";
 import CardSlider from "./slider";
 
@@ -14,22 +13,20 @@ const ContactForm = dynamic(() => import("@/components/ContactForm/index"), {
 });
 
 export default function Hero() {
-  const reduce = useReducedMotion();
   const [showForm, setShowForm] = useState(false);
 
-  const leftMotion = {
-    initial: { x: reduce ? 0 : -18, opacity: reduce ? 1 : 0 },
-    animate: { x: 0, opacity: 1, transition: { duration: 0.45 } },
-  };
-  const rightMotion = {
-    initial: { x: reduce ? 0 : 18, opacity: reduce ? 1 : 0 },
-    animate: { x: 0, opacity: 1, transition: { duration: 0.45, delay: 0.05 } },
-  };
-
   return (
-    <section id="main-banner" aria-labelledby="home-hero-title" className="relative z-1 overflow-hidden">
-      {/* Background image (critical) */}
-      <div className="absolute inset-0 -z-10">
+    /* IMPORTANT:
+       - isolate -> creates its own stacking context (so -z values don't slip behind the page)
+       - bg-transparent overrides your global "section { bg-white }"
+    */
+    <section
+      id="main-banner"
+      aria-labelledby="home-hero-title"
+      className="relative isolate z-0 overflow-hidden bg-transparent"
+    >
+      {/* Full-bleed background image + tint (sits behind content only) */}
+      <div className="pointer-events-none absolute -inset-0 -z-10">
         <Image
           src="/images/hero/top-immigration-counsultent.webp"
           alt="top-immigration-counsultent"
@@ -39,15 +36,14 @@ export default function Hero() {
           className="object-cover object-center"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-blue-700/85 md:bg-blue-700/80 " />
+        <div className="absolute inset-0 bg-blue-700/85 md:bg-blue-700/80" />
       </div>
 
       <div className="container mx-auto px-4 lg:max-w-screen-2xl">
         {/* ===================== TOP GRID ===================== */}
-        {/* Balanced columns & tighter horizontal rhythm on lg+ */}
         <div className="grid grid-cols-12 items-start gap-y-10 gap-x-6 lg:gap-x-12 pt-16 md:pt-20 lg:pt-24">
           {/* LEFT: Text + CTAs */}
-          <motion.div {...leftMotion} className="col-span-12 lg:col-span-7 xl:col-span-6">
+          <div className="col-span-12 lg:col-span-7 xl:col-span-6">
             {/* Eyebrow */}
             <div className="mb-4 flex items-center justify-center gap-3 lg:justify-start">
               <Image
@@ -114,7 +110,7 @@ export default function Hero() {
               </Link>
 
               <Link
-                href="https://apps.apple.com/app/idXXXXXXXX" // TODO: replace with real App Store link
+                href="https://apps.apple.com/app/idXXXXXXXX" /* TODO: real link */
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Download on the App Store"
@@ -158,20 +154,16 @@ export default function Hero() {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
 
-          {/* RIGHT: Desktop form (right-aligned, sticky) */}
-          <motion.aside
-            {...rightMotion}
-            className="relative col-span-12 hidden lg:col-span-5 xl:col-span-6 lg:block"
-          >
+          {/* RIGHT: Desktop form (sticky) */}
+          <aside className="relative col-span-12 hidden lg:col-span-5 xl:col-span-6 lg:block">
             <div className="lg:sticky lg:top-24">
-              {/* align to the right edge, controlled width */}
               <div className="ml-auto w-full max-w-md rounded-2xl bg-white/10 p-4 backdrop-blur ring-1 ring-white/20 shadow-[0_8px_30px_rgba(0,0,0,0.20)]">
                 <ContactForm />
               </div>
             </div>
-          </motion.aside>
+          </aside>
         </div>
 
         {/* ===================== SLIDER ===================== */}
@@ -182,24 +174,6 @@ export default function Hero() {
 
       {/* Subtle glow */}
       <div className="pointer-events-none absolute -right-16 -top-56 -z-10 h-64 w-64 rounded-full bg-secondary/30 blur-[120px] md:h-80 md:w-80" />
-
-      {/* Tiny SEO JSON-LD */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "WebSite",
-            name: "XIPHIAS Immigration",
-            url: "https://www.xiphiasimmigration.com",
-            potentialAction: {
-              "@type": "SearchAction",
-              target: "https://www.xiphiasimmigration.com/search?q={search_term_string}",
-              "query-input": "required name=search_term_string",
-            },
-          }),
-        }}
-      />
     </section>
   );
 }
