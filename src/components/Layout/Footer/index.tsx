@@ -279,7 +279,7 @@ export default function Footer() {
               <ul className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-white/90 text-[12px]">
                 <li className="inline-flex items-center gap-1">
                   <Icon icon="mdi:star" className="w-4 h-4" />
-                  <strong>4.8/5</strong> · 1,200+ reviews{" "}
+                  <strong>4.8/5</strong> · 10,000+ reviews{" "}
                   <Link href="https://g.page/r/CTH8DQwm1lYnEAE/review" className="underline underline-offset-4 hover:text-white">
                     (Google)
                   </Link>
@@ -642,7 +642,7 @@ export default function Footer() {
         {/* ===== Bottom Legal Bar ===== */}
         <div className="py-5 border-t border-white/15">
           <div className="mt-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <p className="text-[11.5px] text-white/80">©2011–{year} XIPHIAS Immigration. All rights reserved.</p>
+            <p className="text-[11.5px] text-white/80">©2009–{year} XIPHIAS Immigration. All rights reserved.</p>
             <p className="text-[11.5px] text-white/75">Registered in India • CIN: U74900KA2015PTC078396 • Jurisdiction: Bengaluru, Karnataka</p>
           </div>
         </div>

@@ -409,7 +409,7 @@ export const headerMenu: HeaderItem[] = [
         meta: { code: 'CA' },
         submenu: [
           { label: 'Canadian Experience Class', href: '/skilled/canada/canadian-experience-class' },
-          { label: 'Express Entry', href: '/skilled/canada/Express Entry' },
+          { label: 'Express Entry', href: '/skilled/canada/express-entry' },
           { label: 'Federal Skilled Trades', href: '/skilled/canada/federal-skilled-trades' },
           { label: 'Global Talent Stream', href: '/skilled/canada/global-talent-stream' },
           { label: 'Provincial Nominee Program', href: '/skilled/canada/provincial-nominee-program' },
