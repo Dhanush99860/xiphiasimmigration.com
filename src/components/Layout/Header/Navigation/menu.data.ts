@@ -188,7 +188,7 @@ export const headerMenu: HeaderItem[] = [
   // Residency (flag-rich list)
   {
     label: 'Residency',
-    href: '/#residency',
+    href: '/residency',
     badge: { text: 'Popular', tone: 'success' },
     submenu: residencyCountries,
   },
@@ -196,7 +196,7 @@ export const headerMenu: HeaderItem[] = [
   // Citizenship by investment
   {
     label: 'Citizenship',
-    href: '/#citizenship',
+    href: '/citizenship',
     submenu: [
       {
         label: 'Antigua & Barbuda',
@@ -311,7 +311,7 @@ export const headerMenu: HeaderItem[] = [
   // Corporate formation (only countries with valid pages)
   {
     label: 'Corporate',
-    href: '/#corporate',
+    href: '/corporate',
     submenu: [
       {
         label: 'Canada',
@@ -386,7 +386,7 @@ export const headerMenu: HeaderItem[] = [
   // Skilled migration (only countries with valid pages)
   {
     label: 'Skilled',
-    href: '/#skilled',
+    href: '/skilled',
     submenu: [
       {
         label: 'Australia',

@@ -1,4 +1,3 @@
-// FILE: src/components/Layout/Header/Navigation/MegaPanel.tsx
 'use client';
 
 import * as React from 'react';
@@ -17,7 +16,6 @@ interface MegaPanelProps {
 const TWEEN = { type: 'tween', duration: 0.18 } as const;
 const SHOW_FLAGS = true;
 
-/** ---- Flags ---- */
 function flagEmojiFromCode(code?: string) {
   if (!code) return '🏳️';
   const cc = code.trim().toUpperCase();
@@ -28,63 +26,53 @@ function flagEmojiFromCode(code?: string) {
     String.fromCodePoint(cc.charCodeAt(1) + base)
   );
 }
-function getFlag(item: SubmenuItem): string | null {
-  const any = item as unknown as { code?: string; meta?: { code?: string; iconEmoji?: string } };
-  const emoji = any.meta?.iconEmoji;
-  const code = any.code ?? any.meta?.code;
-  return emoji ?? (code ? flagEmojiFromCode(code) : null);
-}
-
-/** ---- Column calc (unchanged) ---- */
-function usePreferredCols() {
-  const [cols, setCols] = React.useState(4);
-  React.useEffect(() => {
-    const mq6 = window.matchMedia('(min-width: 1440px)');
-    const mq5 = window.matchMedia('(min-width: 1280px)');
-    const mq4 = window.matchMedia('(min-width: 1024px)');
-    const mq3 = window.matchMedia('(min-width: 640px)');
-    const update = () => {
-      if (mq6.matches) setCols(6);
-      else if (mq5.matches) setCols(5);
-      else if (mq4.matches) setCols(4);
-      else if (mq3.matches) setCols(3);
-      else setCols(2);
-    };
-    update();
-    mq6.addEventListener('change', update);
-    mq5.addEventListener('change', update);
-    mq4.addEventListener('change', update);
-    mq3.addEventListener('change', update);
-    return () => {
-      mq6.removeEventListener('change', update);
-      mq5.removeEventListener('change', update);
-      mq4.removeEventListener('change', update);
-      mq3.removeEventListener('change', update);
-    };
-  }, []);
-  return cols;
-}
-function chunkEven<T>(items: T[], cols: number) {
-  const out: T[][] = Array.from({ length: cols }, () => []);
-  items.forEach((item, i) => out[i % cols].push(item));
-  return out;
-}
 
 export default function MegaPanel({ rootLabel, columns, open, onClose }: MegaPanelProps) {
   const panelRef = React.useRef<HTMLDivElement>(null);
   const firstFocusRef = React.useRef<HTMLAnchorElement>(null);
   const toolsRef = React.useRef<HTMLDivElement>(null);
+  const rafRef = React.useRef<number | null>(null);
 
   const [query, setQuery] = React.useState('');
   const [reducedMotion, setReducedMotion] = React.useState(false);
   const [toolsH, setToolsH] = React.useState(64);
-  const cols = usePreferredCols();
+  const [panelTop, setPanelTop] = React.useState<number>(84); // px from viewport top
 
-  /** ==== FIXED TOP OFFSET (74px) ==== 
-   * You can override globally with:  :root { --nav-mega-top: 74px; }
-   * We DO NOT measure the header anymore.
-   */
-  const TOP_VAR = 'var(--nav-mega-top, 74px)';
+  // measure nav anchor (rounded nav row) and set panel top = bottom + 10px
+  const measureTop = React.useCallback(() => {
+    const anchor = document.querySelector('[data-mega-anchor]') as HTMLElement | null;
+    if (!anchor) return;
+    const rect = anchor.getBoundingClientRect();
+    setPanelTop(Math.round(rect.bottom + 10)); // 👈 10px gap from nav row
+  }, []);
+
+  // update on open + while visible
+  React.useEffect(() => {
+    if (!open) return;
+    measureTop();
+
+    const onScrollOrResize = () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(measureTop);
+    };
+
+    window.addEventListener('scroll', onScrollOrResize, { passive: true });
+    window.addEventListener('resize', onScrollOrResize);
+
+    const anchor = document.querySelector('[data-mega-anchor]') as HTMLElement | null;
+    const ro = anchor ? new ResizeObserver(onScrollOrResize) : null;
+    ro?.observe(anchor!);
+    const onTransition = () => onScrollOrResize();
+    anchor?.addEventListener('transitionend', onTransition);
+
+    return () => {
+      window.removeEventListener('scroll', onScrollOrResize);
+      window.removeEventListener('resize', onScrollOrResize);
+      anchor?.removeEventListener('transitionend', onTransition);
+      ro?.disconnect();
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [open, measureTop]);
 
   // motion pref
   React.useEffect(() => {
@@ -132,7 +120,7 @@ export default function MegaPanel({ rootLabel, columns, open, onClose }: MegaPan
     };
   }, [open]);
 
-  // Filtered data
+  // Filter
   const filtered = React.useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return columns;
@@ -143,11 +131,9 @@ export default function MegaPanel({ rootLabel, columns, open, onClose }: MegaPan
     );
   }, [columns, query]);
 
-  const colData = React.useMemo(() => chunkEven(filtered, cols), [filtered, cols]);
-
-  // Panel max-height: remaining viewport under the fixed 74px top, minus a small bottom margin
-  const PANEL_MAX_H = `calc(100vh - ${TOP_VAR} - 16px)`;
-  const BODY_MAX_H = `calc(100vh - ${TOP_VAR} - 16px - ${toolsH}px)`;
+  // Heights based on live top value
+  const PANEL_MAX_H = `calc(100vh - ${panelTop}px - 12px)`;
+  const BODY_MAX_H  = `calc(100vh - ${panelTop}px - 12px - ${toolsH}px)`;
 
   return (
     <AnimatePresence>
@@ -160,37 +146,28 @@ export default function MegaPanel({ rootLabel, columns, open, onClose }: MegaPan
           role="menu"
           aria-label={`${rootLabel} menu`}
           className="fixed inset-x-0 z-[60]"
-          style={{ top: `var(--nav-mega-top, 74px)` }}  // <- exactly 74px unless you override the var
+          style={{ top: panelTop }}           // 👈 follows the nav row only
         >
-          {/* Match header container exactly */}
-          <div className="pointer-events-auto mx-auto w-full max-w-screen-2xl px-4 md:px-6">
+          <div className="pointer-events-auto mx-auto w-full max-w-screen-2xl px-3 md:px-5">
             <div
               ref={panelRef}
               className={cx(
-                'relative w-full overflow-hidden rounded-3xl ring-1 shadow-2xl backdrop-blur-xl backdrop-saturate-150 backdrop-contrast-125',
+                'relative w-full overflow-hidden rounded-2xl ring-1 shadow-2xl backdrop-blur-xl backdrop-saturate-150',
                 'ring-black/5 dark:ring-white/15',
-                'bg-[linear-gradient(180deg,rgba(255,255,255,0.92)_0%,rgba(255,255,255,0.82)_100%)]',
-                'dark:bg-[linear-gradient(180deg,rgba(14,14,14,0.92)_0%,rgba(22,22,22,0.84)_100%)]',
-                'supports-[backdrop-filter:none]:bg-white/90 supports-[backdrop-filter:none]:dark:bg-zinc-900/90'
+                'bg-[linear-gradient(180deg,rgba(255,255,255,0.94)_0%,rgba(255,255,255,0.86)_100%)]',
+                'dark:bg-[linear-gradient(180deg,rgba(14,14,14,0.94)_0%,rgba(22,22,22,0.86)_100%)]',
+                'supports-[backdrop-filter:none]:bg-white/95 supports-[backdrop-filter:none]:dark:bg-zinc-900/95'
               )}
               style={{ maxHeight: PANEL_MAX_H }}
             >
-              {/* Decorative layer */}
-              <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl">
-                <div className="absolute -top-24 left-1/2 h-64 w-[120%] -translate-x-1/2 rounded-[50%] bg-[radial-gradient(closest-side,rgba(99,102,241,0.12),transparent_65%)] dark:bg-[radial-gradient(closest-side,rgba(99,102,241,0.15),transparent_60%)]" />
-                <div className="absolute inset-0 opacity-[0.04] dark:opacity-[0.06] [background-image:linear-gradient(to_right,currentColor_1px,transparent_1px),linear-gradient(to_bottom,currentColor_1px,transparent_1px)] [background-size:32px_32px] text-zinc-700 dark:text-zinc-300" />
-                <div className="absolute inset-0 rounded-3xl bg-[radial-gradient(120%_100%_at_50%_0%,transparent_60%,rgba(0,0,0,0.04)_100%)] dark:bg-[radial-gradient(120%_100%_at_50%_0%,transparent_58%,rgba(0,0,0,0.18)_100%)]" />
-              </div>
-
-              {/* Tools row */}
+              {/* Tools row (sticky) */}
               <div
                 ref={toolsRef}
-                className="sticky top-0 z-10 flex flex-col gap-3 border-b border-white/40 bg-white/55 px-4 py-3 backdrop-blur-xl dark:border-white/15 dark:bg-zinc-900/55 sm:flex-row sm:items-center sm:justify-between md:px-6 md:py-4"
+                className="sticky top-0 z-10 flex flex-col gap-2.5 border-b border-white/50 bg-white/70 px-3 py-2.5 backdrop-blur-xl dark:border-white/10 dark:bg-zinc-900/70 sm:flex-row sm:items-center sm:justify-between md:px-5 md:py-3"
               >
                 <h2 className="text-[11px] font-semibold tracking-wide uppercase text-zinc-900 dark:text-zinc-100">
                   Explore {rootLabel}
                 </h2>
-
                 <label className="relative inline-flex items-center">
                   <span className="sr-only">Filter {rootLabel}</span>
                   <input
@@ -198,7 +175,7 @@ export default function MegaPanel({ rootLabel, columns, open, onClose }: MegaPan
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="Filter by country or program…"
                     className={cx(
-                      'w-[min(80vw,340px)] sm:w-80 rounded-lg border px-3 py-2 text-xs shadow-inner',
+                      'w-[min(82vw,360px)] sm:w-80 rounded-lg border px-3 py-2 text-xs shadow-inner',
                       'bg-white/85 backdrop-blur-sm border-black/10 placeholder:text-zinc-500 text-zinc-900',
                       'focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent',
                       'dark:bg-zinc-900/85 dark:border-white/15 dark:text-zinc-100 dark:placeholder:text-zinc-400'
@@ -209,89 +186,81 @@ export default function MegaPanel({ rootLabel, columns, open, onClose }: MegaPan
 
               {/* Scrollable body */}
               <div
-                className="min-h-0 overflow-y-auto overscroll-contain px-4 pb-5 pt-4 md:px-6 md:pb-6 md:pt-5"
-                style={{
-                  maxHeight: BODY_MAX_H,
-                  scrollbarGutter: 'stable both-edges',
-                } as React.CSSProperties}
+                className="min-h-0 overflow-y-auto overscroll-contain px-3 pb-4 pt-3 md:px-5 md:pb-5 md:pt-4"
+                style={{ maxHeight: BODY_MAX_H, scrollbarGutter: 'stable both-edges' } as React.CSSProperties}
               >
                 <div
-                  className="grid gap-6"
-                  style={{ gridTemplateColumns: `repeat(${cols}, minmax(180px, 1fr))` }}
+                  className={cx(
+                    'grid gap-4 sm:gap-5',
+                    'grid-cols-[repeat(auto-fill,minmax(200px,1fr))] md:grid-cols-[repeat(auto-fill,minmax(220px,1fr))] xl:grid-cols-[repeat(auto-fill,minmax(240px,1fr))]'
+                  )}
                 >
-                  {colData.map((col, i) => (
-                    <div key={`col-${i}`} className="min-w-0 space-y-5">
-                      {col.map((country, j) => {
-                        const isFirst = i === 0 && j === 0;
-                        const flag = SHOW_FLAGS ? getFlag(country) : null;
+                  {filtered.map((country, idx) => {
+                    const any = country as any;
+                    const flag =
+                      any?.meta?.iconEmoji ?? (any.code ?? any?.meta?.code ? flagEmojiFromCode(any.code ?? any?.meta?.code) : null);
+                    const isFirst = idx === 0;
 
-                        return (
-                          <section
-                            key={country.label}
-                            className={cx(
-                              'group relative min-w-0 rounded-2xl p-3 transition',
-                              'ring-1 ring-black/5 dark:ring-white/10',
-                              'hover:bg-white/70 dark:hover:bg-white/[0.06]',
-                              'hover:shadow-sm'
-                            )}
-                          >
-                            <Link
-                              ref={isFirst ? firstFocusRef : undefined}
-                              href={country.href}
-                              className="inline-flex items-start gap-1.5 text-[14px] font-semibold text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 dark:text-zinc-100"
-                              onClick={onClose}
-                            >
-                              {flag && <span className="text-base leading-none">{flag}</span>}
-                              <span
-                                className={cx(
-                                  'whitespace-normal leading-tight',
-                                  '[display:-webkit-box] [-webkit-line-clamp:2] [-webkit-box-orient:vertical] overflow-hidden',
-                                  'group-hover:text-primary'
-                                )}
-                              >
-                                {country.label}
-                              </span>
-                            </Link>
+                    return (
+                      <section
+                        key={country.label}
+                        className={cx(
+                          'group relative min-w-0 rounded-2xl p-3.5 sm:p-4 transition',
+                          'ring-1 ring-black/5 dark:ring-white/10',
+                          'bg-white/60 dark:bg-white/[0.04]',
+                          'hover:bg-white/80 dark:hover:bg-white/[0.07]',
+                          'hover:shadow-sm'
+                        )}
+                      >
+                        <Link
+                          ref={isFirst ? firstFocusRef : undefined}
+                          href={country.href}
+                          className="inline-flex items-start gap-1.5 text-[14px] font-semibold text-zinc-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 dark:text-zinc-100"
+                          onClick={onClose}
+                        >
+                          {flag && <span className="text-base leading-none">{flag}</span>}
+                          <span className="break-words leading-tight group-hover:text-primary">
+                            {country.label}
+                          </span>
+                        </Link>
 
-                            {country.submenu && (
-                              <ul className="mt-2 space-y-1.5">
-                                {country.submenu.slice(0, 10).map((p) => (
-                                  <li key={p.label}>
-                                    <Link
-                                      href={p.href}
-                                      className={cx(
-                                        'relative flex items-start rounded-md px-2 py-1.5 text-[13px] text-zinc-800 dark:text-zinc-200',
-                                        'before:mr-2 before:mt-[9px] before:inline-block before:h-1.5 before:w-1.5 before:rounded-full before:bg-zinc-300 dark:before:bg-zinc-500',
-                                        'hover:text-primary hover:before:bg-primary/70',
-                                        'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30'
-                                      )}
-                                      onClick={onClose}
-                                    >
-                                      <span className="truncate">{p.label}</span>
-                                    </Link>
-                                  </li>
-                                ))}
-                                {country.submenu.length > 10 && (
-                                  <li>
-                                    <Link
-                                      href={country.href}
-                                      className="ml-2 inline-flex items-center gap-1 py-1 text-[12px] font-semibold text-primary hover:underline"
-                                      onClick={onClose}
-                                    >
-                                      View all {country.submenu.length} programs
-                                      <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
-                                        <path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" />
-                                      </svg>
-                                    </Link>
-                                  </li>
-                                )}
-                              </ul>
+                        {country.submenu && country.submenu.length > 0 && (
+                          <ul className="mt-2.5 space-y-1.5">
+                            {country.submenu.slice(0, 12).map((p) => (
+                              <li key={p.label}>
+                                <Link
+                                  href={p.href}
+                                  className={cx(
+                                    'relative flex items-start rounded-md px-2 py-1.5 text-[13px] text-zinc-800 dark:text-zinc-200',
+                                    'before:mr-2 before:mt-[9px] before:inline-block before:h-1.5 before:w-1.5 before:rounded-full before:bg-zinc-300 dark:before:bg-zinc-500',
+                                    'hover:text-primary hover:before:bg-primary/70',
+                                    'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30'
+                                  )}
+                                  onClick={onClose}
+                                >
+                                  <span className="truncate">{p.label}</span>
+                                </Link>
+                              </li>
+                            ))}
+                            {country.submenu.length > 12 && (
+                              <li>
+                                <Link
+                                  href={country.href}
+                                  className="ml-2 inline-flex items-center gap-1 py-1 text-[12px] font-semibold text-primary hover:underline"
+                                  onClick={onClose}
+                                >
+                                  View all {country.submenu.length} programs
+                                  <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                                    <path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" />
+                                  </svg>
+                                </Link>
+                              </li>
                             )}
-                          </section>
-                        );
-                      })}
-                    </div>
-                  ))}
+                          </ul>
+                        )}
+                      </section>
+                    );
+                  })}
                 </div>
 
                 {filtered.length === 0 && (

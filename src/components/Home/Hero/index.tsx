@@ -20,11 +20,11 @@ export default function Hero() {
        - isolate -> creates its own stacking context (so -z values don't slip behind the page)
        - bg-transparent overrides your global "section { bg-white }"
     */
-    <section
-      id="main-banner"
-      aria-labelledby="home-hero-title"
-      className="relative isolate z-0 overflow-hidden bg-transparent"
-    >
+       <section
+       id="main-banner"
+       aria-labelledby="home-hero-title"
+       className="relative isolate z-0 overflow-hidden bg-transparent mt-[-1px]"
+     >
       {/* Full-bleed background image + tint (sits behind content only) */}
       <div className="pointer-events-none absolute -inset-0 -z-10">
         <Image
