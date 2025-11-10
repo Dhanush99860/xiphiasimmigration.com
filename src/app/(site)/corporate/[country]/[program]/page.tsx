@@ -347,7 +347,7 @@ export default async function ProgramPage(props: {
         <ProgramQuickNav sections={sectionsForNav} />
 
         {/* BODY */}
-        <div className="flex flex-col gap-8 pt-5 pb-16 sm:px-6 lg:grid lg:grid-cols-12 lg:gap-8 lg:px-8">
+        <div className="flex flex-col gap-8 pt-5 pb-2 sm:px-6 lg:grid lg:grid-cols-12 lg:gap-8 lg:px-8">
           {/* MAIN */}
           <div className="order-2 lg:order-1 lg:col-span-8 xl:col-span-8 space-y-10">
             {/* QUICK FACTS */}
@@ -652,7 +652,7 @@ export default async function ProgramPage(props: {
             ) : null}
 
             {/* spacer so mobile floating nav never hides last section */}
-            <div className="sm:hidden h-24" aria-hidden="true" />
+            <div className="sm:hidden h-1" aria-hidden="true" />
           </div>
 
           {/* SIDEBAR (desktop) */}

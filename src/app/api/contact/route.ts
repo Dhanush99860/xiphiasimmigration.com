@@ -3,10 +3,32 @@ export const runtime = "nodejs";
 
 import { NextResponse, type NextRequest } from "next/server";
 
-// ✅ This route never throws to the frontend (always 200).
-// ✅ If Email/WhatsApp envs are missing, it SKIPS those sends.
-// ✅ Uses non-literal dynamic import for "nodemailer" so TS won't require it.
+/* -------------------- Optional: Cloudflare Turnstile -------------------- */
+async function verifyTurnstile(token?: string) {
+  const secret = process.env.TURNSTILE_SECRET_KEY; // set to enable verification
+  if (!secret) return { ok: true }; // CAPTCHA disabled
+  if (!token) return { ok: false, error: "Captcha missing." };
 
+  try {
+    const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ secret, response: token }),
+    });
+    const data = (await res.json()) as { success?: boolean; ["error-codes"]?: string[] };
+    if (!data.success) {
+      return {
+        ok: false,
+        error: `Captcha failed${data["error-codes"] ? `: ${data["error-codes"].join(", ")}` : ""}`,
+      };
+    }
+    return { ok: true };
+  } catch (e: any) {
+    return { ok: false, error: e?.message || "Captcha verify failed." };
+  }
+}
+
+/* ------------------------------ Route: POST ----------------------------- */
 export async function POST(req: NextRequest) {
   const t0 = Date.now();
 
@@ -17,12 +39,22 @@ export async function POST(req: NextRequest) {
     const phone = String(body?.phone ?? "").trim();
     const email = String(body?.email ?? "").trim();
     const message = String(body?.message ?? "").trim();
-    const variant = String(body?.variant ?? "contact");
+    const variant = String(body?.variant ?? "contact"); // "full" or "quick" from UI
     const page = String(body?.page ?? "");
     const referrer = String(body?.referrer ?? "");
     const consent = String(body?.consent ?? "");
+    const company = String(body?.company ?? ""); // honeypot
+    const captchaToken = String(body?.captchaToken ?? "");
 
-    // Basic guard (still returns 200, just skips)
+    // Honeypot: treat as success but ignore the submission
+    if (company) {
+      return NextResponse.json(
+        { ok: true, email: "skipped", whatsapp: "skipped", tookMs: Date.now() - t0 },
+        { status: 200 }
+      );
+    }
+
+    // Soft guard (you preferred "200 + skipped" for UX)
     if (!name || !phone) {
       return NextResponse.json(
         {
@@ -30,21 +62,27 @@ export async function POST(req: NextRequest) {
           warning: "missing required fields (name/phone) – accepted and skipped",
           email: "skipped",
           whatsapp: "skipped",
+          tookMs: Date.now() - t0,
         },
         { status: 200 }
       );
     }
 
-    // ---------- EMAIL (optional) ----------
+    // Optional CAPTCHA (only enforced if TURNSTILE_SECRET_KEY is set)
+    const cap = await verifyTurnstile(captchaToken);
+    if (!cap.ok) {
+      // For a strict block you could return 400; keeping it 400 so UI shows an error
+      return NextResponse.json({ error: cap.error || "Captcha failed." }, { status: 400 });
+    }
+
+    /* ----------------------------- EMAIL (optional) ----------------------------- */
     let emailStatus: "sent" | "skipped" | "failed" = "skipped";
     const hasEmailCfg =
-      !!process.env.SMTP_HOST &&
-      !!process.env.EMAIL_FROM &&
-      !!process.env.EMAIL_TO;
+      !!process.env.SMTP_HOST && !!process.env.EMAIL_FROM && !!process.env.EMAIL_TO;
 
     if (hasEmailCfg) {
       try {
-        // ⬇️ Non-literal dynamic import avoids TS2307 when nodemailer isn't installed
+        // dynamic import so the build doesn't error when nodemailer isn't installed
         const pkgName: string = "nodemailer";
         const nodemailerMod: any = await import(pkgName);
         const nodemailer = nodemailerMod.default ?? nodemailerMod;
@@ -54,10 +92,7 @@ export async function POST(req: NextRequest) {
           port: Number(process.env.SMTP_PORT || 587),
           secure: Number(process.env.SMTP_PORT || 587) === 465, // implicit TLS on 465
           auth: process.env.SMTP_USER
-            ? {
-                user: process.env.SMTP_USER,
-                pass: process.env.SMTP_PASS,
-              }
+            ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
             : undefined,
         });
 
@@ -83,12 +118,11 @@ export async function POST(req: NextRequest) {
 
         emailStatus = "sent";
       } catch {
-        // nodemailer not installed or SMTP error → keep UI happy
-        emailStatus = "failed";
+        emailStatus = "failed"; // nodemailer not installed or SMTP error
       }
     }
 
-    // ---------- WHATSAPP (optional, Meta Cloud API) ----------
+    /* ---------------------- WHATSAPP (Meta Cloud API, optional) ---------------------- */
     let whatsappStatus: "sent" | "skipped" | "failed" = "skipped";
     const hasWaCfg =
       !!process.env.META_WABA_TOKEN &&
@@ -136,11 +170,14 @@ export async function POST(req: NextRequest) {
     );
   } catch {
     // Final safety net: never fail the client
-    return NextResponse.json({ ok: true, email: "skipped", whatsapp: "skipped" }, { status: 200 });
+    return NextResponse.json(
+      { ok: true, email: "skipped", whatsapp: "skipped" },
+      { status: 200 }
+    );
   }
 }
 
-/* --------- helpers --------- */
+/* ------------------------------- helpers ------------------------------- */
 function escapeHtml(s: string) {
   return s
     .replaceAll("&", "&amp;")

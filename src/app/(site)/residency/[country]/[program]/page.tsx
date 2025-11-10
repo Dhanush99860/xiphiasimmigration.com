@@ -713,7 +713,7 @@ export default async function ProgramPage(props: {
             ) : null}
 
             {/* spacer so mobile floating nav never hides last section */}
-            <div className="sm:hidden h-24" aria-hidden="true" />
+            <div className="sm:hidden h-1" aria-hidden="true" />
           </div>
 
           {/* SIDEBAR (desktop) */}

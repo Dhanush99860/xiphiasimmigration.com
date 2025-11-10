@@ -412,7 +412,7 @@ export default function Footer() {
                   <div className="mt-1 flex items-center gap-1 text-[12px] text-white/90">
                     <Icon icon="mdi:star" className="w-4 h-4" />
                     <strong>4.8</strong>
-                    <span className="text-white/70">· 1,200+ reviews</span>
+                    <span className="text-white/70">· 10,000+ reviews</span>
                   </div>
 
                   {/* Store badges (open in new tab) */}

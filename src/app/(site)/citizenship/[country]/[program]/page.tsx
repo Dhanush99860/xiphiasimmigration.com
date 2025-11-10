@@ -403,7 +403,7 @@ export default async function ProgramPage(props: {
 
     return (
       <main
-        className="relative container mx-auto px-4 sm:px-6 lg:px-8 pb-24 text-black dark:text-white "
+        className="relative container mx-auto px-4 sm:px-6 lg:px-8 pb-2 text-black dark:text-white "
         style={{ scrollBehavior: "smooth" } as React.CSSProperties}
       >
         {/* JSON-LD */}

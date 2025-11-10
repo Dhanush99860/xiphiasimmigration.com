@@ -123,7 +123,7 @@ export default async function CountryPage(props: { params: Promise<{ country: st
   const heroImage = (meta as any).heroImage as string | undefined;
 
   return (
-    <main className="relative container mx-auto px-4 sm:px-6 lg:px-8 pb-12 text-black">
+    <main className="relative container mx-auto px-4 sm:px-6 lg:px-8 pb-2 text-black">
       <h1 className="sr-only">Skilled migration in {countryName}</h1>
 
       <JsonLd data={breadcrumbLd([

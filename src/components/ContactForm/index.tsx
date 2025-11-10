@@ -1,10 +1,20 @@
 "use client";
 
-import React, { useMemo, useRef, useState } from "react";
+import React, { useMemo, useRef, useState, useEffect } from "react";
+import Script from "next/script";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import Loader from "@/components/Common/Loader";
 import { FiMail, FiUser, FiPhone, FiMessageSquare } from "react-icons/fi";
+
+/** Expose type for window.turnstile */
+declare global {
+  interface Window {
+    turnstile?: {
+      render: (el: HTMLElement, opts: any) => void;
+      reset: (el?: HTMLElement) => void;
+    };
+  }
+}
 
 type Props = {
   variant?: "full" | "quick";
@@ -12,16 +22,15 @@ type Props = {
   heading?: string;
   subheading?: string;
   defaults?: Partial<Record<"name" | "phone" | "email" | "message", string>>;
-
   /** POST URL that will send both WhatsApp + Email. Defaults to /api/contact */
   apiEndpoint?: string;
-
   /** After a successful submit, navigate here (e.g. "/thanks"). */
   onSuccessRedirect?: string;
-
   /** Optional: add an id prefix if you render multiple forms on the same page */
   idPrefix?: string; // keeps ids stable to avoid hydration issues
 };
+
+const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY; // optional
 
 export default function ContactForm({
   variant = "full",
@@ -37,7 +46,11 @@ export default function ContactForm({
   const [loading, setLoading] = useState(false);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [msgLen, setMsgLen] = useState(defaults?.message?.length ?? 0);
+  const [captchaToken, setCaptchaToken] = useState<string | undefined>(undefined);
+
   const formRef = useRef<HTMLFormElement | null>(null);
+  const captchaRef = useRef<HTMLDivElement | null>(null);
+  const captchaRendered = useRef(false);
   const router = useRouter();
 
   // ---- a11y ids (stable / no useId to avoid hydration mismatches) ----
@@ -65,12 +78,10 @@ export default function ContactForm({
     const email = get("email");
     const message = get("message");
 
-    if (touched.name && !vName(name))
-      e.name = "Please enter at least 2 characters.";
+    if (touched.name && !vName(name)) e.name = "Please enter at least 2 characters.";
     if (touched.phone && !vPhone(phone))
       e.phone = "Enter a valid phone number (digits, +, -, () allowed).";
-    if (isFull && touched.email && !vEmail(email))
-      e.email = "Enter a valid email.";
+    if (isFull && touched.email && !vEmail(email)) e.email = "Enter a valid email.";
     if (isFull && touched.message && !vMsg(message))
       e.message = "Please add at least 10 characters.";
     return e;
@@ -81,12 +92,46 @@ export default function ContactForm({
     setTouched((t) => ({ ...t, [name]: true }));
   }
 
+  // Optional: render Turnstile if a site key is present
+  useEffect(() => {
+    if (!SITE_KEY) return;
+    if (!captchaRef.current) return;
+
+    const tryRender = () => {
+      if (captchaRendered.current) return;
+      if (typeof window === "undefined" || !window.turnstile) return;
+      if (!captchaRef.current) return;
+      window.turnstile.render(captchaRef.current, {
+        sitekey: SITE_KEY,
+        callback: (token: string) => setCaptchaToken(token),
+        "error-callback": () => setCaptchaToken(undefined),
+        "expired-callback": () => setCaptchaToken(undefined),
+        theme: "auto",
+      });
+      captchaRendered.current = true;
+    };
+
+    // render immediately if script already loaded
+    tryRender();
+
+    // also try again shortly (script may load a bit later)
+    const id = setTimeout(tryRender, 250);
+    return () => clearTimeout(id);
+  }, []);
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const f = e.currentTarget;
 
     // Honeypot
-    if ((f.elements.namedItem("company") as HTMLInputElement)?.value) return;
+    if ((f.elements.namedItem("company") as HTMLInputElement)?.value) {
+      // Pretend success to mislead bots
+      toast.success("Your message has been sent. We’ll be in touch soon.");
+      f.reset();
+      setTouched({});
+      setMsgLen(0);
+      return;
+    }
 
     const payload = Object.fromEntries(new FormData(f).entries());
     const n = String(payload.name || "");
@@ -100,23 +145,29 @@ export default function ContactForm({
       return;
     }
 
+    // If CAPTCHA is enabled, require a token
+    if (SITE_KEY && !captchaToken) {
+      toast.error("Please complete the CAPTCHA.");
+      return;
+    }
+
     try {
       setLoading(true);
 
-      // Real submit: this route sends BOTH WhatsApp + Email
       const res = await fetch(apiEndpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...payload,
+          captchaToken,
           variant,
           page: typeof window !== "undefined" ? window.location.pathname : "",
-          referrer: typeof document !== "undefined" ? document.referrer || "" : "",
+          referrer:
+            typeof document !== "undefined" ? document.referrer || "" : "",
         }),
       });
 
       if (!res.ok) {
-        // Try to read a server-provided error if any
         let message = "Failed to send message.";
         try {
           const data = await res.json();
@@ -135,12 +186,18 @@ export default function ContactForm({
       f.reset();
       setTouched({});
       setMsgLen(0);
-
+      setCaptchaToken(undefined);
       if (onSuccessRedirect) router.push(onSuccessRedirect);
     } catch (err: any) {
       toast.error(err?.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
+      // Reset captcha if present
+      if (SITE_KEY && window.turnstile && captchaRef.current) {
+        try {
+          window.turnstile.reset(captchaRef.current);
+        } catch {}
+      }
     }
   }
 
@@ -258,6 +315,7 @@ export default function ContactForm({
             help={errors.message || `${msgLen}/1000`}
             rows={5}
             required
+            maxLength={1000}
             className="md:col-span-2"
           />
         )}
@@ -274,6 +332,23 @@ export default function ContactForm({
           </label>
         )}
 
+        {/* Optional CAPTCHA (renders only if NEXT_PUBLIC_TURNSTILE_SITE_KEY is set) */}
+        {SITE_KEY ? (
+          <>
+            <Script
+              src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+              strategy="lazyOnload"
+            />
+            <div className="md:col-span-2">
+              <div
+                ref={captchaRef}
+                className="cf-turnstile"
+                data-sitekey={SITE_KEY}
+              />
+            </div>
+          </>
+        ) : null}
+
         <div className="md:col-span-2">
           <button
             type="submit"
@@ -287,7 +362,7 @@ export default function ContactForm({
             ].join(" ")}
             aria-live="polite"
           >
-            {loading ? <Loader /> : isFull ? "Send message" : "Request callback"}
+            {loading ? <Spinner /> : isFull ? "Send message" : "Request callback"}
           </button>
           <p className="mt-2 text-[12px] text-neutral-600 dark:text-neutral-400">
             We respond within one business day. By submitting, you accept our{" "}
@@ -388,7 +463,8 @@ function Field({
             "bg-transparent px-1 text-sm text-neutral-500 dark:text-neutral-400",
             "transition-all",
             "peer-focus:top-0 peer-focus:-translate-y-1/2 peer-focus:text-[12px] peer-focus:text-primary",
-            "peer-not-placeholder-shown:top-0 peer-not-placeholder-shown:-translate-y-1/2 peer-not-placeholder-shown:text-[12px]",
+            // FIX: float when value present
+            "peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:-translate-y-1/2 peer-[:not(:placeholder-shown)]:text-[12px]",
           ].join(" ")}
         >
           {label}
@@ -424,6 +500,7 @@ function Textarea({
   defaultValue,
   rows = 5,
   className = "",
+  maxLength = 1000,
   onBlur,
   onInput,
 }: {
@@ -438,6 +515,7 @@ function Textarea({
   defaultValue?: string;
   rows?: number;
   className?: string;
+  maxLength?: number;
   onBlur?: () => void;
   onInput?: (length: number) => void;
 }) {
@@ -460,6 +538,7 @@ function Textarea({
           required={required}
           defaultValue={defaultValue}
           rows={rows}
+          maxLength={maxLength}
           onBlur={onBlur}
           onInput={(e) =>
             onInput?.((e.target as HTMLTextAreaElement).value.length)
@@ -480,7 +559,8 @@ function Textarea({
             "bg-transparent px-1 text-sm text-neutral-500 dark:text-neutral-400",
             "transition-all",
             "peer-focus:top-0 peer-focus:-translate-y-1/2 peer-focus:text-[12px] peer-focus:text-primary",
-            "peer-not-placeholder-shown:top-0 peer-not-placeholder-shown:-translate-y-1/2 peer-not-placeholder-shown:text-[12px]",
+            // FIX: float when value present
+            "peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:-translate-y-1/2 peer-[:not(:placeholder-shown)]:text-[12px]",
           ].join(" ")}
         >
           {label}
@@ -519,5 +599,19 @@ function CardBG() {
         <rect width="100%" height="100%" fill="url(#grid-cf)" className="text-primary" />
       </svg>
     </div>
+  );
+}
+
+/** Simple inline spinner so there are no external component deps */
+function Spinner() {
+  return (
+    <svg
+      className="h-5 w-5 animate-spin"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" opacity="0.25" />
+      <path d="M22 12a10 10 0 0 1-10 10" fill="none" stroke="currentColor" strokeWidth="4" />
+    </svg>
   );
 }

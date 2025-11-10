@@ -132,7 +132,7 @@ export default async function CountryPage(props: {
     .slice(0, 2);
 
   return (
-    <main className="relative container mx-auto px-4 sm:px-6 lg:px-8 pb-12 text-black">
+    <main className="relative container mx-auto px-4 sm:px-6 lg:px-8 pb-2 text-black">
       <h1 className="sr-only">Residency in {meta.country}</h1>
 
       <JsonLd

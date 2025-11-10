@@ -13,8 +13,8 @@ export default function ProgramQuickNav({ sections }: { sections: Section[] }) {
 
   /* ---------- helpers ---------- */
   const getTopOffset = () => {
-    // Sum heights of any sticky/fixed top navs that may be visible
-    const maybeStickyIds = ["program-top-nav", "program-mobile-top-nav"];
+    // Only count top-stuck bars (mobile nav is fixed to the bottom now)
+    const maybeStickyIds = ["program-top-nav"];
     let topH = 0;
     for (const id of maybeStickyIds) {
       const el = document.getElementById(id);
@@ -136,7 +136,7 @@ export default function ProgramQuickNav({ sections }: { sections: Section[] }) {
   useEffect(() => {
     const t = setTimeout(() => {
       centerActive("program-top-nav-inner");
-      centerActive("program-mobile-top-nav-inner");
+      centerActive("program-mobile-bottom-nav-inner");
     }, 0);
     return () => clearTimeout(t);
   }, [activeId]);
@@ -235,18 +235,18 @@ export default function ProgramQuickNav({ sections }: { sections: Section[] }) {
         </div>
       </nav>
 
-      {/* Sticky Top Tabs (mobile) — previously floating bottom */}
+      {/* Fixed Bottom Tabs (mobile) */}
       <nav
-        id="program-mobile-top-nav"
+        id="program-mobile-bottom-nav"
         aria-label="Section navigation"
         className="
-          md:hidden sticky z-50
-          top-[env(safe-area-inset-top)]
-          w-full
-          border-b border-white/30 dark:border-black/30
+          md:hidden fixed z-50
+          bottom-0 left-0 right-0 w-full
+          border-t border-white/30 dark:border-black/30
           bg-white/65 dark:bg-neutral-900/65 backdrop-blur
           supports-[backdrop-filter]:bg-white/45 supports-[backdrop-filter]:dark:bg-neutral-900/45
-          shadow-[0_10px_30px_-20px_rgba(0,0,0,0.45)]
+          shadow-[0_-10px_30px_-20px_rgba(0,0,0,0.45)]
+          pb-[env(safe-area-inset-bottom)]
         "
       >
         <div className="relative">
@@ -261,7 +261,7 @@ export default function ProgramQuickNav({ sections }: { sections: Section[] }) {
           />
           <div className="container mx-auto">
             <div
-              id="program-mobile-top-nav-inner"
+              id="program-mobile-bottom-nav-inner"
               className="
                 no-scrollbar flex items-end gap-4 overflow-x-auto whitespace-nowrap
                 px-3 py-2.5
@@ -315,6 +315,9 @@ export default function ProgramQuickNav({ sections }: { sections: Section[] }) {
           </div>
         </div>
       </nav>
+
+      {/* spacer for the fixed bottom bar so content isn't covered */}
+      <div className="md:hidden h-14" aria-hidden />
     </>
   );
 }
