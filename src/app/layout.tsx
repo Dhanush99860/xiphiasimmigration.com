@@ -8,6 +8,7 @@ import { ThemeProvider } from "next-themes";
 import ScrollToTop from "@/components/ScrollToTop";
 import Aoscompo from "@/utils/aos";
 import MDXProviders from "@/components/MDX/MDXProviders";
+import ChatWidget from "@/components/ChatWidget";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const sora = Sora({ subsets: ["latin"], variable: "--font-sora", display: "swap" });
@@ -132,6 +133,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
             <Footer />
             <ScrollToTop />
+            <ChatWidget />
           </Aoscompo>
         </ThemeProvider>
 

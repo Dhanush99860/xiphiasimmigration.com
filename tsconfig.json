@@ -14,16 +14,16 @@
     "jsx": "preserve",
     "incremental": true,
     "baseUrl": "src",
-    "paths": {
-      "@/*": ["./*"]
-    },
+    "paths": { "@/*": ["./*"] },
     "types": ["node"],
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
+    "plugins": [{ "name": "next" }]
   },
-  "include": ["**/*.ts", "**/*.tsx", "next-env.d.ts", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.d.ts",              // <-- add this (or "src/types/**/*.d.ts")
+    ".next/types/**/*.ts"
+  ],
   "exclude": ["node_modules", ".next"]
 }

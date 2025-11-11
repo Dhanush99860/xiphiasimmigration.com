@@ -1,20 +1,10 @@
 "use client";
 
-import React, { useMemo, useRef, useState, useEffect } from "react";
-import Script from "next/script";
+import React, { useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import Loader from "@/components/Common/Loader";
 import { FiMail, FiUser, FiPhone, FiMessageSquare } from "react-icons/fi";
-
-/** Expose type for window.turnstile */
-declare global {
-  interface Window {
-    turnstile?: {
-      render: (el: HTMLElement, opts: any) => void;
-      reset: (el?: HTMLElement) => void;
-    };
-  }
-}
 
 type Props = {
   variant?: "full" | "quick";
@@ -22,15 +12,10 @@ type Props = {
   heading?: string;
   subheading?: string;
   defaults?: Partial<Record<"name" | "phone" | "email" | "message", string>>;
-  /** POST URL that will send both WhatsApp + Email. Defaults to /api/contact */
-  apiEndpoint?: string;
-  /** After a successful submit, navigate here (e.g. "/thanks"). */
+  apiEndpoint?: string;          // UI only — backend unchanged
   onSuccessRedirect?: string;
-  /** Optional: add an id prefix if you render multiple forms on the same page */
-  idPrefix?: string; // keeps ids stable to avoid hydration issues
+  idPrefix?: string;
 };
-
-const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY; // optional
 
 export default function ContactForm({
   variant = "full",
@@ -38,7 +23,7 @@ export default function ContactForm({
   heading,
   subheading,
   defaults,
-  apiEndpoint = "/api/contact",
+  apiEndpoint = "/api/enquiry",
   onSuccessRedirect,
   idPrefix = "contact",
 }: Props) {
@@ -46,17 +31,11 @@ export default function ContactForm({
   const [loading, setLoading] = useState(false);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [msgLen, setMsgLen] = useState(defaults?.message?.length ?? 0);
-  const [captchaToken, setCaptchaToken] = useState<string | undefined>(undefined);
-
   const formRef = useRef<HTMLFormElement | null>(null);
-  const captchaRef = useRef<HTMLDivElement | null>(null);
-  const captchaRendered = useRef(false);
   const router = useRouter();
 
-  // ---- a11y ids (stable / no useId to avoid hydration mismatches) ----
   const titleId = `${idPrefix}-title`;
 
-  // helpers to read values
   const get = (name: string) =>
     (
       formRef.current?.elements.namedItem(name) as
@@ -65,7 +44,7 @@ export default function ContactForm({
         | null
     )?.value || "";
 
-  // simple validators
+  // validators (unchanged)
   const vName = (s: string) => s.trim().length >= 2;
   const vPhone = (s: string) => /^[0-9+()\-\s]{7,}$/.test(s.trim());
   const vEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i.test(s.trim());
@@ -86,52 +65,17 @@ export default function ContactForm({
       e.message = "Please add at least 10 characters.";
     return e;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [touched, isFull]); // values read from DOM
+  }, [touched, isFull]);
 
-  function markTouched(name: string) {
+  const markTouched = (name: string) =>
     setTouched((t) => ({ ...t, [name]: true }));
-  }
-
-  // Optional: render Turnstile if a site key is present
-  useEffect(() => {
-    if (!SITE_KEY) return;
-    if (!captchaRef.current) return;
-
-    const tryRender = () => {
-      if (captchaRendered.current) return;
-      if (typeof window === "undefined" || !window.turnstile) return;
-      if (!captchaRef.current) return;
-      window.turnstile.render(captchaRef.current, {
-        sitekey: SITE_KEY,
-        callback: (token: string) => setCaptchaToken(token),
-        "error-callback": () => setCaptchaToken(undefined),
-        "expired-callback": () => setCaptchaToken(undefined),
-        theme: "auto",
-      });
-      captchaRendered.current = true;
-    };
-
-    // render immediately if script already loaded
-    tryRender();
-
-    // also try again shortly (script may load a bit later)
-    const id = setTimeout(tryRender, 250);
-    return () => clearTimeout(id);
-  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const f = e.currentTarget;
 
     // Honeypot
-    if ((f.elements.namedItem("company") as HTMLInputElement)?.value) {
-      // Pretend success to mislead bots
-      toast.success("Your message has been sent. We’ll be in touch soon.");
-      f.reset();
-      setTouched({});
-      setMsgLen(0);
-      return;
-    }
+    if ((f.elements.namedItem("company") as HTMLInputElement)?.value) return;
 
     const payload = Object.fromEntries(new FormData(f).entries());
     const n = String(payload.name || "");
@@ -145,12 +89,6 @@ export default function ContactForm({
       return;
     }
 
-    // If CAPTCHA is enabled, require a token
-    if (SITE_KEY && !captchaToken) {
-      toast.error("Please complete the CAPTCHA.");
-      return;
-    }
-
     try {
       setLoading(true);
 
@@ -159,7 +97,9 @@ export default function ContactForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...payload,
-          captchaToken,
+          country:
+            (formRef.current?.elements.namedItem("country") as HTMLInputElement)
+              ?.value || "",
           variant,
           page: typeof window !== "undefined" ? window.location.pathname : "",
           referrer:
@@ -178,26 +118,18 @@ export default function ContactForm({
 
       toast.success(
         isFull
-          ? "Your message has been sent. We’ll be in touch soon."
-          : "Callback request received. We’ll call you shortly."
+          ? "Your message has been sent. We'll be in touch soon."
+          : "Callback request received. We'll call you shortly."
       );
 
-      // Clear form & local state
       f.reset();
       setTouched({});
       setMsgLen(0);
-      setCaptchaToken(undefined);
       if (onSuccessRedirect) router.push(onSuccessRedirect);
     } catch (err: any) {
       toast.error(err?.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
-      // Reset captcha if present
-      if (SITE_KEY && window.turnstile && captchaRef.current) {
-        try {
-          window.turnstile.reset(captchaRef.current);
-        } catch {}
-      }
     }
   }
 
@@ -215,7 +147,7 @@ export default function ContactForm({
         "relative w-full max-w-xl mx-auto",
         "rounded-2xl bg-white dark:bg-neutral-950",
         "ring-1 ring-neutral-200 dark:ring-neutral-800 shadow-sm",
-        "p-5 sm:p-6",
+        "p-4 sm:p-6",
         className,
       ].join(" ")}
       aria-labelledby={titleId}
@@ -230,11 +162,11 @@ export default function ContactForm({
         </div>
         <h2
           id={titleId}
-          className="mt-2 text-xl sm:text-2xl font-semibold text-neutral-900 dark:text-neutral-50"
+          className="mt-1.5 text-lg sm:text-xl font-semibold text-neutral-900 dark:text-neutral-50"
         >
           {title}
         </h2>
-        <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
+        <p className="mt-1 text-xs sm:text-sm text-neutral-600 dark:text-neutral-400">
           {desc}
         </p>
       </header>
@@ -244,17 +176,10 @@ export default function ContactForm({
         ref={formRef}
         onSubmit={handleSubmit}
         noValidate
-        className="relative mt-4 grid grid-cols-1 gap-4 md:grid-cols-2"
+        className="relative mt-3 grid grid-cols-1 gap-3 md:grid-cols-2"
       >
         {/* Honeypot */}
-        <input
-          type="text"
-          name="company"
-          tabIndex={-1}
-          autoComplete="off"
-          className="hidden"
-          aria-hidden="true"
-        />
+        <input type="text" name="company" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
 
         <Field
           id={`${idPrefix}-name`}
@@ -267,6 +192,7 @@ export default function ContactForm({
           invalid={!!errors.name}
           help={errors.name}
           required
+          autoComplete="name"
         />
 
         <Field
@@ -274,7 +200,7 @@ export default function ContactForm({
           name="phone"
           label="Phone number"
           icon={<FiPhone />}
-          placeholder="+1 555 555 5555"
+          placeholder="+91 99860 72700"
           defaultValue={defaults?.phone}
           onBlur={() => markTouched("phone")}
           invalid={!!errors.phone}
@@ -282,6 +208,7 @@ export default function ContactForm({
           required
           inputMode="tel"
           pattern="[0-9+\-\(\)\s]{7,}"
+          autoComplete="tel"
         />
 
         {isFull && (
@@ -298,6 +225,7 @@ export default function ContactForm({
             required
             type="email"
             className="md:col-span-2"
+            autoComplete="email"
           />
         )}
 
@@ -313,15 +241,15 @@ export default function ContactForm({
             onInput={(n) => setMsgLen(n)}
             invalid={!!errors.message}
             help={errors.message || `${msgLen}/1000`}
-            rows={5}
-            required
+            rows={4}
             maxLength={1000}
+            required
             className="md:col-span-2"
           />
         )}
 
         {isFull && (
-          <label className="md:col-span-2 flex items-start gap-2 text-sm text-neutral-700 dark:text-neutral-300">
+          <label className="md:col-span-2 flex items-start gap-2 text-xs sm:text-sm text-neutral-700 dark:text-neutral-300">
             <input
               type="checkbox"
               name="consent"
@@ -332,27 +260,11 @@ export default function ContactForm({
           </label>
         )}
 
-        {/* Optional CAPTCHA (renders only if NEXT_PUBLIC_TURNSTILE_SITE_KEY is set) */}
-        {SITE_KEY ? (
-          <>
-            <Script
-              src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
-              strategy="lazyOnload"
-            />
-            <div className="md:col-span-2">
-              <div
-                ref={captchaRef}
-                className="cf-turnstile"
-                data-sitekey={SITE_KEY}
-              />
-            </div>
-          </>
-        ) : null}
-
         <div className="md:col-span-2">
           <button
             type="submit"
             disabled={loading}
+            aria-busy={loading}
             className={[
               "inline-flex w-full items-center justify-center gap-2 rounded-xl px-5 py-3 text-[15px] font-semibold",
               "bg-primary text-white hover:brightness-110",
@@ -360,11 +272,19 @@ export default function ContactForm({
               "disabled:opacity-60 disabled:cursor-not-allowed",
               "transition-all",
             ].join(" ")}
-            aria-live="polite"
           >
-            {loading ? <Spinner /> : isFull ? "Send message" : "Request callback"}
+            {loading ? (
+              <>
+                <Loader />
+                <span>Sending…</span>
+              </>
+            ) : isFull ? (
+              "Send message"
+            ) : (
+              "Request callback"
+            )}
           </button>
-          <p className="mt-2 text-[12px] text-neutral-600 dark:text-neutral-400">
+          <p className="mt-2 text-[11px] sm:text-[12px] text-neutral-600 dark:text-neutral-400">
             We respond within one business day. By submitting, you accept our{" "}
             <a href="/privacy-policy" className="underline text-primary">
               privacy policy
@@ -383,8 +303,7 @@ export default function ContactForm({
             "@context": "https://schema.org",
             "@type": "ContactPage",
             name: "Contact / Consultation",
-            description:
-              "Get in touch for an immigration consultation or request a callback.",
+            description: "Get in touch for an immigration consultation or request a callback.",
           }),
         }}
       />
@@ -393,6 +312,9 @@ export default function ContactForm({
 }
 
 /* ====================== Sub-components ====================== */
+/* FIX: labels are shown ONLY when empty. As soon as there is a value,
+   the label is fully hidden (no overlay while typing). Inputs keep
+   symmetric vertical padding so text is visually centered. */
 
 function Field({
   id,
@@ -408,6 +330,7 @@ function Field({
   className = "",
   inputMode,
   pattern,
+  autoComplete,
   onBlur,
 }: {
   id: string;
@@ -423,6 +346,7 @@ function Field({
   className?: string;
   inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
   pattern?: string;
+  autoComplete?: string;
   onBlur?: () => void;
 }) {
   return (
@@ -436,7 +360,7 @@ function Field({
             {icon}
           </span>
         ) : null}
-        {/* floating label pattern */}
+
         <input
           id={id}
           name={name}
@@ -447,37 +371,40 @@ function Field({
           defaultValue={defaultValue}
           inputMode={inputMode}
           pattern={pattern}
+          autoComplete={autoComplete}
           onBlur={onBlur}
           className={[
             "peer w-full rounded-xl bg-white dark:bg-neutral-950",
             "ring-1 ring-neutral-300 dark:ring-neutral-700",
             "px-10 py-3 text-sm text-neutral-900 dark:text-neutral-50",
             "focus:outline-none focus:ring-2 focus:ring-primary",
+            "placeholder-transparent",
             invalid ? "ring-red-400 focus:ring-red-500" : "",
           ].join(" ")}
         />
+
+        {/* SHOW ONLY WHEN EMPTY (placeholder-shown). Remove the old peer-focus rule. */}
         <label
           htmlFor={id}
           className={[
-            "pointer-events-none absolute left-10 top-1/2 -translate-y-1/2",
-            "bg-transparent px-1 text-sm text-neutral-500 dark:text-neutral-400",
-            "transition-all",
-            "peer-focus:top-0 peer-focus:-translate-y-1/2 peer-focus:text-[12px] peer-focus:text-primary",
-            // FIX: float when value present
-            "peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:-translate-y-1/2 peer-[:not(:placeholder-shown)]:text-[12px]",
+            "pointer-events-none absolute left-10 bg-white dark:bg-neutral-950 px-1 rounded",
+            "text-neutral-500 dark:text-neutral-400 transition-all z-10",
+            // hidden by default (when there is a value)
+            "opacity-0 top-2 translate-y-0 text-[12px]",
+            // when empty: center & show
+            "peer-placeholder-shown:opacity-100 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm",
           ].join(" ")}
         >
           {label}
           {required ? <span className="ml-1 text-red-600">*</span> : null}
         </label>
       </div>
+
       {help ? (
         <p
           className={[
-            "mt-1 text-[12px]",
-            invalid
-              ? "text-red-600 dark:text-red-400"
-              : "text-neutral-500 dark:text-neutral-400",
+            "mt-1 text-[11px] sm:text-[12px]",
+            invalid ? "text-red-600 dark:text-red-400" : "text-neutral-500 dark:text-neutral-400",
           ].join(" ")}
           role={invalid ? "alert" : undefined}
         >
@@ -498,11 +425,11 @@ function Textarea({
   invalid,
   required,
   defaultValue,
-  rows = 5,
+  rows = 4,
   className = "",
-  maxLength = 1000,
   onBlur,
   onInput,
+  maxLength,
 }: {
   id: string;
   name: string;
@@ -515,9 +442,9 @@ function Textarea({
   defaultValue?: string;
   rows?: number;
   className?: string;
-  maxLength?: number;
   onBlur?: () => void;
   onInput?: (length: number) => void;
+  maxLength?: number;
 }) {
   return (
     <div className={["relative", className].join(" ")}>
@@ -530,6 +457,7 @@ function Textarea({
             {icon}
           </span>
         ) : null}
+
         <textarea
           id={id}
           name={name}
@@ -540,40 +468,37 @@ function Textarea({
           rows={rows}
           maxLength={maxLength}
           onBlur={onBlur}
-          onInput={(e) =>
-            onInput?.((e.target as HTMLTextAreaElement).value.length)
-          }
+          onInput={(e) => onInput?.((e.target as HTMLTextAreaElement).value.length)}
           className={[
             "peer w-full rounded-xl bg-white dark:bg-neutral-950",
             "ring-1 ring-neutral-300 dark:ring-neutral-700",
             "px-10 py-3 text-sm text-neutral-900 dark:text-neutral-50",
             "focus:outline-none focus:ring-2 focus:ring-primary",
-            "resize-y",
+            "resize-y placeholder-transparent",
             invalid ? "ring-red-400 focus:ring-red-500" : "",
           ].join(" ")}
         />
+
+        {/* SHOW ONLY WHEN EMPTY */}
         <label
           htmlFor={id}
           className={[
-            "pointer-events-none absolute left-10 top-3",
-            "bg-transparent px-1 text-sm text-neutral-500 dark:text-neutral-400",
-            "transition-all",
-            "peer-focus:top-0 peer-focus:-translate-y-1/2 peer-focus:text-[12px] peer-focus:text-primary",
-            // FIX: float when value present
-            "peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:-translate-y-1/2 peer-[:not(:placeholder-shown)]:text-[12px]",
+            "pointer-events-none absolute left-10 bg-white dark:bg-neutral-950 px-1 rounded",
+            "text-neutral-500 dark:text-neutral-400 transition-all z-10",
+            "opacity-0 top-2 translate-y-0 text-[12px]",
+            "peer-placeholder-shown:opacity-100 peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm",
           ].join(" ")}
         >
           {label}
           {required ? <span className="ml-1 text-red-600">*</span> : null}
         </label>
       </div>
+
       {help ? (
         <p
           className={[
-            "mt-1 text-[12px]",
-            invalid
-              ? "text-red-600 dark:text-red-400"
-              : "text-neutral-500 dark:text-neutral-400",
+            "mt-1 text-[11px] sm:text-[12px]",
+            invalid ? "text-red-600 dark:text-red-400" : "text-neutral-500 dark:text-neutral-400",
           ].join(" ")}
           role={invalid ? "alert" : undefined}
         >
@@ -584,12 +509,12 @@ function Textarea({
   );
 }
 
-/* subtle decorative background with primary tint */
+/* subtle decorative background */
 function CardBG() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0">
-      <div className="absolute -top-10 -left-10 h-36 w-36 rounded-full bg-primary/10 blur-3xl" />
-      <div className="absolute -bottom-10 -right-10 h-48 w-48 rounded-full bg-primary/10 blur-3xl" />
+      <div className="absolute -top-10 -left-10 h-28 w-28 rounded-full bg-primary/10 blur-3xl" />
+      <div className="absolute -bottom-10 -right-10 h-40 w-40 rounded-full bg-primary/10 blur-3xl" />
       <svg className="absolute inset-0 h-full w-full opacity-[0.04] dark:opacity-[0.07]">
         <defs>
           <pattern id="grid-cf" width="24" height="24" patternUnits="userSpaceOnUse">
@@ -599,19 +524,5 @@ function CardBG() {
         <rect width="100%" height="100%" fill="url(#grid-cf)" className="text-primary" />
       </svg>
     </div>
-  );
-}
-
-/** Simple inline spinner so there are no external component deps */
-function Spinner() {
-  return (
-    <svg
-      className="h-5 w-5 animate-spin"
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" opacity="0.25" />
-      <path d="M22 12a10 10 0 0 1-10 10" fill="none" stroke="currentColor" strokeWidth="4" />
-    </svg>
   );
 }
