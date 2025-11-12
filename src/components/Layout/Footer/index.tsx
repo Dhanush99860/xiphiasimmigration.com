@@ -70,12 +70,12 @@ const OFFICES = [
   },
   {
     name: "Dubai",
-    street: "Unit 608-A40, Platinum Tower, JLT-PH1-I2, Jumeirah Lakes Towers",
+    street: "Unit 608, Platinum Tower, JLT-PH1-I2, Jumeirah Lakes Towers",
     city: "Dubai",
     postal: "",
     country: "UAE",
     hours: "Sun–Thu, 9:00–18:00",
-    phone: "+971 521 021 001",
+    phone: "+971 5272 75101",
     maps: "https://maps.google.com/?q=Platinum+Tower+JLT+Dubai",
   },
 

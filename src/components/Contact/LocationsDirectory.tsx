@@ -203,11 +203,10 @@ export default function LocationsDirectory({
       company: "XIPHIAS IMMIGRATION DMCC",
       regionKey: "uae",
       address: [
-        "Unit No: 608-A40, Platinum Tower, Plot No: JLT-PH1-I2",
+        "Unit No: 608, Platinum Tower, Plot No: JLT-PH1-I2",
         "Jumeirah Lakes Towers, Dubai, UAE",
       ],
-      phones: ["+971-521 021 001"],
-      whatsapp: "+971-527 275 101",
+      phones: ["+971-527 275 101"],
       email: "dubai@xiphiasimmigration.com",
       website: "https://www.xiphiasimmigration.ae",
     },

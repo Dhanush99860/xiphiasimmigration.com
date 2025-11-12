@@ -446,7 +446,7 @@ function FeatureList({
 
                   <div className="mt-1 flex items-center justify-between">
                     <p id="country-search-hint" className="text-[11px] tracking-wide opacity-75">
-                      Tip: type a few letters (e.g., “domi” for Dominica).
+                      Tip: type a few letters (e.g., “gre” for Grenada).
                     </p>
                     <div aria-hidden className="hidden sm:flex items-center gap-1 text-[11px] opacity-80">
                       <span className="rounded-md border border-[var(--c-border)] px-1.5 py-[2px]">Ctrl</span>
