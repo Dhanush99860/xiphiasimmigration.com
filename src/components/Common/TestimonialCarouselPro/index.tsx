@@ -47,7 +47,7 @@ export default function TestimonialCarouselMarquee({
       aria-roledescription="carousel"
       aria-label="Client testimonials"
     >
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
         {/* Header */}
         <div className="mb-6 md:mb-8">
           <div className="inline-flex items-center gap-2 text-[12px]">

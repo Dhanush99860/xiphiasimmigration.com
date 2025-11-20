@@ -33,14 +33,14 @@ const HAS_VIDEO: boolean =
 
 // Keep copy neutral (no unverified claims)
 const BIO: string =
-  "Varun Singh is a Fellow of the Investment Migration Council (FIMC) and a Certified Investment Migration Consultant (Cert IM). As Managing Director of XIPHIAS Immigration (established 2009), he advises HNIs, family offices, and senior professionals on residency‑by‑investment strategies—covering UAE Golden Visa and select EU residency programs—delivered with strict compliance, due diligence, and transparent process.";
+  "With more than 15 years of experience, Varun Singh, MD, Cert IMC, is a renowned expert in international immigration and investment migration. He is famous for his unwavering standards of integrity, precision, and client excellence in his role as Managing Director of XIPHIAS Immigration";
 
 const HIGHLIGHTS: Highlight[] = [
   {
     icon: <Award className="w-5 h-5 text-primary relative z-10" />,
     text: (
       <>
-        <span className="font-semibold">IMC credentials</span>: FIMC & Cert IM
+        15+ Years of Experience & IMC-Certified Leadership
       </>
     ),
   },
@@ -48,7 +48,7 @@ const HIGHLIGHTS: Highlight[] = [
     icon: <Globe className="w-5 h-5 text-primary relative z-10" />,
     text: (
       <>
-        <span className="font-semibold">UAE Golden Visa</span> & select EU residency pathways
+        Customized Advice on Investments and Corporate Migration
       </>
     ),
   },
@@ -56,7 +56,7 @@ const HIGHLIGHTS: Highlight[] = [
     icon: <Sparkles className="w-5 h-5 text-primary relative z-10" />,
     text: (
       <>
-        Tailored for <span className="font-semibold">HNIs & family offices</span>
+        Solutions for Family Migration, Residency, and International Mobility
       </>
     ),
   },
@@ -64,7 +64,7 @@ const HIGHLIGHTS: Highlight[] = [
     icon: <ShieldCheck className="w-5 h-5 text-primary relative z-10" />,
     text: (
       <>
-        <span className="font-semibold">Compliance-first</span>: eligibility, source‑of‑funds, risk review
+        Global Regulatory Edge and Client-Centric Excellence
       </>
     ),
   },
@@ -73,8 +73,8 @@ const HIGHLIGHTS: Highlight[] = [
 const FACTS: Fact[] = [
   { label: "Role", value: "Managing Director" },
   { label: "Credentials", value: "FIMC (IMC Fellow), Cert IM" },
-  { label: "Focus", value: "HNIs • Residency-by-investment" },
-  { label: "Programs", value: "UAE Golden Visa • EU residency" },
+  { label: "Focus", value: " Advisory for Elite Global Clients" },
+  { label: "Programs", value: " Specialization in Investment & Corporate Mobility" },
 ];
 
 /* ----------------------------- Component ----------------------------- */

@@ -580,32 +580,6 @@ export default async function ProgramPage(props: {
               </section>
             )}
 
-            {/* COSTS & FUNDS */}
-            {hasPrices ? (
-              <section id="prices" className="scroll-mt-28 overflow-visible">
-                <header className="mb-3">
-                  <h2 className="text-xl font-semibold">Costs & proof of funds</h2>
-                </header>
-                <div className="w-full overflow-visible">
-                  <Prices
-                    items={prices ?? []}
-                    proofOfFunds={proofOfFunds ?? []}
-                    defaultCurrency={(meta as any).currency}
-                  />
-                </div>
-              </section>
-            ) : null}
-
-            {/* GOV FEES — anchor for quick-nav */}
-            {hasGovFees ? (
-              <section id="gov-fees" className="scroll-mt-28">
-                <GovernmentFees
-                  fees={governmentFees}
-                  defaultCurrency={(meta as any).currency || "USD"}
-                />
-              </section>
-            ) : null}
-
             {/* === Eligibility + Benefits === */}
             {hasRequirements || hasBenefits ? (
               <div className="grid gap-6 lg:grid-cols-2">
@@ -649,6 +623,32 @@ export default async function ProgramPage(props: {
               </div>
             ) : null}
 
+            {/* COSTS & FUNDS */}
+            {hasPrices ? (
+              <section id="prices" className="scroll-mt-28 overflow-visible">
+                <header className="mb-3">
+                  <h2 className="text-xl font-semibold">Costs & proof of funds</h2>
+                </header>
+                <div className="w-full overflow-visible">
+                  <Prices
+                    items={prices ?? []}
+                    proofOfFunds={proofOfFunds ?? []}
+                    defaultCurrency={(meta as any).currency}
+                  />
+                </div>
+              </section>
+            ) : null}
+
+            {/* GOV FEES — anchor for quick-nav */}
+            {hasGovFees ? (
+              <section id="gov-fees" className="scroll-mt-28">
+                <GovernmentFees
+                  fees={governmentFees}
+                  defaultCurrency={(meta as any).currency || "USD"}
+                />
+              </section>
+            ) : null} 
+
             {/* Optional: Document checklist & Dependents */}
             {documentChecklist?.length ? (
               <section id="documents" className="scroll-mt-28">
@@ -691,16 +691,6 @@ export default async function ProgramPage(props: {
                   <h2 className="text-xl font-semibold">Comparison</h2>
                 </header>
                 <Prose>{sections[mdxKey.comparison]}</Prose>
-              </section>
-            )}
-
-            {/* WHY COUNTRY */}
-            {hasWhyCountry && mdxKey.whyCountry && (
-              <section id="why-country" className="scroll-mt-28">
-                <header className="mb-3">
-                  <h2 className="text-xl font-semibold">Why {meta.country}</h2>
-                </header>
-                <Prose>{sections[mdxKey.whyCountry]}</Prose>
               </section>
             )}
 

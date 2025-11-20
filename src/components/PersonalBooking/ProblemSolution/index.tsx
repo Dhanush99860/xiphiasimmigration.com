@@ -46,9 +46,9 @@ const PAIRS: Pair[] = [
       icon: <Globe2 className="h-5 w-5 text-amber-600" />,
     },
     solution: {
-      title: "IMC-aligned discovery & dual-track plan",
+      title: "IMC-Aligned Discovery & Dual-Track Strategy",
       desc:
-        "Independent shortlisting across jurisdictions with a primary and contingency route (e.g., fund/investment vs. skills/corporate), so pivots are pre-planned if rules shift.",
+        "We independently shortlist jurisdictions to design a primary and contingency route, whether fund, investment, or skills-based, so you stay agile when regulations evolve.",
       note: "Keeps optionality while avoiding dead-ends.",
       icon: <ShieldCheck className="h-5 w-5 text-emerald-600" />,
     },
@@ -56,102 +56,102 @@ const PAIRS: Pair[] = [
   {
     id: "sof-aml",
     problem: {
-      title: "Complex source-of-funds (SoF) & AML/KYC scrutiny",
+      title: "Complex Source-of-Funds (SoF) & AML/KYC scrutiny",
       desc:
-        "Multi-asset wealth (private companies, real estate exits, carried interest, trusts) generates DD friction; PEP checks and adverse media can trigger slowdowns.",
+        "Layered wealth structures, private equity exits, trusts, and family holdings often trigger extended due diligence reviews, PEP checks, and compliance slowdowns across jurisdictions.",
       tag: "Due-Diligence",
       icon: <Fingerprint className="h-5 w-5 text-amber-600" />,
     },
     solution: {
-      title: "Forensic SoF narrative & DD-ready pack",
+      title: "Forensic SoF Mapping & Pre-Due-Diligence File",
       desc:
-        "A coherent funds trail (audited statements, SPAs, distributions, trust deeds) plus PEP/adverse-media screening upfront—presented in regulator-friendly structure.",
-      note: "Built to AML expectations; reduces back-and-forth.",
+        "We create regulator-ready documentation that traces fund origins, ownership layers, and transaction flows aligned with IMC and FATF standards to minimize due-diligence friction.",
+      note: "Reduces risk of delays and regulatory escalations.",
       icon: <FileCheck2 className="h-5 w-5 text-emerald-600" />,
     },
   },
   {
     id: "investment-execution",
     problem: {
-      title: "Instrument risk & execution (escrow, fund terms, liquidity)",
+      title: "Capital risk in complex instruments & fund mechanics",
       desc:
-        "Unclear escrow terms, side letters, and redemption mechanics expose capital to delays or lock-ups; real-estate options are restricted in some programs.",
+        "Instrument complexity and opaque fund mechanics, escrow terms, side letters, and redemption clauses can expose capital to lock-ups or liquidity delays, especially in restricted real-estate routes.",
       tag: "Capital Risk",
       icon: <Banknote className="h-5 w-5 text-amber-600" />,
     },
     solution: {
-      title: "Curated, policy-compliant routes & risk brief",
+      title: "Policy-Compliant Structuring & Risk Brief",
       desc:
-        "We align the route with current program policy, summarize key risks (governance, liquidity, fees), and co-ordinate counsel for subscription/escrow document checks.",
-      note: "We do not provide investment advice—process & compliance only.",
+        "We align your investment route with current program policy, outline key risks around governance, liquidity, and fees, and coordinate independent counsel for escrow and subscription review.",
+      note: "Compliance-focused; no investment advice.",
       icon: <Scale className="h-5 w-5 text-emerald-600" />,
     },
   },
   {
     id: "tax-residency",
     problem: {
-      title: "Tax residency & presence-day traps",
+      title: "Tax & reporting risk",
       desc:
-        "Unplanned days on the ground, tie-breaker rules and reporting (CRS/AEOI) can create unexpected tax outcomes for globally mobile families.",
+        "Unplanned presence days, tie-breaker rules, and global reporting frameworks (CRS, AEOI) can trigger unintended tax residency or dual reporting for mobile HNI families.",
       tag: "Tax/Reporting",
       icon: <Landmark className="h-5 w-5 text-amber-600" />,
     },
     solution: {
-      title: "Pre-landing planning with accredited advisors",
+      title: "Pre-Landing Tax Planning with Accredited Advisors",
       desc:
-        "We flag tax-residency impacts at strategy stage, then co-ordinate opinions with specialist counsel on timing, domicile, and reporting to avoid unpleasant surprises.",
-      note: "Sequencing avoids accidental tax residence.",
+        "We identify tax-residency implications early, coordinate specialist counsel on domicile, timing, and reporting, and structure travel or relocation plans to prevent cross-jurisdiction exposure.",
+      note: "Sequencing prevents accidental tax residency.",
       icon: <FileText className="h-5 w-5 text-emerald-600" />,
     },
   },
   {
     id: "governance-family",
     problem: {
-      title: "Family governance (spouse, dependants, education, succession)",
+      title: "Family & dependent planning",
       desc:
-        "Cut-off ages, dependency rules, and study plans are often misaligned with the chosen route; succession/estate angles get missed.",
+        "Cut-off ages, dependency rules, and education timelines often misalign with the chosen migration route, while succession and estate considerations may be overlooked.",
       tag: "Family",
       icon: <GraduationCap className="h-5 w-5 text-amber-600" />,
     },
     solution: {
-      title: "Whole-household routing & documentation map",
+      title: "Whole-Household Routing & Documentation Map",
       desc:
-        "We blueprint eligibility across family members, align education timelines, and highlight succession/estate touchpoints for counsel review.",
-      note: "Avoids last-minute dependent exclusions.",
+        "We blueprint eligibility across family members, align education and relocation timelines, and flag succession or estate touchpoints for counsel review.",
+      note: "Prevents last-minute dependent issues.",
       icon: <ClipboardList className="h-5 w-5 text-emerald-600" />,
     },
   },
   {
     id: "corporate-mobility",
     problem: {
-      title: "Corporate mobility & PE/payroll compliance",
+      title: "Corporate mobility & compliance risk",
       desc:
-        "C-suite relocations, intra-company transfers and remote leadership risk permanent establishment, payroll leakage and license breaches.",
+        "C-suite relocations, intra-company transfers, and remote leadership can trigger permanent establishment exposure, payroll gaps, or licensing breaches across jurisdictions.",
       tag: "Corporate",
       icon: <BriefcaseBusiness className="h-5 w-5 text-amber-600" />,
     },
     solution: {
-      title: "Business-case kits & host-country compliance",
+      title: "Business-Case Kits & Host-Country Compliance",
       desc:
-        "We assemble visa-fit business cases, co-ordinate with local counsel for entity/PE/payroll checks, and stage entry so licenses and reporting stay in sync.",
-      note: "Protects both executive and enterprise.",
+        "We prepare visa-fit business cases, coordinate with local counsel on entity, PE, and payroll checks, and stage entry to keep licenses and reporting aligned.",
+      note: "Safeguards both executive and corporate interests.",
       icon: <Building2 className="h-5 w-5 text-emerald-600" />,
     },
   },
   {
     id: "timelines",
     problem: {
-      title: "Missed timelines & expiring docs (PCCs, bank letters, medicals)",
+      title: "Missed timelines & expiring documents",
       desc:
-        "Critical documents lapse or land out of sequence, causing re-work and queue resets.",
+        "Critical documents—PCCs, bank letters, medicals—can lapse or arrive out of sequence, causing rework and delays in processing.",
       tag: "Execution",
       icon: <TimerReset className="h-5 w-5 text-amber-600" />,
     },
     solution: {
-      title: "Milestone calendar with proactive refreshes",
+      title: "Milestone Calendar with Proactive Refreshes",
       desc:
-        "We maintain a live tracker for time-sensitive documents, file early, and respond fast to clarifications until decision and landing.",
-      note: "Minimizes idle time and duplicate effort.",
+        "We maintain a live tracker for time-sensitive documents, file early, and respond promptly to clarifications until approval and landing.",
+      note: "Reduces idle time and duplicate effort.",
       icon: <ShieldCheck className="h-5 w-5 text-emerald-600" />,
     },
   },
@@ -160,19 +160,20 @@ const PAIRS: Pair[] = [
     problem: {
       title: "Unlicensed intermediaries & over-promising",
       desc:
-        "Informal advisory and unverified claims create refusal risk and reputational exposure for HNIs.",
+        "Informal advisors and unverified claims expose HNIs to application refusals and reputational risk.",
       tag: "Governance",
       icon: <AlertTriangle className="h-5 w-5 text-amber-600" />,
     },
     solution: {
-      title: "IMC-certified leadership & transparent scope",
+      title: "IMC-Certified Leadership & Transparent Scope",
       desc:
-        "Engagements are documented with clear scope, compliant marketing, and ethics-first guidance under IMC’s code of conduct.",
-      note: "Led by a Fellow Certified Investment Migration Consultant (FIMC).",
+        "All engagements follow clear documentation, compliant marketing, and ethics-first guidance under IMC’s code of conduct.",
+      note: "Led by a FIMC-certified expert.",
       icon: <BadgeCheck className="h-5 w-5 text-emerald-600" />,
     },
   },
 ];
+
 
 export default function ProblemSolutionCompare({ className = "" }: { className?: string }) {
   return (
@@ -206,8 +207,8 @@ export default function ProblemSolutionCompare({ className = "" }: { className?:
             : problems we solve—side by side
           </h2>
           <p className="mt-3 text-base md:text-lg text-slate-600 dark:text-slate-300">
-            A compliance-first pathway under IMC standards—clear strategy, due-diligence-ready
-            documentation, and coordinated execution from discovery to landing.
+          At XIPHIAS Immigration, we provide a compliance-first pathway aligned with Investment Migration Council (IMC) standards.
+          Our approach blends strategy, due diligence, and coordinated execution, guiding clients from discovery to landing with clarity and confidence.
           </p>
         </div>
 

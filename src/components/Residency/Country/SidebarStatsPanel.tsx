@@ -131,7 +131,7 @@ export default function SidebarStatsPanel({
 
         {(loading || hasInvest) && (
           <MetricTile
-            label="Investment"
+            label="Min Investment"
             color="green"
             icon={<BadgeDollarSign className="h-4 w-4" aria-hidden />}
             value={

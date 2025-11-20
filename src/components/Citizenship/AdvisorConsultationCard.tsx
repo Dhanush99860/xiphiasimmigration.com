@@ -66,23 +66,23 @@ function money(amount: number, currency: string) {
 /* -------------------------------- Component ------------------------------- */
 export default function AdvisorConsultationCard({
   advisorName = "Varun Singh",
-  role = "CBI & RBI — Caribbean",
+  role = "Global CBI & RBI Specialist",
   avatarSrc = "/images/avtar/varun-singh.png",
-  credentials = "Ex-Big4 • 12+ yrs CBI/RBI",
-  languages = "English • Hindi • Arabic",
+  credentials = "Fellow (FIMC) & Certified Investment Migration Consultant (Cert IM)",
+  languages = "English • Hindi",
   timezone = "Gulf / IST friendly",
 
   title = "Talk to a senior CBI advisor",
-  subtitle = "Personal, paid session on eligibility, timelines, and project selection — fully confidential.",
+  subtitle = "Book a confidential, paid consultation to understand your eligibility, timelines, investment routes, and the best-fit programs for your long-term global goals.",
 
   rating = 4.9,
   reviewsCount = 312,
   clientsServed = 1200,
 
   highlights = [
-    "Eligibility triage & risk pointers",
-    "Donation vs real-estate trade-offs",
-    "Project shortlist & action plan",
+    "IMC Fellow–led advisory focused on ethics, compliance, and clear ROI insights.",
+    "Expert guidance on the source of funds, risk assessment, and program selection.",
+    "Accurate country comparisons with updated policies and complete documentation support.",
   ],
 
   priceAmount = 25500,

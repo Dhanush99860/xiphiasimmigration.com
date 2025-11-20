@@ -10,10 +10,10 @@ type Program = {
 };
 
 const programs: Program[] = [
-  { tag: "Residency",   title: "UAE Golden Visa",    text: "Investor & talent pathways with regional benefits.", href: "/residency/uae-golden-visa" },
+  { tag: "Residency",   title: "UAE Golden Visa",    text: "Investor & talent pathways with regional benefits.", href: "/residency/uae" },
   { tag: "Residency",   title: "Portugal Residency", text: "Compliant routes with family inclusion & mobility.",   href: "/residency/portugal" },
-  { tag: "Citizenship", title: "Caribbean CBI",      text: "Efficient donation & real-estate options.",           href: "/citizenship/caribbean-cbi" },
-  { tag: "Citizenship", title: "EU by Exception",    text: "Special routes in select EU jurisdictions.",          href: "/citizenship/eu" },
+  { tag: "Citizenship", title: "Grenada CBI",      text: "Efficient donation & real-estate options.",           href: "/citizenship/grenada" },
+  { tag: "Citizenship", title: "Dominica  CBI",    text: "Special routes in select EU jurisdictions.",          href: "/citizenship/dominica" },
 ];
 
 function tagStyles(tag: Program["tag"]) {

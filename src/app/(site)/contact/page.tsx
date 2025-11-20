@@ -119,34 +119,46 @@ export default function ContactPage() {
       />
 
       {/* Enquiry + Channels */}
-      <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,.9fr)] py-5">
-        <div>
-          <LeadTabs
-            id="enquiry"
-            emailTo={CONTACT.email}
-            phoneFallback={CONTACT.phonePrimary}
-          />
+      <div className="py-5 space-y-4">
+        {/* Cards row: form + contact options */}
+        <div className="flex flex-col md:flex-row gap-4 items-stretch">
+         
+
+          {/* Right: contact options */}
+          <div className="md:flex-[0.9] flex-1 flex">
+            {/* keep sticky behavior inside, doesn't affect equal height */}
+            <aside className="lg:sticky lg:top-4 flex-1">
+              <ContactChannels
+                phone={CONTACT.phonePrimary}
+                altPhone={CONTACT.phoneAlt}
+                email={CONTACT.email}
+                whatsapp={CONTACT.whatsapp}
+                address={[...CONTACT.address]}
+                hours={CONTACT.hours}
+                socials={[...CONTACT.socials]}
+                className="h-full"
+              />
+            </aside>
+          </div>
+           {/* Left: contact form */}
+           <div className="md:flex-1 bg-none">
+            <LeadTabs
+              id="enquiry"
+              emailTo={CONTACT.email}
+              phoneFallback={CONTACT.phonePrimary}
+            />
+          </div>
         </div>
 
-        <aside className="lg:sticky lg:top-4">
-          <ContactChannels
-            phone={CONTACT.phonePrimary}
-            altPhone={CONTACT.phoneAlt}
-            email={CONTACT.email}
-            whatsapp={CONTACT.whatsapp}
-            address={[...CONTACT.address]}
-            hours={CONTACT.hours}
-            socials={[...CONTACT.socials]}
-          />
-          <MapCard
-            className="mt-4 hidden sm:block"
-            title="Bengaluru HQ"
-            query="Aurbis Prime, 80 Feet Road, 3rd Block Koramangala, Bengaluru 560034"
-            address={[...CONTACT.address]}
-            height={300}
-            zoom={14}
-          />
-        </aside>
+        {/* Map below, full width */}
+        <MapCard
+          className="hidden sm:block"
+          title="Bengaluru HQ"
+          query="Aurbis Prime, 80 Feet Road, 3rd Block Koramangala, Bengaluru 560034"
+          address={[...CONTACT.address]}
+          height={300}
+          zoom={14}
+        />
       </div>
 
       {/* Locations (self-contained) */}

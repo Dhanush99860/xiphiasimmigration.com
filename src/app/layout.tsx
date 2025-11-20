@@ -72,7 +72,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     "@type": ["Organization", "LegalService"],
     name: "XIPHIAS Immigration",
     url: "https://www.xiphiasimmigration.com",
-    logo: "https://www.xiphiasimmigration.com/logo.png",
+    logo: "https://www.xiphiasimmigration.com/images/logo/xiphias-immigration.png",
     sameAs: [
       "https://www.linkedin.com/company/xiphias",
       "https://www.facebook.com/xiphias",

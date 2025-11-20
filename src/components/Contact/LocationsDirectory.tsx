@@ -192,7 +192,7 @@ export default function LocationsDirectory({
       company: "XIPHIAS IMMIGRATION PVT LTD",
       regionKey: "australia",
       address: ["19 McLochlan St, Mount Waverley VIC 3149, Australia"],
-      phones: ["+61 481 180 072"],
+      phones: ["+61 451 239 239"],
       email: "info@xiphiasimmigration.com",
     },
 

@@ -45,6 +45,8 @@ export default function ContactChannels({
         "text-sm p-4 sm:p-5 lg:p-6",
         "bg-white/95 dark:bg-white/5 ring-1 ring-blue-100/80 dark:ring-blue-900/30",
         "shadow-[0_1px_0_rgba(0,0,0,0.03)]",
+        // make card stretch to available height
+        "h-full flex flex-col",
         className,
       ].join(" ")}
       aria-labelledby="contact-channels-title"

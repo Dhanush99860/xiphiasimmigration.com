@@ -33,7 +33,7 @@ export default function CorporateHero({
   secondaryHref = "/insights",
   secondaryText = "Read Insights",
 
-  brochureHref = "/brochures/corporate/corporate-overview.pdf",
+  brochureHref = "/images/citizenship/antigua/xiphias-immigration.pdf",
   brochureText = "Download Brochure",
   eligibilityHref,
   eligibilityText = "Check Eligibility",

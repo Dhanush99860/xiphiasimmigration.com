@@ -27,7 +27,7 @@ type Props = {
 
 export default function HeroPremium({
   title = "Book Your RBI / CBI Strategy Call",
-  subtitle = "Private, compliance-first advisory for Residency & Citizenship by Investment. We compare jurisdictions, build a DD-ready source-of-funds file, and map a primary + contingency route that fits your family, timelines, and risk profile.",
+  subtitle = "Your objectives, comfort, and clarity are at the core of all we do at XIPHIAS. You receive ethical, transparent, and fully compliant immigration support that is customized to meet your specific needs, with IMC Fellow-certified specialists advising you at every step. We facilitate a more seamless and assured journey by",
   primaryHref = "/personal-booking",
   primaryText = "Book Paid Consultation",
   secondaryHref = "/images/residency/xiphias-corporate-mobility.pdf",
@@ -36,11 +36,11 @@ export default function HeroPremium({
   badge = "Private Client • Investment Migration",
   features = [
     "IMC Fellow–led, ethics & compliance first",
-    "Primary + contingency program shortlist",
-    "DD-ready SoF narrative & KYC/AML pack",
-    "Escrow / subscription docs: counsel coordination",
-    "Presence-day & filing window calendar",
-    "Jurisdiction comparisons with policy notes",
+    "Tailored Program Solution",
+    "Precise ROI and risk insights",
+    "Refined source of funds advice",
+    "Complete assistance with business, financial, and legal documentation",
+    "Accurate comparisons between nations with revised policies",
   ],
   align = "left",
   microNote = "Confidential • NDA on request",

@@ -27,22 +27,22 @@ const DEFAULT_FAQS: FAQ[] = [
   {
     question: "What services do you provide?",
     answer:
-      "End-to-end immigration services: assessment, strategy, documentation, filings, and post-landing support across multiple destinations.",
+      "We provide end-to-end, IMC-standard advisory across residency, citizenship, investment migration, and corporate mobility, delivering a fully managed, precision-crafted experience from strategy to successful landing.",
   },
   {
-    question: "How long does the process take?",
+    question: "How much time does a process take?",
     answer:
-      "Timelines vary by country and program. Typical ranges are 4–24 weeks. We’ll share a tailored timeline after your assessment.",
+      "Depending on the Country, timelines differ, but we offer a clear milestone roadmap and oversee each phase to guarantee the quickest possible compliant implementation.",
   },
   {
-    question: "Do you work with clients outside India?",
+    question: "For whom is the consultation intended?",
     answer:
-      "Yes. We support applicants worldwide and coordinate across time zones for calls, document reviews, and filings.",
+      "HNI/UHNI investors, families, business owners, and corporate decision-makers want to expand their business internationally or move globally strategically.",
   },
   {
-    question: "Is the first consultation free?",
+    question: "What takes place following the consultation?",
     answer:
-      "Yes. The first consultation helps us understand your goals and eligibility before recommending a pathway.",
+      "To start your residency or business migration journey, you receive a customized action plan with next actions, documentation pathways, program guidance, and concierge-style onboarding.",
   },
 ];
 

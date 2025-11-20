@@ -75,7 +75,7 @@ const OFFICES = [
     postal: "",
     country: "UAE",
     hours: "Sun–Thu, 9:00–18:00",
-    phone: "+971 5272 75101",
+    phone: "+971-527 275 101",
     maps: "https://maps.google.com/?q=Platinum+Tower+JLT+Dubai",
   },
 
@@ -96,7 +96,7 @@ const OFFICES = [
     postal: "VIC 3149",
     country: "Australia",
     hours: "Mon–Fri, 9:00–17:00",
-    phone: "+61 481 180 072",
+    phone: "+61 451 239 239",
     maps: "https://maps.google.com/?q=19+McLochlan+St+Mount+Waverley+VIC+3149",
   },
   {
@@ -194,6 +194,52 @@ function Collapsible({
 export default function Footer() {
   const year = new Date().getFullYear();
 
+  // Newsletter state
+  const [email, setEmail] = React.useState("");
+  const [status, setStatus] = React.useState<"idle" | "loading" | "success" | "error">("idle");
+  const [statusMessage, setStatusMessage] = React.useState<string | null>(null);
+
+  const handleNewsletterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!email.trim()) {
+      setStatus("error");
+      setStatusMessage("Please enter a valid email address.");
+      return;
+    }
+
+    try {
+      setStatus("loading");
+      setStatusMessage(null);
+
+      const res = await fetch("/api/newsletter/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          source: "footer", // helps you track where it came from
+        }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        throw new Error(data?.message || "Something went wrong. Please try again.");
+      }
+
+      setStatus("success");
+      setStatusMessage(
+        "Thanks for subscribing! Please check your inbox for a confirmation email."
+      );
+      setEmail("");
+    } catch (err: any) {
+      setStatus("error");
+      setStatusMessage(
+        err?.message || "Unable to subscribe right now. Please try again later."
+      );
+    }
+  };
+  
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -295,19 +341,59 @@ export default function Footer() {
             <div className="md:col-span-5 md:flex md:justify-end">
               <div aria-label="Subscribe" className="w-full md:max-w-sm rounded-xl border border-white/15 bg-white/10 backdrop-blur-md p-3.5">
                 <h3 className="text-white/95 text-sm font-semibold mb-2">Subscribe</h3>
-                <form action="/newsletter" method="post" noValidate>
-                  <label htmlFor="footer-email" className="sr-only">Email address</label>
-                  <div className="flex items-stretch rounded-full overflow-hidden ring-1 ring-white/20 focus-within:ring-2 focus-within:ring-white/40">
-                    <input id="footer-email" name="email" type="email" inputMode="email" placeholder="you@email.com" required className="flex-1 min-w-0 px-3 h-10 bg-transparent text-white placeholder-white/70 outline-none" />
-                    <button type="submit" className="px-4 h-10 text-sm font-medium text-black bg-secondary focus-visible:outline-none">
-                      Subscribe
-                    </button>
-                  </div>
-                  <p className="mt-1.5 text-[11px] text-white/75">
-                    Weekly insights. No spam. By subscribing, you consent to our{" "}
-                    <Link href="/privacy-policy" className="underline">Privacy Policy</Link>.
-                  </p>
-                </form>
+                <form onSubmit={handleNewsletterSubmit} noValidate>
+  <label htmlFor="footer-email" className="sr-only">
+    Email address
+  </label>
+
+  <div className="flex items-stretch rounded-full overflow-hidden ring-1 ring-white/20 focus-within:ring-2 focus-within:ring-white/40">
+    <input
+      id="footer-email"
+      name="email"
+      type="email"
+      inputMode="email"
+      placeholder="you@email.com"
+      required
+      className="flex-1 min-w-0 px-3 h-10 bg-transparent text-white placeholder-white/70 outline-none"
+      value={email}
+      onChange={(e) => {
+        setEmail(e.target.value);
+        if (status !== "idle") {
+          setStatus("idle");
+          setStatusMessage(null);
+        }
+      }}
+      disabled={status === "loading"}
+    />
+
+    <button
+      type="submit"
+      className="px-4 h-10 text-sm font-medium text-black bg-secondary focus-visible:outline-none disabled:opacity-70 disabled:cursor-not-allowed"
+      disabled={!email || status === "loading"}
+    >
+      {status === "loading" ? "Subscribing..." : "Subscribe"}
+    </button>
+  </div>
+
+  {/* Helper text + success/error */}
+  <p className="mt-1.5 text-[11px] text-white/75">
+    Weekly insights. No spam. By subscribing, you consent to our{" "}
+    <Link href="/privacy-policy" className="underline">
+      Privacy Policy
+    </Link>.
+  </p>
+
+  {statusMessage && (
+    <p
+      className={`mt-1 text-[11px] ${
+        status === "success" ? "text-emerald-200" : "text-red-200"
+      }`}
+    >
+      {statusMessage}
+    </p>
+  )}
+</form>
+
               </div>
             </div>
           </div>

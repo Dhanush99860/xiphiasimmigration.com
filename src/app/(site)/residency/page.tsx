@@ -13,7 +13,6 @@ const ResidencyLanding = nextDynamic(() => import("@/components/Residency/Reside
 const InsightsPreview = nextDynamic(() => import("@/components/Insights/InsightsPreview"));
 const TestimonialCarousel = nextDynamic(() => import("@/components/Citizenship/TestimonialCarousel"));
 const OurOffer = nextDynamic(() => import("@/components/Citizenship/OurOffer"));
-const Footer = nextDynamic(() => import("@/components/Layout/Footer"));
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
@@ -92,7 +91,6 @@ export default function ResidencyPage() {
         />
       </div>
       <InsightsPreview limit={6} />
-      <Footer />
     </>
   );
 }
