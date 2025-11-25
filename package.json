@@ -12,6 +12,7 @@
     "build:index": "node scripts/build-search-index.mjs",
     "prebuild": "node scripts/build-search-index.mjs",
     "prevercel-build": "node scripts/build-search-index.mjs",
+    "analyze": "cross-env ANALYZE=true next build",
     "clean": "node -e \"try{require('fs').rmSync('.next',{recursive:true,force:true});require('fs').rmSync('node_modules/.cache',{recursive:true,force:true});}catch(e){}\""
   },
   "dependencies": {
@@ -62,6 +63,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.35.0",
+    "@next/bundle-analyzer": "^16.0.4",
     "@next/eslint-plugin-next": "^15.5.3",
     "@types/aos": "^3.0.7",
     "@types/node": "^20.19.14",
@@ -71,6 +73,7 @@
     "@types/react-slick": "^0.23.13",
     "@typescript-eslint/eslint-plugin": "^8.43.0",
     "@typescript-eslint/parser": "^8.43.0",
+    "cross-env": "^10.1.0",
     "eslint": "^9.35.0",
     "eslint-config-next": "^15.5.3",
     "eslint-plugin-react": "^7.37.5",
