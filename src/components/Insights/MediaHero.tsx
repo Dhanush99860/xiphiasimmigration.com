@@ -39,7 +39,7 @@ function MobileCTABar({ actions }: { actions: Action[] }) {
       style={{ paddingBottom: "max(env(safe-area-inset-bottom),12px)" }}
     >
       <div className="mx-auto max-w-screen-sm px-3">
-        <div className="flex w-full items-center gap-3 rounded-2xl border border-black/10 dark:border-white/10 bg-white dark:bg-black shadow-[0_10px_30px_rgba(0,0,0,0.15)] p-2">
+      <div className="flex w-full items-center gap-3 rounded-2xl border border-black/10 dark:border-white/10 bg-white dark:bg-black shadow-[0_10px_30px_rgba(0,0,0,0.15)] p-2">
           {mobileActions.map((a) => {
             const base =
               "inline-flex flex-1 basis-1/2 items-center justify-center rounded-xl px-4 h-12 text-sm font-semibold";

@@ -244,38 +244,38 @@ export default async function ProgramPage(props: {
     const howToLdData =
       processSteps.length > 0
         ? {
-            "@context": "https://schema.org",
-            "@type": "HowTo",
-            name: `${meta.title} Application Process`,
-            description: (meta as any).seo?.description ?? (meta as any).tagline,
-            step: processSteps.map((step: any, index: number) => ({
-              "@type": "HowToStep",
-              position: index + 1,
-              name: step.title,
-              text: step.description,
-            })),
-          }
+          "@context": "https://schema.org",
+          "@type": "HowTo",
+          name: `${meta.title} Application Process`,
+          description: (meta as any).seo?.description ?? (meta as any).tagline,
+          step: processSteps.map((step: any, index: number) => ({
+            "@type": "HowToStep",
+            position: index + 1,
+            name: step.title,
+            text: step.description,
+          })),
+        }
         : null;
 
     const offerLd =
       prices && prices.length
         ? {
-            "@context": "https://schema.org",
-            "@type": "AggregateOffer",
-            priceCurrency:
-              prices.find((p) => p.currency)?.currency || (meta as any).currency || "USD",
-            offers: prices
-              .filter((p) => typeof p.amount === "number")
-              .map((p) => ({
-                "@type": "Offer",
-                name: p.label,
-                price: p.amount,
-                priceCurrency: p.currency || (meta as any).currency || "USD",
-                category: p.when || undefined,
-                description: p.notes || undefined,
-                availability: "https://schema.org/InStock",
-              })),
-          }
+          "@context": "https://schema.org",
+          "@type": "AggregateOffer",
+          priceCurrency:
+            prices.find((p) => p.currency)?.currency || (meta as any).currency || "USD",
+          offers: prices
+            .filter((p) => typeof p.amount === "number")
+            .map((p) => ({
+              "@type": "Offer",
+              name: p.label,
+              price: p.amount,
+              priceCurrency: p.currency || (meta as any).currency || "USD",
+              category: p.when || undefined,
+              description: p.notes || undefined,
+              availability: "https://schema.org/InStock",
+            })),
+        }
         : null;
 
     const canonicalPath = `/residency/${params.country}/${params.program}`;
@@ -645,7 +645,9 @@ export default async function ProgramPage(props: {
                               // eslint-disable-next-line @next/next/no-img-element
                               <img
                                 src={r.heroImage!}
-                                alt=""
+                                alt={`${r.title} — ${r.country} residency program`}
+                                loading="lazy"
+                                decoding="async"
                                 className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
                               />
                             ) : (
@@ -653,6 +655,7 @@ export default async function ProgramPage(props: {
                                 <span className="text-xs opacity-70">{r.country}</span>
                               </div>
                             )}
+
                             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                           </div>
 

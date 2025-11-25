@@ -31,18 +31,32 @@ type CorporateRoute =
   | "hq";
 
 /** Infer a corporate route type from tags */
-function inferCorporateRouteTypeFromTags(tags?: string[]): CorporateRoute | undefined {
+function inferCorporateRouteTypeFromTags(
+  tags?: string[],
+): CorporateRoute | undefined {
   if (!tags) return undefined;
   const t = tags.map((s) => s.toLowerCase());
 
-  if (t.some((s) => s.includes("free zone") || s.includes("freezone") || s.includes("fz"))) return "free-zone";
+  if (t.some((s) => s.includes("free zone") || s.includes("freezone") || s.includes("fz")))
+    return "free-zone";
   if (t.some((s) => s.includes("mainland"))) return "mainland";
   if (t.some((s) => s.includes("holding"))) return "holding";
-  if (t.some((s) => s.includes("entrepreneur") || s.includes("startup"))) return "entrepreneur";
-  if (t.some((s) => s.includes("investor") || s.includes("investment"))) return "investor";
+  if (t.some((s) => s.includes("entrepreneur") || s.includes("startup")))
+    return "entrepreneur";
+  if (t.some((s) => s.includes("investor") || s.includes("investment")))
+    return "investor";
   if (t.some((s) => s.includes("branch"))) return "branch";
-  if (t.some((s) => s.includes("work permit") || s.includes("work-permit"))) return "work-permit";
-  if (t.some((s) => s.includes("ep") || s.includes("employment pass") || s.includes("executive permit"))) return "ep";
+  if (t.some((s) => s.includes("work permit") || s.includes("work-permit")))
+    return "work-permit";
+  if (
+    t.some(
+      (s) =>
+        s.includes("ep") ||
+        s.includes("employment pass") ||
+        s.includes("executive permit"),
+    )
+  )
+    return "ep";
   if (t.some((s) => s.includes("hq") || s.includes("headquarters"))) return "hq";
 
   return undefined;
@@ -112,9 +126,17 @@ function availableRouteTypes(programs?: ProgramMeta[]) {
 /** Heuristic: 100% ownership (no local partner) bubble-up */
 function hasFullOwnership(p: ProgramMeta) {
   const t = ((p as any).tags ?? []).map((s: string) => s.toLowerCase());
-  if (t.some((s: string) => s.includes("100%") && s.includes("ownership"))) return true;
-  if (t.some((s: string) => s.includes("free zone") || s.includes("freezone"))) return true;
-  if (t.some((s: string) => s.includes("no local sponsor") || s.includes("no local partner"))) return true;
+  if (t.some((s: string) => s.includes("100%") && s.includes("ownership")))
+    return true;
+  if (t.some((s: string) => s.includes("free zone") || s.includes("freezone")))
+    return true;
+  if (
+    t.some(
+      (s: string) =>
+        s.includes("no local sponsor") || s.includes("no local partner"),
+    )
+  )
+    return true;
   return false;
 }
 
@@ -138,9 +160,9 @@ export default function ExploreGrid({
 
   const [q, setQ] = React.useState("");
   const [routeType, setRouteType] = React.useState<string>("");
-  const [sort, setSort] = React.useState<"timeline" | "setup" | "ownership" | "alpha">(
-    "timeline",
-  );
+  const [sort, setSort] = React.useState<
+    "timeline" | "setup" | "ownership" | "alpha"
+  >("timeline");
 
   const routeTypes = React.useMemo(
     () => availableRouteTypes(safePrograms),
@@ -193,7 +215,9 @@ export default function ExploreGrid({
       const title = String(p?.title ?? "").toLowerCase();
       const country = String(p?.country ?? "").toLowerCase();
       const slug = String((p as any)?.programSlug ?? "").toLowerCase();
-      const tags: string[] = Array.isArray((p as any)?.tags) ? (p as any).tags : [];
+      const tags: string[] = Array.isArray((p as any)?.tags)
+        ? (p as any).tags
+        : [];
 
       return (
         title.includes(ql) ||
@@ -244,7 +268,9 @@ export default function ExploreGrid({
       arr = arr.filter(({ c }) => {
         const country = String(c?.country ?? "").toLowerCase();
         const title = String(c?.title ?? "").toLowerCase();
-        const tags: string[] = Array.isArray((c as any)?.tags) ? (c as any).tags : [];
+        const tags: string[] = Array.isArray((c as any)?.tags)
+          ? (c as any).tags
+          : [];
         return (
           country.includes(ql) ||
           title.includes(ql) ||
@@ -368,10 +394,7 @@ export default function ExploreGrid({
             label="Route type"
             value={routeType}
             onChange={setRouteType}
-            options={[
-              { value: "", label: "All routes" },
-              ...routeTypeOptions,
-            ]}
+            options={routeTypeOptions}
             placeholder="All routes"
           />
 
@@ -495,10 +518,7 @@ export default function ExploreGrid({
                   label="Route type"
                   value={routeType}
                   onChange={setRouteType}
-                  options={[
-                    { value: "", label: "All routes" },
-                    ...routeTypeOptions,
-                  ]}
+                  options={routeTypeOptions}
                   placeholder="All routes"
                 />
 
@@ -609,7 +629,11 @@ export default function ExploreGrid({
                   itemType="https://schema.org/ListItem"
                 >
                   <meta itemProp="position" content={String(idx + 1)} />
-                  <div itemProp="item" itemScope itemType="https://schema.org/Country">
+                  <div
+                    itemProp="item"
+                    itemScope
+                    itemType="https://schema.org/Country"
+                  >
                     <meta itemProp="name" content={c.country} />
                     <CountryCardPro
                       href={`/corporate/${c.countrySlug}`}
@@ -725,7 +749,9 @@ function SquareThumb({ program }: { program: ProgramMeta }) {
       "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'><defs><linearGradient id='g' x1='0' x2='1'><stop stop-color='#e6f0ff'/><stop offset='1' stop-color='#f5f8ff'/></linearGradient></defs><rect width='80' height='80' fill='url(#g)'/><circle cx='40' cy='40' r='18' fill='#93c5fd'/></svg>",
     );
 
-  const candidates = [hero, heroPoster, countryPost, og, svgFallback].filter(Boolean) as string[];
+  const candidates = [hero, heroPoster, countryPost, og, svgFallback].filter(
+    Boolean,
+  ) as string[];
   const [idx, setIdx] = React.useState(0);
 
   return (
@@ -884,7 +910,9 @@ function FancySelect({
           {selected ? selected.label : placeholder}
         </span>
         <ChevronDown
-          className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`}
+          className={`h-4 w-4 transition-transform ${
+            open ? "rotate-180" : ""
+          }`}
         />
       </button>
 
@@ -923,7 +951,9 @@ function FancySelect({
               >
                 <div
                   className={`h-4 w-4 mt-0.5 rounded border ${
-                    isSel ? "bg-blue-600 border-blue-600" : "border-zinc-300 dark:border-zinc-700"
+                    isSel
+                      ? "bg-blue-600 border-blue-600"
+                      : "border-zinc-300 dark:border-zinc-700"
                   }`}
                 >
                   {isSel && <CheckIcon className="h-4 w-4 text-white" />}

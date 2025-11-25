@@ -358,38 +358,38 @@ export default async function ProgramPage(props: {
     const howToLdData =
       processSteps.length > 0
         ? {
-            "@context": "https://schema.org",
-            "@type": "HowTo",
-            name: `${meta.title} Application Process`,
-            description: (meta as any).seo?.description ?? (meta as any).tagline,
-            step: processSteps.map((step: any, index: number) => ({
-              "@type": "HowToStep",
-              position: index + 1,
-              name: step.title,
-              text: step.description,
-            })),
-          }
+          "@context": "https://schema.org",
+          "@type": "HowTo",
+          name: `${meta.title} Application Process`,
+          description: (meta as any).seo?.description ?? (meta as any).tagline,
+          step: processSteps.map((step: any, index: number) => ({
+            "@type": "HowToStep",
+            position: index + 1,
+            name: step.title,
+            text: step.description,
+          })),
+        }
         : null;
 
     const offerLd =
       prices && prices.length
         ? {
-            "@context": "https://schema.org",
-            "@type": "AggregateOffer",
-            priceCurrency:
-              prices.find((p) => p.currency)?.currency || (meta as any).currency || "USD",
-            offers: prices
-              .filter((p) => typeof p.amount === "number")
-              .map((p) => ({
-                "@type": "Offer",
-                name: p.label,
-                price: p.amount,
-                priceCurrency: p.currency || (meta as any).currency || "USD",
-                category: p.when || undefined,
-                description: p.notes || undefined,
-                availability: "https://schema.org/InStock",
-              })),
-          }
+          "@context": "https://schema.org",
+          "@type": "AggregateOffer",
+          priceCurrency:
+            prices.find((p) => p.currency)?.currency || (meta as any).currency || "USD",
+          offers: prices
+            .filter((p) => typeof p.amount === "number")
+            .map((p) => ({
+              "@type": "Offer",
+              name: p.label,
+              price: p.amount,
+              priceCurrency: p.currency || (meta as any).currency || "USD",
+              category: p.when || undefined,
+              description: p.notes || undefined,
+              availability: "https://schema.org/InStock",
+            })),
+        }
         : null;
 
     const canonicalPath = `/citizenship/${params.country}/${params.program}`;
@@ -647,7 +647,7 @@ export default async function ProgramPage(props: {
                   defaultCurrency={(meta as any).currency || "USD"}
                 />
               </section>
-            ) : null} 
+            ) : null}
 
             {/* Optional: Document checklist & Dependents */}
             {documentChecklist?.length ? (
@@ -712,7 +712,13 @@ export default async function ProgramPage(props: {
                       <div className="relative aspect-[16/9] overflow-hidden">
                         {p.image ? (
                           // eslint-disable-next-line @next/next/no-img-element
-                          <img src={p.image} alt="" className="h-full w-full object-cover" />
+                          <img
+                          src={p.image}
+                          alt={`${p.name} project in ${meta.country}`}
+                          loading="lazy"
+                          decoding="async"
+                          className="h-full w-full object-cover"
+                        />
                         ) : (
                           <div className="h-full w-full bg-gradient-to-br from-slate-200 to-slate-100 dark:from-neutral-800 dark:to-neutral-700 grid place-items-center">
                             <span className="text-xs opacity-70">{meta.country}</span>
@@ -880,7 +886,9 @@ export default async function ProgramPage(props: {
                               // eslint-disable-next-line @next/next/no-img-element
                               <img
                                 src={r.heroImage!}
-                                alt=""
+                                alt={`${r.title} — ${r.country} citizenship program`}
+                                loading="lazy"
+                                decoding="async"
                                 className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
                               />
                             ) : (
@@ -992,10 +1000,10 @@ function toNiceDate(d: string) {
   return isNaN(date.getTime())
     ? d
     : new Intl.DateTimeFormat(undefined, {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      }).format(date);
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    }).format(date);
 }
 function prettyRouteType(rt: string) {
   return rt.replace(/[-_]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());

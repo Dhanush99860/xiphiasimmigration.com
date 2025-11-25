@@ -39,6 +39,7 @@ export default function TestimonialCarouselMarquee({
 
   return (
     <section
+      role="region"
       className={[
         "mx-auto max-w-screen-2xl px-4 py-5",
         "bg-gradient-to-br from-sky-50 via-white to-indigo-50 dark:from-blue-950/30 dark:via-transparent dark:to-indigo-950/20",
@@ -97,7 +98,13 @@ export default function TestimonialCarouselMarquee({
 
 /* ================================= Card ================================ */
 
-function Card({ item: t, showInitialsOnly }: { item: Testimonial; showInitialsOnly: boolean }) {
+function Card({
+  item: t,
+  showInitialsOnly,
+}: {
+  item: Testimonial;
+  showInitialsOnly: boolean;
+}) {
   const stars = Math.max(0, Math.min(5, t.rating ?? 0));
   return (
     <article
@@ -110,16 +117,23 @@ function Card({ item: t, showInitialsOnly }: { item: Testimonial; showInitialsOn
       {/* Top meta */}
       <div className="mb-3 flex items-center justify-between gap-4">
         <div className="flex items-center gap-2 text-blue-700 dark:text-blue-300">
-          <Quote className="h-5 w-5" />
-          <span className="text-xs font-semibold uppercase tracking-wide">Review</span>
+          <Quote className="h-5 w-5" aria-hidden="true" />
+          <span className="text-xs font-semibold uppercase tracking-wide">
+            Review
+          </span>
         </div>
-        <div className="flex items-center gap-1" aria-label={`${stars} out of 5 stars`}>
+        <div
+          className="flex items-center gap-1"
+          aria-label={`${stars} out of 5 stars`}
+        >
           {Array.from({ length: 5 }).map((_, i) => (
             <Star
               key={i}
               size={14}
               className={
-                i < stars ? "text-amber-400 fill-amber-400" : "text-neutral-300 dark:text-neutral-700"
+                i < stars
+                  ? "text-amber-400 fill-amber-400"
+                  : "text-neutral-300 dark:text-neutral-700"
               }
               aria-hidden="true"
             />
@@ -128,7 +142,9 @@ function Card({ item: t, showInitialsOnly }: { item: Testimonial; showInitialsOn
       </div>
 
       {/* Quote */}
-      <p className="text-neutral-800 dark:text-neutral-200 leading-relaxed">“{t.text}”</p>
+      <p className="text-neutral-800 dark:text-neutral-200 leading-relaxed">
+        “{t.text}”
+      </p>
 
       {/* Person */}
       <div className="mt-5 flex items-center gap-3">
@@ -143,12 +159,14 @@ function Card({ item: t, showInitialsOnly }: { item: Testimonial; showInitialsOn
                 title="Verified reviewer"
                 className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700 ring-1 ring-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-300 dark:ring-emerald-800/60"
               >
-                <BadgeCheck className="h-3.5 w-3.5" />
+                <BadgeCheck className="h-3.5 w-3.5" aria-hidden="true" />
                 Verified
               </span>
             )}
           </div>
-          <p className="truncate text-sm text-neutral-600 dark:text-neutral-300">{t.role}</p>
+          <p className="truncate text-sm text-neutral-600 dark:text-neutral-300">
+            {t.role}
+          </p>
         </div>
       </div>
     </article>
@@ -157,18 +175,29 @@ function Card({ item: t, showInitialsOnly }: { item: Testimonial; showInitialsOn
 
 /* =============================== Avatar =============================== */
 
-function Avatar({ src, alt, size = 48 }: { src?: string; alt: string; size?: number }) {
+function Avatar({
+  src,
+  alt,
+  size = 48,
+}: {
+  src?: string;
+  alt: string;
+  size?: number;
+}) {
   const [error, setError] = React.useState(false);
   const letters = initials(alt);
+
+  const label =
+    alt && alt.trim().length > 0 ? `${alt}'s avatar` : "Client avatar";
 
   // Always fallback if no src OR error
   if (!src || error) {
     return (
       <div
-        className="flex items-center justify-center rounded-full ring-1 ring-blue-200 dark:ring-blue-900/40
-                   bg-blue-100/70 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200"
+        role="img"
+        aria-label={label}
+        className="flex items-center justify-center rounded-full ring-1 ring-blue-200 dark:ring-blue-900/40 bg-blue-100/70 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200"
         style={{ width: size, height: size }}
-        aria-label={`Avatar initials for ${alt}`}
       >
         <span className="text-sm font-semibold">{letters}</span>
       </div>
@@ -178,7 +207,7 @@ function Avatar({ src, alt, size = 48 }: { src?: string; alt: string; size?: num
   return (
     <Image
       src={src}
-      alt={alt}
+      alt={label}
       width={size}
       height={size}
       onError={() => setError(true)}

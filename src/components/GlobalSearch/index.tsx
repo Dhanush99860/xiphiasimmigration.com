@@ -217,7 +217,12 @@ export default function GlobalSearch({
     src ? (
       <div className="relative h-10 w-10 flex-none overflow-hidden rounded-md border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={src} alt="" className="h-full w-full object-cover" />
+        <img
+          src={src}
+          alt=""
+          className="h-full w-full object-cover"
+          loading="lazy"
+        />
       </div>
     ) : null;
 
@@ -377,10 +382,10 @@ export default function GlobalSearch({
                       {query.trim() === ""
                         ? "Type to search"
                         : loading
-                        ? "Searching"
-                        : items.length === 0
-                        ? "No results"
-                        : `${items.length} results`}
+                          ? "Searching"
+                          : items.length === 0
+                            ? "No results"
+                            : `${items.length} results`}
                     </p>
                   </div>
 

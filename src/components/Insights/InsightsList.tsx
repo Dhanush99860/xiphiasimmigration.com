@@ -44,7 +44,7 @@ export default function InsightsList({
           setPage((p) => (p * pageSize < total ? p + 1 : p));
         }
       },
-      { rootMargin: "360px 0px" }
+      { rootMargin: "360px 0px" },
     );
     io.observe(endRef.current);
     return () => io.disconnect();
@@ -77,11 +77,15 @@ export default function InsightsList({
       >
         {isLoading
           ? Array.from({ length: pageSize }).map((_, i) =>
-            view === "grid" ? <SkeletonCard key={i} /> : <SkeletonRow key={i} />
-          )
+              view === "grid" ? <SkeletonCard key={i} /> : <SkeletonRow key={i} />,
+            )
           : items.slice(0, visible).map((it) =>
-            view === "grid" ? <InsightCard key={it.url} item={it} /> : <Row key={it.url} item={it} />
-          )}
+              view === "grid" ? (
+                <InsightCard key={it.url} item={it} />
+              ) : (
+                <Row key={it.url} item={it} />
+              ),
+            )}
       </div>
 
       {!isLoading && visible < total && (
@@ -121,7 +125,9 @@ function Toolbar({
 }) {
   return (
     <div className="mb-4 flex flex-wrap items-center gap-3 rounded-2xl bg-white/70 dark:bg-neutral-900/50 px-3 py-2">
-      <span className="text-sm text-neutral-700 dark:text-neutral-300">{countText}</span>
+      <span className="text-sm text-neutral-700 dark:text-neutral-300">
+        {countText}
+      </span>
 
       <div className="ml-auto flex items-center gap-2">
         {onSortChangeAction && (
@@ -142,7 +148,11 @@ function Toolbar({
 
         <div className="inline-flex overflow-hidden rounded-md ring-1 ring-neutral-300 dark:ring-neutral-700">
           <button
-            className={`px-2.5 py-1.5 text-sm ${view === "grid" ? "bg-secondary text-white" : "bg-white dark:bg-neutral-900"}`}
+            className={`px-2.5 py-1.5 text-sm ${
+              view === "grid"
+                ? "bg-secondary text-white"
+                : "bg-white dark:bg-neutral-900"
+            }`}
             aria-pressed={view === "grid"}
             onClick={() => onViewChange("grid")}
             title="Grid view"
@@ -150,7 +160,11 @@ function Toolbar({
             <GridIcon className="h-4 w-4" />
           </button>
           <button
-            className={`px-2.5 py-1.5 text-sm ${view === "list" ? "bg-primary text-white" : "bg-white dark:bg-neutral-900"}`}
+            className={`px-2.5 py-1.5 text-sm ${
+              view === "list"
+                ? "bg-primary text-white"
+                : "bg-white dark:bg-neutral-900"
+            }`}
             aria-pressed={view === "list"}
             onClick={() => onViewChange("list")}
             title="List view"
@@ -190,6 +204,7 @@ function Row({ item }: { item: InsightMeta }) {
             alt=""
             className="absolute inset-0 h-full w-full object-cover"
             loading="lazy"
+            decoding="async"
           />
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-neutral-100 to-neutral-50 dark:from-neutral-800 dark:to-neutral-900" />
@@ -201,7 +216,7 @@ function Row({ item }: { item: InsightMeta }) {
         <div className="flex items-start gap-2">
           <span
             className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] ring-1 ${badgeClasses(
-              type
+              type,
             )}`}
             aria-label={`Content type: ${type}`}
           >
@@ -220,7 +235,8 @@ function Row({ item }: { item: InsightMeta }) {
         )}
 
         <p className="mt-1 text-[11px] text-neutral-500 dark:text-neutral-400">
-          {readStr ? `${readStr} · ` : ""}{any.date ?? ""}
+          {readStr ? `${readStr} · ` : ""}
+          {any.date ?? ""}
         </p>
       </div>
     </a>
@@ -229,16 +245,31 @@ function Row({ item }: { item: InsightMeta }) {
 
 /* ───────── Empty & Skeletons ───────── */
 
-function EmptyState({ onResetFiltersAction }: { onResetFiltersAction?: () => void }) {
+function EmptyState({
+  onResetFiltersAction,
+}: {
+  onResetFiltersAction?: () => void;
+}) {
   return (
-    <div role="status" aria-live="polite" className="rounded-2xl border border-dashed border-neutral-300 dark:border-neutral-800 p-10 text-center">
+    <div
+      role="status"
+      aria-live="polite"
+      className="rounded-2xl border border-dashed border-neutral-300 dark:border-neutral-800 p-10 text-center"
+    >
       <div className="mx-auto mb-3 h-12 w-12 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 flex items-center justify-center">
         <SearchIcon className="h-5 w-5" />
       </div>
-      <p className="text-sm text-neutral-700 dark:text-neutral-300">No results</p>
-      <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">Try different keywords or adjust filters.</p>
+      <p className="text-sm text-neutral-700 dark:text-neutral-300">
+        No results
+      </p>
+      <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+        Try different keywords or adjust filters.
+      </p>
       {onResetFiltersAction && (
-        <button onClick={onResetFiltersAction} className="mt-4 inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm ring-1 ring-neutral-300 hover:bg-neutral-50 dark:ring-neutral-700 dark:hover:bg-neutral-800">
+        <button
+          onClick={onResetFiltersAction}
+          className="mt-4 inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm ring-1 ring-neutral-300 hover:bg-neutral-50 dark:ring-neutral-700 dark:hover:bg-neutral-800"
+        >
           <RotateIcon className="h-4 w-4" /> Clear filters
         </button>
       )}
@@ -300,14 +331,22 @@ function getTypeBadge(any: any): "news" | "blog" | "media" | "article" {
 
   if (["news"].includes(pick)) return "news";
   if (["blog", "post"].includes(pick)) return "blog";
-  if (["media", "press", "press-release", "press_release"].includes(pick)) return "media";
+  if (["media", "press", "press-release", "press_release"].includes(pick))
+    return "media";
   if (["article", "insight", "guide"].includes(pick)) return "article";
 
-  const tags: string[] = Array.isArray(any?.tags) ? any.tags.map((t: any) => String(t).toLowerCase()) : [];
+  const tags: string[] = Array.isArray(any?.tags)
+    ? any.tags.map((t: any) => String(t).toLowerCase())
+    : [];
   if (tags.includes("news")) return "news";
   if (tags.includes("blog")) return "blog";
   if (tags.includes("media") || tags.includes("press")) return "media";
-  if (tags.includes("article") || tags.includes("insight") || tags.includes("guide")) return "article";
+  if (
+    tags.includes("article") ||
+    tags.includes("insight") ||
+    tags.includes("guide")
+  )
+    return "article";
 
   return "article"; // default – ensures badge renders
 }
@@ -341,23 +380,37 @@ function getReadTime(item: InsightMeta): string | undefined {
 /* ───────── Icons ───────── */
 
 function GridIcon({ className = "" }: { className?: string }) {
-  return <svg viewBox="0 0 20 20" fill="currentColor" className={className} aria-hidden>
-    <path d="M3 3h6v6H3V3zm8 0h6v6h-6V3zM3 11h6v6H3v-6zm8 0h6v6h-6v-6z" />
-  </svg>;
+  return (
+    <svg viewBox="0 0 20 20" fill="currentColor" className={className} aria-hidden>
+      <path d="M3 3h6v6H3V3zm8 0h6v6h-6V3zM3 11h6v6H3v-6zm8 0h6v6h-6v-6z" />
+    </svg>
+  );
 }
 function ListIcon({ className = "" }: { className?: string }) {
-  return <svg viewBox="0 0 20 20" fill="currentColor" className={className} aria-hidden>
-    <path d="M3 5h14v2H3V5zm0 4h14v2H3V9zm0 4h14v2H3v-2z" />
-  </svg>;
+  return (
+    <svg viewBox="0 0 20 20" fill="currentColor" className={className} aria-hidden>
+      <path d="M3 5h14v2H3V5zm0 4h14v2H3V9zm0 4h14v2H3v-2z" />
+    </svg>
+  );
 }
 function ArrowDown({ className = "" }: { className?: string }) {
-  return <svg viewBox="0 0 20 20" fill="currentColor" className={className} aria-hidden>
-    <path d="M10 3a1 1 0 011 1v8.586l2.293-2.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4A1 1 0 016.293 10.3L8.586 12.6V4a1 1 0 011-1z" />
-  </svg>;
+  return (
+    <svg viewBox="0 0 20 20" fill="currentColor" className={className} aria-hidden>
+      <path d="M10 3a1 1 0 0 1 1 1v8.586l2.293-2.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4A1 1 0 0 1 6.293 10.3L8.586 12.6V4a1 1 0 0 1 1-1z" />
+    </svg>
+  );
 }
 function SearchIcon({ className = "" }: { className?: string }) {
-  return <svg viewBox="0 0 24 24" fill="currentColor" className={className}><path d="M10 2a8 8 0 105.293 14.293l4.707 4.707a1 1 0 001.414-1.414l-4.707-4.707A8 8 0 0010 2zm0 2a6 6 0 110 12A6 6 0 0110 4z" /></svg>;
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
+      <path d="M10 2a8 8 0 1 0 5.293 14.293l4.707 4.707a1 1 0 0 0 1.414-1.414l-4.707-4.707A8 8 0 0 0 10 2zm0 2a6 6 0 1 1 0 12A6 6 0 0 1 10 4z" />
+    </svg>
+  );
 }
 function RotateIcon({ className = "" }: { className?: string }) {
-  return <svg viewBox="0 0 20 20" fill="currentColor" className={className}><path d="M10 2a8 8 0 017.937 7H16l3.5 3.5L23 9h-2.063A8.001 8.001 0 112 10a1 1 0 102 0 6 6 0 106 6 1 1 0 100-2 4 4 0 110-8 1 1 0 100-2z" /></svg>;
+  return (
+    <svg viewBox="0 0 20 20" fill="currentColor" className={className} aria-hidden>
+      <path d="M10 2a8 8 0 0 1 7.937 7H16l3.5 3.5L23 9h-2.063A8.001 8.001 0 1 1 2 10a1 1 0 1 0 2 0 6 6 0 1 0 6 6 1 1 0 1 0 0-2 4 4 0 1 1 0-8 1 1 0 1 0 0-2z" />
+    </svg>
+  );
 }

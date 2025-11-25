@@ -30,12 +30,17 @@ function isHttp(p?: string) {
 function isRootAbs(p?: string) {
   return !!p && p.startsWith("/");
 }
-/** Accepts http(s) and root-absolute; coerces relative to root-absolute. */
+function isDataUri(p?: string) {
+  return !!p && p.startsWith("data:");
+}
+
+/** Accepts http(s), root-absolute & data:; coerces other relatives to root-absolute. */
 function normalizeAssetPath(p?: string, fallback?: string) {
   if (!p) return fallback ?? "";
-  if (isHttp(p) || isRootAbs(p)) return p;
+  if (isHttp(p) || isRootAbs(p) || isDataUri(p)) return p;
   return `/${p.replace(/^\/+/, "")}`;
 }
+
 function getCountryPoster(countrySlug: string) {
   return `/images/countries/${countrySlug}-hero-poster.jpg`;
 }
@@ -83,6 +88,9 @@ type ProgramHeroProps = {
   /** Derives /images/countries/<slug>-hero-poster.jpg */
   countrySlug?: string;
 
+  /** Optional explicit alt text for the hero media (image/video) */
+  heroAlt?: string;
+
   /** Mark as LCP if this is the top-most hero */
   priority?: boolean;
 
@@ -107,6 +115,7 @@ export default function ProgramHero({
   heroVideo,
   heroPoster,
   countrySlug,
+  heroAlt,
   priority = true,
   actions,
   videoAutoplay = false,
@@ -132,8 +141,8 @@ export default function ProgramHero({
   const [allowMotion, setAllowMotion] = useState(true);
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const set = () => setAllowMotion(!mq.matches);
-    set();
+    const apply = () => setAllowMotion(!mq.matches);
+    apply();
     const handler = (e: MediaQueryListEvent) => setAllowMotion(!e.matches);
     mq.addEventListener?.("change", handler);
     return () => mq.removeEventListener?.("change", handler);
@@ -141,11 +150,19 @@ export default function ProgramHero({
 
   const shouldAutoplay = !!heroVideo && videoAutoplay && allowMotion;
 
+  // Centralised accessible text for image & video
+  const imageAlt =
+    heroAlt ||
+    (tagline
+      ? `${title} – ${tagline}`
+      : `${title} – ${country} program hero image`);
+
+  const videoLabel = heroAlt || `${title} program video`;
+
   return (
     <header
       className={[
         "relative isolate overflow-hidden mb-6",
-        // Use standard Tailwind so it works out of the box; swap to your tokens if you like
         "rounded-3xl shadow-md",
         "bg-gradient-to-br from-blue-500/10 via-white to-indigo-500/10",
         className ?? "",
@@ -212,7 +229,7 @@ export default function ProgramHero({
                   autoPlay={shouldAutoplay}
                   loop={shouldAutoplay}
                   preload="metadata"
-                  aria-label={`${title} video`}
+                  aria-label={videoLabel}
                 >
                   <source src={normalizeAssetPath(heroVideo)} />
                   Your browser does not support the video tag.
@@ -221,8 +238,8 @@ export default function ProgramHero({
                 <>
                   {!imgLoaded && <Skeleton className="absolute inset-0" />}
                   <OptimizedHeroImage
-                    src={normalizeAssetPath(imgSrc)}
-                    alt={`${title} hero image`}
+                    src={imgSrc}
+                    alt={imageAlt}
                     onError={onImageError}
                     onLoad={() => setImgLoaded(true)}
                     priority={priority}
@@ -260,7 +277,7 @@ function OptimizedHeroImage({
   onLoad?: () => void;
   priority?: boolean;
 }) {
-  const remote = isHttp(src);
+  const isRemoteLike = isHttp(src) || isDataUri(src);
   return (
     <Image
       src={src}
@@ -274,8 +291,8 @@ function OptimizedHeroImage({
       blurDataURL={BLUR_SVG}
       onError={onError}
       onLoad={onLoad}
-      // Prevent domain-config errors if pointing at remote URLs:
-      unoptimized={remote}
+      // Prevent domain-config/loader issues for remote or data: URLs
+      unoptimized={isRemoteLike}
     />
   );
 }

@@ -694,7 +694,7 @@ function SquareThumb({ program }: { program: ProgramMeta }) {
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={candidates[idx]}
-        alt=""
+        alt={`${program.title} – ${program.country} thumbnail`}
         className="h-full w-full object-cover"
         onError={() => setIdx((i) => Math.min(i + 1, candidates.length - 1))}
         loading="lazy"

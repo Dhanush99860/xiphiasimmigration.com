@@ -13,15 +13,33 @@ const MediaHero = nextDynamic(() => import("@/components/Residency/MediaHero"));
 const ContactForm = nextDynamic(() => import("@/components/ContactForm"));
 const Breadcrumb = nextDynamic(() => import("@/components/Common/Breadcrumb"));
 
-const SidebarStatsPanel = nextDynamic(() => import("@/components/Residency/Country/SidebarStatsPanel"));
-const SidebarProgramsList = nextDynamic(() => import("@/components/Residency/Country/SidebarProgramsList"));
-const SidebarHighlights = nextDynamic(() => import("@/components/Residency/Country/SidebarHighlights"));
-const AboutCountrySection = nextDynamic(() => import("@/components/Residency/Country/AboutCountrySection"));
-const WhyCountrySection = nextDynamic(() => import("@/components/Residency/Country/WhyCountrySection"));
-const ProcessSteps = nextDynamic(() => import("@/components/Residency/Country/ProcessSteps"));
-const EligibilityRequirements = nextDynamic(() => import("@/components/Residency/Country/EligibilityRequirements"));
-const FAQSection = nextDynamic(() => import("@/components/Residency/Country/FAQSection"));
-const RelatedCountriesSection = nextDynamic(() => import("@/components/Residency/Country/RelatedCountriesSection"));
+const SidebarStatsPanel = nextDynamic(
+  () => import("@/components/Residency/Country/SidebarStatsPanel"),
+);
+const SidebarProgramsList = nextDynamic(
+  () => import("@/components/Residency/Country/SidebarProgramsList"),
+);
+const SidebarHighlights = nextDynamic(
+  () => import("@/components/Residency/Country/SidebarHighlights"),
+);
+const AboutCountrySection = nextDynamic(
+  () => import("@/components/Residency/Country/AboutCountrySection"),
+);
+const WhyCountrySection = nextDynamic(
+  () => import("@/components/Residency/Country/WhyCountrySection"),
+);
+const ProcessSteps = nextDynamic(
+  () => import("@/components/Residency/Country/ProcessSteps"),
+);
+const EligibilityRequirements = nextDynamic(
+  () => import("@/components/Residency/Country/EligibilityRequirements"),
+);
+const FAQSection = nextDynamic(
+  () => import("@/components/Residency/Country/FAQSection"),
+);
+const RelatedCountriesSection = nextDynamic(
+  () => import("@/components/Residency/Country/RelatedCountriesSection"),
+);
 
 export const runtime = "nodejs";
 export const revalidate = 86400;
@@ -82,10 +100,33 @@ export default async function CountryPage(props: {
   const { meta } = await loadCountryPage(params.country);
   const programs = getCorporatePrograms(params.country);
 
+  // Brochure URL (country-level)
+  // 1) Prefer `brochure` from _country.mdx frontmatter if present
+  // 2) Fallback: a conventional PDF path for this country
+  const brochure =
+    ((meta as any).brochure as string | undefined) ??
+    `/brochures/corporate/${params.country}.pdf`;
+
   // Hero media
   const videoSrc = (meta as any).heroVideo as string | undefined;
   const poster = (meta as any).heroPoster as string | undefined;
   const heroImage = (meta as any).heroImage as string | undefined;
+
+  // Hero actions: Book Consultation + Download Brochure
+  const heroActions: {
+    href: string;
+    label: string;
+    variant?: "primary" | "ghost";
+    download?: boolean;
+  }[] = [
+    { href: "/personal-booking", label: "Book Consultation", variant: "primary" },
+    {
+      href: brochure,
+      label: "Download Brochure",
+      variant: "ghost",
+      download: true,
+    },
+  ];
 
   // Aggregates (ranges)
   const minInvestments = programs
@@ -97,7 +138,9 @@ export default async function CountryPage(props: {
 
   const minInvestmentRange =
     minInvestments.length && programs[0]?.currency
-      ? `${Math.min(...minInvestments).toLocaleString()}–${Math.max(...minInvestments).toLocaleString()} ${programs[0].currency}`
+      ? `${Math.min(...minInvestments).toLocaleString()}–${Math.max(
+          ...minInvestments,
+        ).toLocaleString()} ${programs[0].currency}`
       : "Varies";
 
   const timelineRange = timelines.length
@@ -105,8 +148,15 @@ export default async function CountryPage(props: {
     : "Varies";
 
   // Optional fields from frontmatter
-  const { overview, keyPoints, facts, applicationProcess, requirements, faq, introPoints } =
-    meta as any;
+  const {
+    overview,
+    keyPoints,
+    facts,
+    applicationProcess,
+    requirements,
+    faq,
+    introPoints,
+  } = meta as any;
 
   // Related countries (simple: any other 2)
   const related = getCorporateCountries()
@@ -132,7 +182,7 @@ export default async function CountryPage(props: {
           videoSrc={videoSrc}
           poster={poster}
           imageSrc={heroImage}
-          actions={[{ href: "/personal-booking", label: "Book Consultation", variant: "primary" }]}
+          actions={heroActions}
         />
       </section>
 

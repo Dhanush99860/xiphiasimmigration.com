@@ -676,7 +676,7 @@ export default function Footer() {
                   >
                     <img
                       src={src}
-                      alt="Press logo"
+                      alt="xiphias immigreation Press and news"
                       loading="lazy"
                       decoding="async"
                       className="object-contain h-full w-full opacity-90 contrast-125"

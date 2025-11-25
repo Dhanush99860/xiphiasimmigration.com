@@ -267,11 +267,14 @@ function Avatar({ name, url }: { name: string; url?: string }) {
     .join("")
     .toUpperCase();
 
+  const altText =
+    name && name.trim().length > 0 ? `${name}'s photo` : "Client photo";
+
   return url ? (
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src={url}
-      alt=""
+      alt={altText}
       className="h-8 w-8 rounded-full ring-1 ring-blue-100/80 object-cover bg-zinc-100 dark:bg-zinc-900"
     />
   ) : (

@@ -333,7 +333,7 @@ export default function ExploreGrid({
   /* --------------------------------- UI --------------------------------- */
 
   return (
-    <div className={["text-black dark:text-white", className].join(" ")}>
+    <div className={["text-black dark:text-white", className ?? ""].join(" ")}>
       {/* MOBILE: collapsible filter panel with premium dropdowns */}
       <details
         className="
@@ -373,10 +373,7 @@ export default function ExploreGrid({
             label="Route type"
             value={routeType}
             onChange={setRouteType}
-            options={[
-              { value: "", label: "All routes" },
-              ...routeTypeOptions,
-            ]}
+            options={routeTypeOptions}
             placeholder="All routes"
           />
 
@@ -500,10 +497,7 @@ export default function ExploreGrid({
                   label="Route type"
                   value={routeType}
                   onChange={setRouteType}
-                  options={[
-                    { value: "", label: "All routes" },
-                    ...routeTypeOptions,
-                  ]}
+                  options={routeTypeOptions}
                   placeholder="All routes"
                 />
 

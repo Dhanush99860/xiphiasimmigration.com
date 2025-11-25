@@ -137,32 +137,32 @@ export default async function ProgramPage(props: {
     const governmentFees =
       ((meta as any).governmentFees as
         | {
-            label: string;
-            amount?: number;
-            currency?: string;
-            sourceLabel?: string;
-            sourceUrl?: string;
-          }[]
+          label: string;
+          amount?: number;
+          currency?: string;
+          sourceLabel?: string;
+          sourceUrl?: string;
+        }[]
         | undefined) ?? [];
 
     // optional corporate blocks
     const snapshot = (meta as any).snapshot as
       | {
-          structure?: string;
-          ownership?: string;
-          office?: string;
-          visaQuota?: number | string;
-          bankReady?: boolean | string;
-          highlights?: string[];
-        }
+        structure?: string;
+        ownership?: string;
+        office?: string;
+        visaQuota?: number | string;
+        bankReady?: boolean | string;
+        highlights?: string[];
+      }
       | undefined;
 
     const sponsorship = (meta as any).sponsorship as
       | {
-          title?: string;
-          thresholds?: { level: string; amount?: number; currency?: string; note?: string }[];
-          notes?: string[];
-        }
+        title?: string;
+        thresholds?: { level: string; amount?: number; currency?: string; note?: string }[];
+        notes?: string[];
+      }
       | undefined;
 
     const postSetup = (meta as any).postSetup as { title?: string; items?: string[] } | undefined;
@@ -253,8 +253,8 @@ export default async function ProgramPage(props: {
       "comparison-with-provincial-entrepreneur-programs" in sections
         ? "comparison-with-provincial-entrepreneur-programs"
         : "comparison" in sections
-        ? "comparison"
-        : null;
+          ? "comparison"
+          : null;
 
     /** Quick Nav — corporate */
     const sectionsForNav: { id: string; label: string }[] = [
@@ -282,17 +282,17 @@ export default async function ProgramPage(props: {
     const howToLdData =
       processSteps.length > 0
         ? {
-            "@context": "https://schema.org",
-            "@type": "HowTo",
-            name: `${meta.title} Application Process`,
-            description: (meta as any).seo?.description ?? (meta as any).tagline,
-            step: processSteps.map((step: any, index: number) => ({
-              "@type": "HowToStep",
-              position: index + 1,
-              name: step.title,
-              text: step.description,
-            })),
-          }
+          "@context": "https://schema.org",
+          "@type": "HowTo",
+          name: `${meta.title} Application Process`,
+          description: (meta as any).seo?.description ?? (meta as any).tagline,
+          step: processSteps.map((step: any, index: number) => ({
+            "@type": "HowToStep",
+            position: index + 1,
+            name: step.title,
+            text: step.description,
+          })),
+        }
         : null;
 
     const canonicalPath = `/corporate/${params.country}/${params.program}`;
@@ -377,17 +377,17 @@ export default async function ProgramPage(props: {
               snapshot?.visaQuota != null ||
               snapshot?.bankReady != null ||
               snapshot?.highlights?.length) && (
-              <section id="company" className="scroll-mt-28">
-                <CompanySnapshot
-                  structure={snapshot?.structure}
-                  ownership={snapshot?.ownership}
-                  office={snapshot?.office}
-                  visaQuota={snapshot?.visaQuota}
-                  bankReady={snapshot?.bankReady}
-                  highlights={snapshot?.highlights}
-                />
-              </section>
-            )}
+                <section id="company" className="scroll-mt-28">
+                  <CompanySnapshot
+                    structure={snapshot?.structure}
+                    ownership={snapshot?.ownership}
+                    office={snapshot?.office}
+                    visaQuota={snapshot?.visaQuota}
+                    bankReady={snapshot?.bankReady}
+                    highlights={snapshot?.highlights}
+                  />
+                </section>
+              )}
 
             {/* OVERVIEW */}
             {sections[overviewKey] && (
@@ -600,7 +600,9 @@ export default async function ProgramPage(props: {
                               // eslint-disable-next-line @next/next/no-img-element
                               <img
                                 src={r.heroImage!}
-                                alt=""
+                                alt={`${r.title} — ${r.country} corporate immigration program`}
+                                loading="lazy"
+                                decoding="async"
                                 className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
                               />
                             ) : (

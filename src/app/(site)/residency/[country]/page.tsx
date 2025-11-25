@@ -10,21 +10,42 @@ import { JsonLd, breadcrumbLd } from "@/lib/seo";
 // Dynamically import heavy UI sections.  Splitting these into separate
 // chunks reduces initial JS payload and improves Lighthouse performance.
 import nextDynamic from "next/dynamic";
+
 const MediaHero = nextDynamic(() => import("@/components/Residency/MediaHero"));
 const ContactForm = nextDynamic(() => import("@/components/ContactForm"));
 const Breadcrumb = nextDynamic(() => import("@/components/Common/Breadcrumb"));
 
 /* New modular sections */
-const SidebarStatsPanel = nextDynamic(() => import("@/components/Residency/Country/SidebarStatsPanel"));
-const SidebarProgramsList = nextDynamic(() => import("@/components/Residency/Country/SidebarProgramsList"));
-const SidebarHighlights = nextDynamic(() => import("@/components/Residency/Country/SidebarHighlights"));
-const AboutCountrySection = nextDynamic(() => import("@/components/Residency/Country/AboutCountrySection"));
-const WhyCountrySection = nextDynamic(() => import("@/components/Residency/Country/WhyCountrySection"));
-const ProcessSteps = nextDynamic(() => import("@/components/Residency/Country/ProcessSteps"));
-const EligibilityRequirements = nextDynamic(() => import("@/components/Residency/Country/EligibilityRequirements"));
-const FAQSection = nextDynamic(() => import("@/components/Residency/Country/FAQSection"));
-const MDXDetailsSection = nextDynamic(() => import("@/components/Residency/Country/MDXDetailsSection"));
-const RelatedCountriesSection = nextDynamic(() => import("@/components/Residency/Country/RelatedCountriesSection"));
+const SidebarStatsPanel = nextDynamic(
+  () => import("@/components/Residency/Country/SidebarStatsPanel"),
+);
+const SidebarProgramsList = nextDynamic(
+  () => import("@/components/Residency/Country/SidebarProgramsList"),
+);
+const SidebarHighlights = nextDynamic(
+  () => import("@/components/Residency/Country/SidebarHighlights"),
+);
+const AboutCountrySection = nextDynamic(
+  () => import("@/components/Residency/Country/AboutCountrySection"),
+);
+const WhyCountrySection = nextDynamic(
+  () => import("@/components/Residency/Country/WhyCountrySection"),
+);
+const ProcessSteps = nextDynamic(
+  () => import("@/components/Residency/Country/ProcessSteps"),
+);
+const EligibilityRequirements = nextDynamic(
+  () => import("@/components/Residency/Country/EligibilityRequirements"),
+);
+const FAQSection = nextDynamic(
+  () => import("@/components/Residency/Country/FAQSection"),
+);
+const MDXDetailsSection = nextDynamic(
+  () => import("@/components/Residency/Country/MDXDetailsSection"),
+);
+const RelatedCountriesSection = nextDynamic(
+  () => import("@/components/Residency/Country/RelatedCountriesSection"),
+);
 
 // Only include what you actually need. Examples:
 export const runtime = "nodejs";
@@ -91,10 +112,37 @@ export default async function CountryPage(props: {
   const { meta, content } = await loadCountryPage(params.country);
   const programs = getResidencyPrograms(params.country);
 
+  // Brochure URL (country-level)
+  // 1) Prefer `brochure` from _country.mdx frontmatter if present
+  // 2) Fallback: a conventional PDF path for this country
+  const brochure =
+    ((meta as any).brochure as string | undefined) ??
+    `/brochures/residency/${params.country}.pdf`;
+
   // Hero media
   const videoSrc = (meta as any).heroVideo as string | undefined;
   const poster = (meta as any).heroPoster as string | undefined;
   const heroImage = (meta as any).heroImage as string | undefined;
+
+  // Hero actions: Book Consultation + Download Brochure
+  const heroActions: {
+    href: string;
+    label: string;
+    variant?: "primary" | "ghost";
+    download?: boolean;
+  }[] = [
+    {
+      href: "/personal-booking",
+      label: "Book Consultation",
+      variant: "primary",
+    },
+    {
+      href: brochure,
+      label: "Download Brochure",
+      variant: "ghost",
+      download: true,
+    },
+  ];
 
   // Aggregates (ranges)
   const minInvestments = programs
@@ -150,13 +198,7 @@ export default async function CountryPage(props: {
           videoSrc={videoSrc}
           poster={poster}
           imageSrc={heroImage}
-          actions={[
-            {
-              href: "/personal-booking",
-              label: "Book Consultation",
-              variant: "primary",
-            },
-          ]}
+          actions={heroActions}
         />
       </section>
 
@@ -182,11 +224,7 @@ export default async function CountryPage(props: {
 
         {/* Main content */}
         <div className="md:col-span-8 space-y-8">
-          <AboutCountrySection
-            country={meta.country}
-            overview={overview}
-            facts={facts}
-          />
+          <AboutCountrySection country={meta.country} overview={overview} facts={facts} />
           <WhyCountrySection country={meta.country} points={keyPoints} />
           <ProcessSteps steps={applicationProcess} />
           <EligibilityRequirements items={requirements} />
