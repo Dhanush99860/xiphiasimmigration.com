@@ -2,6 +2,7 @@
 import type { Metadata, Viewport } from "next";
 import { Lato, Inter, Sora } from "next/font/google";
 import "./globals.css";
+
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import { ThemeProvider } from "next-themes";
@@ -10,32 +11,73 @@ import Aoscompo from "@/utils/aos";
 import MDXProviders from "@/components/MDX/MDXProviders";
 import ChatWidget from "@/components/ChatWidget";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
-const sora = Sora({ subsets: ["latin"], variable: "--font-sora", display: "swap" });
-const lato = Lato({ subsets: ["latin"], weight: ["400", "700", "900"], display: "swap" });
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const sora = Sora({
+  subsets: ["latin"],
+  variable: "--font-sora",
+  display: "swap",
+});
+
+const lato = Lato({
+  subsets: ["latin"],
+  weight: ["400", "700", "900"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.xiphiasimmigration.com"),
   applicationName: "XIPHIAS Immigration",
   generator: "Next.js",
-  title: { default: "XIPHIAS Immigration – Residency, Citizenship & Global Mobility", template: "%s | XIPHIAS Immigration" },
-  description: "Trusted advisors for Residency by Investment, Citizenship by Investment, Skilled Immigration, and Corporate Mobility across 25+ countries.",
-  robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-snippet": -1, "max-image-preview": "large", "max-video-preview": -1 } },
+  title: {
+    default: "XIPHIAS Immigration – Residency, Citizenship & Global Mobility",
+    template: "%s | XIPHIAS Immigration",
+  },
+  description:
+    "Trusted advisors for Residency by Investment, Citizenship by Investment, Skilled Immigration, and Corporate Mobility across 25+ countries.",
+  referrer: "strict-origin-when-cross-origin",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-snippet": -1,
+      "max-image-preview": "large",
+      "max-video-preview": -1,
+    },
+  },
   formatDetection: { telephone: false, email: false, address: false },
-  alternates: { canonical: "/", languages: { en: "/", "en-IN": "/" } },
+  alternates: {
+    canonical: "/",
+    languages: { en: "/", "en-IN": "/" },
+  },
   openGraph: {
     title: "XIPHIAS Immigration",
-    description: "Residency & Citizenship solutions for high-net-worth individuals and global enterprises.",
+    description:
+      "Residency & Citizenship solutions for high-net-worth individuals and global enterprises.",
     url: "https://www.xiphiasimmigration.com",
     siteName: "XIPHIAS Immigration",
     locale: "en_US",
     type: "website",
-    images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "XIPHIAS Immigration – Residency & Citizenship by Investment" }],
+    images: [
+      {
+        url: "/og.jpg",
+        width: 1200,
+        height: 630,
+        alt: "XIPHIAS Immigration – Residency & Citizenship by Investment",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "XIPHIAS Immigration",
-    description: "Residency & Citizenship solutions for HNWIs and enterprises.",
+    description:
+      "Residency & Citizenship solutions for HNWIs and enterprises.",
     images: ["/og.jpg"],
     creator: "@xiphiasimmig",
   },
@@ -46,13 +88,27 @@ export const metadata: Metadata = {
       { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
       { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
     ],
-    apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+    apple: [
+      {
+        url: "/icons/apple-touch-icon.png",
+        sizes: "180x180",
+        type: "image/png",
+      },
+    ],
     other: [
       { url: "/site.webmanifest", rel: "manifest" },
-      { url: "/icons/safari-pinned-tab.svg", rel: "mask-icon", color: "#0f3a84" },
+      {
+        url: "/icons/safari-pinned-tab.svg",
+        rel: "mask-icon",
+        color: "#0f3a84",
+      },
     ],
   },
-  appleWebApp: { title: "XIPHIAS Immigration", statusBarStyle: "default", capable: true },
+  appleWebApp: {
+    title: "XIPHIAS Immigration",
+    statusBarStyle: "default",
+    capable: true,
+  },
 };
 
 export const viewport: Viewport = {
@@ -66,51 +122,66 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const orgJsonLd = {
-    "@context": "https://schema.org",
-    "@type": ["Organization", "LegalService"],
-    name: "XIPHIAS Immigration",
-    url: "https://www.xiphiasimmigration.com",
-    logo: "https://www.xiphiasimmigration.com/images/logo/xiphias-immigration.png",
-    sameAs: [
-      "https://www.linkedin.com/company/xiphias",
-      "https://www.facebook.com/xiphias",
-      "https://www.instagram.com/xiphias",
-      "https://www.youtube.com/",
-      "https://twitter.com/xiphiasimmig",
-    ],
-    areaServed: "Worldwide",
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: "Aurbis Prime, 11, Kaveri Regent Coronet, 80 Feet Road, 3rd Block, Koramangala",
-      addressLocality: "Bengaluru",
-      addressRegion: "KA",
-      postalCode: "560034",
-      addressCountry: "IN",
+// Global JSON-LD (site-wide)
+const orgJsonLd = {
+  "@context": "https://schema.org",
+  "@type": ["Organization", "LegalService"],
+  name: "XIPHIAS Immigration",
+  url: "https://www.xiphiasimmigration.com",
+  logo: "https://www.xiphiasimmigration.com/images/logo/xiphias-immigration.png",
+  sameAs: [
+    "https://www.linkedin.com/company/xiphias",
+    "https://www.facebook.com/xiphias",
+    "https://www.instagram.com/xiphias",
+    "https://www.youtube.com/",
+    "https://twitter.com/xiphiasimmig",
+  ],
+  areaServed: "Worldwide",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress:
+      "Aurbis Prime, 11, Kaveri Regent Coronet, 80 Feet Road, 3rd Block, Koramangala",
+    addressLocality: "Bengaluru",
+    addressRegion: "KA",
+    postalCode: "560034",
+    addressCountry: "IN",
+  },
+  contactPoint: [
+    {
+      "@type": "ContactPoint",
+      telephone: "+91 90194 00500",
+      contactType: "customer service",
+      areaServed: "IN",
+      availableLanguage: ["en", "hi"],
     },
-    contactPoint: [{ "@type": "ContactPoint", telephone: "+91 90194 00500", contactType: "customer service", areaServed: "IN", availableLanguage: ["en", "hi"] }],
-    serviceType: ["Residency", "Citizenship", "Skilled", "Corporate"],
-  };
+  ],
+  serviceType: ["Residency", "Citizenship", "Skilled", "Corporate"],
+};
 
-  const websiteJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    url: "https://www.xiphiasimmigration.com",
-    name: "XIPHIAS Immigration",
-    potentialAction: { "@type": "SearchAction", target: "https://www.xiphiasimmigration.com/search?q={search_term_string}", "query-input": "required name=search_term_string" },
-  };
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  url: "https://www.xiphiasimmigration.com",
+  name: "XIPHIAS Immigration",
+  potentialAction: {
+    "@type": "SearchAction",
+    target:
+      "https://www.xiphiasimmigration.com/search?q={search_term_string}",
+    "query-input": "required name=search_term_string",
+  },
+};
 
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html
       lang="en"
       className={`${inter.variable} ${sora.variable} ${lato.className} scroll-smooth`}
       suppressHydrationWarning
     >
-      <head>
-        <meta name="referrer" content="strict-origin-when-cross-origin" />
-      </head>
-
       <body className="antialiased">
         <a
           href="#main"
@@ -125,7 +196,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {/* Global header on every page (sticky) */}
               <Header />
 
-              {/* Main content area (NO extra padding needed with sticky header) */}
+              {/* Main content area */}
               <main id="main" className="min-h-screen">
                 {children}
               </main>
@@ -137,9 +208,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </Aoscompo>
         </ThemeProvider>
 
-        {/* JSON-LD (inline) */}
-        <script id="org-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
-        <script id="website-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
+        {/* JSON-LD (inline scripts in body are fine) */}
+        <script
+          id="org-jsonld"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+        />
+        <script
+          id="website-jsonld"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
       </body>
     </html>
   );

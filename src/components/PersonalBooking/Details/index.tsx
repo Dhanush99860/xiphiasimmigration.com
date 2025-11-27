@@ -1,10 +1,9 @@
 // src/components/PersonalBooking/Sections/index.tsx
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-// (Removed framer-motion imports)
+import { useEffect, useState } from "react";
 import Expert from "@/components/PersonalBooking/Expert";
-import TestimonialCarouselPro from "@/components//Common/TestimonialCarouselPro/index";
+import TestimonialCarouselPro from "@/components/Common/TestimonialCarouselPro";
 import AdvisorConsultationCard from "@/components/Citizenship/AdvisorConsultationCard";
 import ProblemSolutionCompare from "@/components/PersonalBooking/ProblemSolution";
 import { Awards } from "@/components/awards";
@@ -12,7 +11,6 @@ import { Awards } from "@/components/awards";
 import {
   User,
   AlertTriangle,
-  Lightbulb,
   FileText,
   Award,
   MessageCircle,
@@ -69,24 +67,28 @@ function ArticleCard({ a }: { a: ArticleMeta }) {
 
 export default function Sections({ articles }: { articles: ArticleMeta[] }) {
   const [active, setActive] = useState<string>(SECTION_IDS[0]);
+  const [sectionEls, setSectionEls] = useState<Record<string, HTMLElement>>({});
 
-  // Cache section elements once on mount
-  const sectionEls = useMemo(() => {
-    if (typeof window === "undefined") return {} as Record<string, HTMLElement>;
+  // Cache section elements once, after DOM is ready
+  useEffect(() => {
+    if (typeof document === "undefined") return;
     const map: Record<string, HTMLElement> = {};
     SECTION_IDS.forEach((id) => {
       const el = document.getElementById(id);
       if (el) map[id] = el as HTMLElement;
     });
-    return map;
+    setSectionEls(map);
   }, []);
 
   // 1) Initialize from hash; 2) hashchange listener
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
     const applyHash = () => {
       const id = window.location.hash.slice(1);
       if (SECTION_IDS.includes(id)) setActive(id);
     };
+
     applyHash();
     window.addEventListener("hashchange", applyHash);
     return () => window.removeEventListener("hashchange", applyHash);
@@ -94,12 +96,16 @@ export default function Sections({ articles }: { articles: ArticleMeta[] }) {
 
   // IntersectionObserver keeps underline in sync while scrolling
   useEffect(() => {
+    if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
+      return;
+    }
+
     const ratios = new Map<string, number>(); // id -> last ratio
 
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          const id = entry.target.id;
+          const id = (entry.target as HTMLElement).id;
           if (!SECTION_IDS.includes(id)) return;
           ratios.set(id, entry.isIntersecting ? entry.intersectionRatio : 0);
         });
@@ -126,7 +132,7 @@ export default function Sections({ articles }: { articles: ArticleMeta[] }) {
     Object.values(sectionEls).forEach((el) => io.observe(el));
     return () => io.disconnect();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sectionEls]);
+  }, [sectionEls, active]);
 
   // Optimistic highlight on click (so underline moves instantly)
   const handleNavClick = (href: string) => {
@@ -147,10 +153,11 @@ export default function Sections({ articles }: { articles: ArticleMeta[] }) {
                   key={item.href}
                   href={item.href}
                   onClick={() => handleNavClick(item.href)}
-                  className={`relative p-5 transition-all duration-300 ${isActive
+                  className={`relative p-5 transition-all duration-300 ${
+                    isActive
                       ? "text-black dark:text-white font-semibold"
                       : "text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white p-1"
-                    }`}
+                  }`}
                 >
                   {item.label}
                   {isActive && (
@@ -191,18 +198,20 @@ export default function Sections({ articles }: { articles: ArticleMeta[] }) {
                   snap-center shrink-0 grow-0 basis-[84px]
                   flex flex-col items-center justify-center
                   h-16 rounded-xl transition-all
-                  ${isActive
-                    ? "text-indigo-600 dark:text-indigo-400"
-                    : "text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white"
+                  ${
+                    isActive
+                      ? "text-indigo-600 dark:text-indigo-400"
+                      : "text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white"
                   }
                 `}
               >
                 <div
                   className={`
                     grid place-items-center h-9 w-9 rounded-xl
-                    ${isActive
-                      ? "bg-indigo-50 dark:bg-indigo-900/40 ring-1 ring-indigo-200/60 dark:ring-indigo-800/60"
-                      : ""
+                    ${
+                      isActive
+                        ? "bg-indigo-50 dark:bg-indigo-900/40 ring-1 ring-indigo-200/60 dark:ring-indigo-800/60"
+                        : ""
                     }
                   `}
                 >

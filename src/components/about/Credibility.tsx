@@ -1,6 +1,5 @@
 // components/about/Credibility.tsx
 import React from "react";
-import awardsData from "@/app/api/contex/awardsData/awardsData";
 import { Awards } from "@/components/awards";
 
 type Brand = { name: string; abbr?: string; color?: string };
@@ -28,22 +27,18 @@ const PRESS: Brand[] = [
 ];
 
 export default function Credibility() {
-  const awards =
-    Array.isArray(awardsData) && awardsData.length
-      ? awardsData
-      : [{ id: 1, title: "Trusted Brand Award", img: "" }];
-
-  // Only awards need duplication for marquee loop
-  const awardsMarquee = [...awards, ...awards];
   const titleId = "credibility-title";
 
   return (
-    <section className="py-6 md:py-6">
+    <section
+      id="credibility"
+      aria-labelledby={titleId}
+      className="py-6 md:py-6"
+    >
       {/* container aligned with hero + overflow safety */}
       <div className="container mx-auto lg:max-w-screen-2xl px-4 sm:px-6 lg:px-8 overflow-x-clip">
         {/* gradient, ringed wrapper (hero aesthetic) */}
         <div
-          aria-labelledby={titleId}
           className={[
             "relative overflow-hidden rounded-3xl p-6 md:p-8 lg:p-10",
             "bg-gradient-to-br from-sky-50 via-white to-indigo-50",
@@ -53,7 +48,10 @@ export default function Credibility() {
           ].join(" ")}
         >
           {/* soft background accents (clipped) */}
-          <div aria-hidden className="pointer-events-none absolute inset-0">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0"
+          >
             <div className="hidden sm:block absolute -top-24 -right-24 h-64 w-64 rounded-full bg-blue-300/20 blur-3xl dark:bg-blue-700/10" />
             <div className="hidden sm:block absolute -bottom-28 -left-10 h-72 w-72 rounded-full bg-indigo-300/20 blur-3xl dark:bg-indigo-700/10" />
             <div className="absolute inset-0 opacity-40 dark:opacity-20 [mask-image:radial-gradient(60%_60%_at_50%_40%,black,transparent_80%)]">
@@ -65,7 +63,7 @@ export default function Credibility() {
           <header className="relative mb-6 md:mb-8 text-center">
             <span className="inline-flex items-center rounded-full bg-white/80 px-3 py-1 text-xs font-medium ring-1 ring-blue-200 backdrop-blur dark:bg-white/5 dark:ring-blue-800">
               <Dot className="mr-1.5" />
-              Recognized & Featured
+              Recognized &amp; Featured
             </span>
             <h2
               id={titleId}
@@ -106,13 +104,19 @@ export default function Credibility() {
 
           <Divider />
 
-          {/* AWARDS — larger, auto RTL marquee */}
-          <RowTitle>Awards & Recognition</RowTitle>
+          {/* AWARDS — uses shared Awards component */}
+          <RowTitle>Awards &amp; Recognition</RowTitle>
           <div className="group relative overflow-hidden rounded-2xl border border-blue-100/70 bg-white/90 p-3 ring-1 ring-blue-100/70 backdrop-blur dark:border-white/10 dark:bg-white/5 dark:ring-blue-900/40">
-          <Awards variant="preview" />
+            <Awards variant="preview" />
             {/* edge fades */}
-            <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-white/95 to-transparent dark:from-[#0A0B0F]/80" />
-            <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-white/95 to-transparent dark:from-[#0A0B0F]/80" />
+            <div
+              className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-white/95 to-transparent dark:from-[#0A0B0F]/80"
+              aria-hidden="true"
+            />
+            <div
+              className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-white/95 to-transparent dark:from-[#0A0B0F]/80"
+              aria-hidden="true"
+            />
           </div>
 
           {/* tiny note */}
@@ -156,8 +160,14 @@ function ScrollStrip({
         <div className="mx-auto w-fit">{children}</div>
       </div>
       {/* gradient fades (appear when content scrolls) */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-white/95 to-transparent dark:from-[#0A0B0F]/80" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-white/95 to-transparent dark:from-[#0A0B0F]/80" />
+      <div
+        className="pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-white/95 to-transparent dark:from-[#0A0B0F]/80"
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-white/95 to-transparent dark:from-[#0A0B0F]/80"
+        aria-hidden="true"
+      />
     </div>
   );
 }
@@ -182,65 +192,25 @@ function PressChip({ name, color }: { name: string; color: string }) {
       <span
         className="h-2 w-2 rounded-full ring-2 ring-white dark:ring-transparent"
         style={{ backgroundColor: color }}
-        aria-hidden
+        aria-hidden="true"
       />
       <span className="whitespace-nowrap">{name}</span>
     </span>
   );
 }
 
-/* Awards icons */
-function AwardIcon({ variant = 0 }: { variant?: number }) {
-  const gold = "#D9A441";
-  switch (variant) {
-    case 0:
-      return (
-        <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke={gold} strokeWidth="1.7" className="mx-auto">
-          <path d="M8 4h8v2a4 4 0 0 1-8 0V4Z" />
-          <path d="M6 6H4a2 2 0 0 0 2 2h1.5M18 6h2a2 2 0 0 1-2 2h-1.5" />
-          <path d="M9 17h6v3H9z" />
-          <path d="M8 20h8" />
-        </svg>
-      );
-    case 1:
-      return (
-        <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke={gold} strokeWidth="1.7" className="mx-auto">
-          <circle cx="12" cy="8" r="5" />
-          <path d="M7 14l-2 6 4-2 3 2 3-2 4 2-2-6" />
-        </svg>
-      );
-    case 2:
-      return (
-        <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke={gold} strokeWidth="1.7" className="mx-auto">
-          <path d="M12 2l2.4 6.6L21 9l-5 3.9L17.5 19 12 15.8 6.5 19 8 12.9 3 9l6.6-.4L12 2z" />
-        </svg>
-      );
-    case 3:
-      return (
-        <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke={gold} strokeWidth="1.7" className="mx-auto">
-          <circle cx="12" cy="8" r="5" />
-          <path d="M8 21l4-3 4 3-1.5-5 4-3.5-5.2-.3L12 7l-1.3 5.2-5.2.3 4 3.5L8 21z" />
-        </svg>
-      );
-    default:
-      return (
-        <svg viewBox="0 0 48 48" width="30" height="30" fill="none" stroke={gold} strokeWidth="1.6" className="mx-auto">
-          <path d="M24 31c6 0 8-4 8-9 0-5-3-9-8-9s-8 4-8 9c0 5 2 9 8 9z" />
-          <path d="M10 20c2 0 5-1 7-3M38 20c-2 0-5-1-7-3" />
-          <path d="M8 22c2 .5 5 .5 7 0M40 22c-2 .5-5 .5-7 0" />
-          <path d="M12 32c3-1 6-3 8-6M36 32c-3-1-6-3-8-6" />
-        </svg>
-      );
-  }
-}
-
 /* utils */
 function Dot({ className = "" }: { className?: string }) {
-  return <span className={`inline-block h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-blue-400 ${className}`} />;
+  return (
+    <span
+      className={`inline-block h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-blue-400 ${className}`}
+    />
+  );
 }
 function initials(name: string) {
   const words = name.split(/\s+/).filter(Boolean);
-  if (words.length === 1) return words[0].replace(/[^A-Za-z0-9]/g, "").slice(0, 3).toUpperCase();
+  if (words.length === 1)
+    return words[0].replace(/[^A-Za-z0-9]/g, "").slice(0, 3).toUpperCase();
   return words
     .slice(0, 3)
     .map((w) => w[0])

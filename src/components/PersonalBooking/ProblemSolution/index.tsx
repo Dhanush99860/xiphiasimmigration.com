@@ -174,68 +174,70 @@ const PAIRS: Pair[] = [
   },
 ];
 
-
 export default function ProblemSolutionCompare({ className = "" }: { className?: string }) {
   return (
     <div className="mx-auto max-w-screen-2xl px-4 py-5">
-    <section
-      className={[
-        "relative w-full py-5 sm:py-5",
-        "bg-gradient-to-b from-slate-50 via-white to-slate-100",
-        "dark:from-slate-900 dark:via-slate-950 dark:to-black",
-        className,
-      ].join(" ")}
-      aria-labelledby="ps-compare-title"
-    >
-      {/* background accents */}
-      <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-24 -right-20 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute -bottom-28 -left-24 h-80 w-80 rounded-full bg-blue-400/10 blur-3xl" />
-      </div>
-
-      <div className="relative mx-auto w-full max-w-7xl px-4">
-        {/* header */}
-        <div className="max-w-3xl">
-          <h2
-            id="ps-compare-title"
-            className="text-2xl md:text-3xl lg:text-4xl font-semibold text-slate-800 dark:text-slate-100 leading-tight"
-          >
-            Built for{" "}
-            <span className="bg-gradient-to-r from-primary/70 to-primary bg-clip-text text-transparent">
-              HNI families & leaders
-            </span>
-            : problems we solve—side by side
-          </h2>
-          <p className="mt-3 text-base md:text-lg text-slate-600 dark:text-slate-300">
-          At XIPHIAS Immigration, we provide a compliance-first pathway aligned with Investment Migration Council (IMC) standards.
-          Our approach blends strategy, due diligence, and coordinated execution, guiding clients from discovery to landing with clarity and confidence.
-          </p>
+      <section
+        className={[
+          "relative w-full py-5 sm:py-5",
+          "bg-gradient-to-b from-slate-50 via-white to-slate-100",
+          "dark:from-slate-900 dark:via-slate-950 dark:to-black",
+          className,
+        ].join(" ")}
+        aria-labelledby="ps-compare-title"
+      >
+        {/* background accents */}
+        <div aria-hidden className="pointer-events-none absolute inset-0">
+          <div className="absolute -top-24 -right-20 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
+          <div className="absolute -bottom-28 -left-24 h-80 w-80 rounded-full bg-blue-400/10 blur-3xl" />
         </div>
 
-        {/* rows */}
-        <div className="mt-8 space-y-4">
-          {PAIRS.map((row) => (
-            <Row key={row.id} pair={row} />
-          ))}
-        </div>
+        <div className="relative mx-auto w-full max-w-7xl px-4">
+          {/* header */}
+          <div className="max-w-3xl">
+            <h2
+              id="ps-compare-title"
+              className="text-2xl md:text-3xl lg:text-4xl font-semibold text-slate-800 dark:text-slate-100 leading-tight"
+            >
+              Built for{" "}
+              <span className="bg-gradient-to-r from-primary/70 to-primary bg-clip-text text-transparent">
+                HNI families &amp; leaders
+              </span>
+              : problems we solve—side by side
+            </h2>
+            <p className="mt-3 text-base md:text-lg text-slate-600 dark:text-slate-300">
+              At XIPHIAS Immigration, we provide a compliance-first pathway aligned with Investment
+              Migration Council (IMC) standards. Our approach blends strategy, due diligence, and
+              coordinated execution, guiding clients from discovery to landing with clarity and
+              confidence.
+            </p>
+          </div>
 
-        {/* Deliverables: What they get in a paid consultation */}
-        <DeliverablesBox />
+          {/* rows */}
+          <div className="mt-8 space-y-4">
+            {PAIRS.map((row) => (
+              <Row key={row.id} pair={row} />
+            ))}
+          </div>
 
-        {/* CTA */}
-        <div className="mt-10">
-          <Link
-            href="/personal-booking"
-            className="inline-flex items-center gap-2 rounded-2xl bg-primary px-5 py-3 text-white font-semibold shadow hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/80"
-          >
-            Book your paid strategy call
-          </Link>
-          <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
-            Note: We do not provide investment or tax advice; we coordinate with licensed advisors.
-          </p>
+          {/* Deliverables: What they get in a paid consultation */}
+          <DeliverablesBox />
+
+          {/* CTA */}
+          <div className="mt-10">
+            <Link
+              href="/personal-booking"
+              className="inline-flex items-center gap-2 rounded-2xl bg-primary px-5 py-3 text-white font-semibold shadow hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/80"
+            >
+              Book your paid strategy call
+            </Link>
+            <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
+              Note: We do not provide investment or tax advice; we coordinate with licensed
+              advisors.
+            </p>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
     </div>
   );
 }
@@ -266,7 +268,9 @@ function Row({ pair }: { pair: Pair }) {
         <h3 className="mt-2 text-[17px] sm:text-lg font-semibold text-slate-900 dark:text-slate-100">
           {problem.title}
         </h3>
-        <p className="mt-2 text-[15px] text-slate-700 dark:text-slate-200">{problem.desc}</p>
+        <p className="mt-2 text-[15px] text-slate-700 dark:text-slate-200">
+          {problem.desc}
+        </p>
         {problem.icon && (
           <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-xs ring-1 ring-amber-200/70 dark:bg-white/10 dark:ring-amber-700/40">
             {problem.icon}
@@ -286,7 +290,9 @@ function Row({ pair }: { pair: Pair }) {
         <h3 className="mt-2 text-[17px] sm:text-lg font-semibold text-slate-900 dark:text-slate-100">
           {solution.title}
         </h3>
-        <p className="mt-2 text-[15px] text-slate-700 dark:text-slate-200">{solution.desc}</p>
+        <p className="mt-2 text-[15px] text-slate-700 dark:text-slate-200">
+          {solution.desc}
+        </p>
         <div className="mt-4 flex flex-wrap items-center gap-2">
           {solution.icon && (
             <span className="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-xs ring-1 ring-emerald-200/70 dark:bg-white/10 dark:ring-emerald-800/40">
@@ -337,7 +343,7 @@ function DeliverablesBox() {
   ];
 
   return (
-    <div className=" rounded-2xl ring-1 ring-blue-100/70 dark:ring-blue-900/40 bg-white/80 dark:bg-white/[0.03] p-5 sm:p-6">
+    <div className="rounded-2xl ring-1 ring-blue-100/70 dark:ring-blue-900/40 bg-white/80 dark:bg-white/[0.03] p-5 sm:p-6 mt-8">
       <div className="flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-300">
         <BadgeCheck className="h-4 w-4 text-primary" />
         What you get in a paid strategy call
@@ -352,7 +358,9 @@ function DeliverablesBox() {
               <div className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">
                 {p.title}
               </div>
-              <div className="text-[13px] text-slate-700 dark:text-slate-300">{p.desc}</div>
+              <div className="text-[13px] text-slate-700 dark:text-slate-300">
+                {p.desc}
+              </div>
             </div>
           </div>
         ))}

@@ -17,9 +17,15 @@ export default function AwardSection() {
       className="py-24 bg-gradient-to-b from-neutral-50 via-white to-neutral-100 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-950 relative overflow-hidden"
       aria-labelledby="awards-heading"
     >
-      {/* Decorative Orbs */}
-      <div className="absolute -top-24 -left-24 w-72 h-72 bg-neutral-300/20 dark:bg-neutral-700/20 rounded-full blur-3xl"></div>
-      <div className="absolute -bottom-24 -right-24 w-72 h-72 bg-neutral-400/20 dark:bg-neutral-800/20 rounded-full blur-3xl"></div>
+      {/* Decorative Orbs (purely visual) */}
+      <div
+        className="absolute -top-24 -left-24 w-72 h-72 bg-neutral-300/20 dark:bg-neutral-700/20 rounded-full blur-3xl"
+        aria-hidden="true"
+      />
+      <div
+        className="absolute -bottom-24 -right-24 w-72 h-72 bg-neutral-400/20 dark:bg-neutral-800/20 rounded-full blur-3xl"
+        aria-hidden="true"
+      />
 
       <div className="max-w-7xl mx-auto px-6 relative">
         {/* Header */}
@@ -32,8 +38,8 @@ export default function AwardSection() {
               Awards &amp; Recognition
             </h2>
             <p className="mt-4 max-w-2xl text-lg text-neutral-600 dark:text-neutral-400 leading-relaxed">
-              We are proud to be recognised worldwide for our commitment to excellence,
-              leadership, and trusted client service.
+              We are proud to be recognised worldwide for our commitment to
+              excellence, leadership, and trusted client service.
             </p>
           </div>
 
@@ -42,12 +48,14 @@ export default function AwardSection() {
             <button
               className="award-prev w-12 h-12 flex items-center justify-center rounded-full bg-white dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 border border-neutral-300/50 dark:border-neutral-700/50 shadow-sm hover:shadow-lg hover:scale-105 transition"
               aria-label="Previous awards"
+              type="button"
             >
               ◀
             </button>
             <button
               className="award-next w-12 h-12 flex items-center justify-center rounded-full bg-white dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 border border-neutral-300/50 dark:border-neutral-700/50 shadow-sm hover:shadow-lg hover:scale-105 transition"
               aria-label="Next awards"
+              type="button"
             >
               ▶
             </button>
@@ -65,7 +73,9 @@ export default function AwardSection() {
             clickable: true,
             el: ".award-pagination",
             renderBullet: (index, className) => {
-              return `<button class="${className} w-3 h-3 mx-1 inline-block rounded-full bg-neutral-400 dark:bg-neutral-600 transition-all" aria-label="Go to slide ${index + 1}"></button>`;
+              return `<button type="button" class="${className} w-3 h-3 mx-1 inline-block rounded-full bg-neutral-400 dark:bg-neutral-600 transition-all" aria-label="Go to slide ${
+                index + 1
+              }"></button>`;
             },
           }}
           spaceBetween={18}
@@ -96,9 +106,10 @@ export default function AwardSection() {
                   height={320}
                   className="object-cover w-full h-full absolute inset-0 transition-transform duration-500 group-hover:scale-105"
                   loading="lazy"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 />
                 {/* Gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent dark:from-black/60 dark:via-black/40 dark:to-transparent opacity-80 group-hover:opacity-90 transition"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent dark:from-black/60 dark:via-black/40 dark:to-transparent opacity-80 group-hover:opacity-90 transition" />
                 {/* Award Title */}
                 <div className="absolute bottom-0 left-0 right-0 p-4 backdrop-blur-sm">
                   <h3 className="text-sm sm:text-base font-semibold text-white">
@@ -114,7 +125,7 @@ export default function AwardSection() {
         <div
           className="award-pagination flex justify-center mt-5"
           aria-label="Awards pagination"
-        ></div>
+        />
 
         {/* Fallback Static Content (for SEO bots without JS) */}
         <noscript>
@@ -129,6 +140,7 @@ export default function AwardSection() {
                   alt={`${award.title} award`}
                   width={400}
                   height={250}
+                  loading="lazy"
                 />
                 <p className="mt-2 text-sm text-neutral-700 dark:text-neutral-300">
                   {award.title}

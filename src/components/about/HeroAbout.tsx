@@ -41,6 +41,7 @@ export default function HeroAbout({
       <div className="container mx-auto lg:max-w-screen-2xl px-4 sm:px-6 lg:px-8 overflow-x-clip">
         {/* CARD hero — NOT full width */}
         <section
+          id="about-hero"
           aria-labelledby={heroId}
           className={[
             "relative mx-auto mt-4 overflow-hidden rounded-3xl p-6 md:p-8 lg:p-10 shadow-sm",
@@ -51,7 +52,10 @@ export default function HeroAbout({
           ].join(" ")}
         >
           {/* soft background accents (clipped by parent) */}
-          <div aria-hidden className="pointer-events-none absolute inset-0">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0"
+          >
             <div className="hidden sm:block absolute -top-24 -right-24 h-64 w-64 rounded-full bg-blue-300/20 blur-3xl dark:bg-blue-700/10" />
             <div className="hidden sm:block absolute -bottom-28 -left-10 h-72 w-72 rounded-full bg-indigo-300/20 blur-3xl dark:bg-indigo-700/10" />
             <div className="absolute inset-0 opacity-40 dark:opacity-20 [mask-image:radial-gradient(60%_60%_at_50%_40%,black,transparent_80%)]">
@@ -121,7 +125,10 @@ export default function HeroAbout({
               </div>
 
               {/* RIGHT column — simplified stat card (no extra CTAs) */}
-              <aside className="lg:col-span-5" aria-label="Firm highlights and trust metrics">
+              <aside
+                className="lg:col-span-5"
+                aria-label="Firm highlights and trust metrics"
+              >
                 <div className="mx-auto w-full max-w-md rounded-2xl border border-blue-100 bg-white/90 p-5 shadow-sm ring-1 ring-blue-100/70 backdrop-blur dark:border-white/10 dark:bg-white/5 dark:ring-blue-900/40">
                   <div className="grid grid-cols-3 gap-4 text-center">
                     <Stat label="Years" value="16+" />
@@ -129,8 +136,10 @@ export default function HeroAbout({
                     <Stat label="Programs" value="100+" />
                   </div>
 
-                  <div className="mt-4 rounded-xl border border-zinc-200 bg-zinc-50 p-3 text-center text-sm dark:border-white/10 dark:bg-black/30">
-                    <p className="font-semibold">98–100%* program success (prioritized tracks)</p>
+                  <div className="mt-4 rounded-xl border border-zinc-200 bg-zinc-50 p-3 text-center text-sm dark:border-white/10 dark:bg:black/30 dark:bg-black/30">
+                    <p className="font-semibold">
+                      Strong approval track record on eligible, well-prepared files*
+                    </p>
                     <p className="mt-1 text-[11px] text-zinc-600 dark:text-zinc-400">
                       *No guarantees. Eligibility &amp; rules apply.
                     </p>
@@ -157,7 +166,11 @@ export default function HeroAbout({
 /* icons */
 function Check() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 20 20" className="h-3.5 w-3.5 fill-blue-600 dark:fill-blue-400">
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 20 20"
+      className="h-3.5 w-3.5 fill-blue-600 dark:fill-blue-400"
+    >
       <path d="M16.707 5.293a1 1 0 0 1 0 1.414l-7.25 7.25a1 1 0 0 1-1.414 0l-4-4A1 1 0 0 1 5.457 8.543l3.293 3.293 6.543-6.543a1 1 0 0 1 1.414 0z" />
     </svg>
   );
@@ -173,13 +186,19 @@ function ArrowRight() {
   );
 }
 function Dot({ className = "" }: { className?: string }) {
-  return <span className={`inline-block h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-blue-400 ${className}`} />;
+  return (
+    <span
+      className={`inline-block h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-blue-400 ${className}`}
+    />
+  );
 }
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl border border-zinc-200 bg-white p-3 dark:border-white/10 dark:bg-black/30">
       <div className="text-lg font-semibold">{value}</div>
-      <div className="text-[11px] uppercase tracking-widest text-zinc-600 dark:text-zinc-400">{label}</div>
+      <div className="text-[11px] uppercase tracking-widest text-zinc-600 dark:text-zinc-400">
+        {label}
+      </div>
     </div>
   );
 }

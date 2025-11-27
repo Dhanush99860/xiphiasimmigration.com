@@ -1,4 +1,4 @@
-// FILE: src/components/Common/FAQSectionXiphas.tsx
+// FILE: src/components/Home/FAQJourney/index.tsx
 "use client";
 
 import * as React from "react";
@@ -47,10 +47,17 @@ export default function FAQSectionXiphas({
   hashMode?: "replace" | "push";
   clearHashOnClose?: boolean;
 }) {
+  // Always work with the first 6 items (used for UI + FAQ schema)
+  const truncatedFaqs = React.useMemo(() => (faqs ?? []).slice(0, 6), [faqs]);
+  const slugs = React.useMemo(
+    () => truncatedFaqs.map((f) => slugify(f.q)),
+    [truncatedFaqs],
+  );
+
   const [openIndex, setOpenIndex] = React.useState<number | null>(0);
   const userChangedRef = React.useRef(false);
 
-  const slugs = React.useMemo(() => (faqs ?? []).map((f) => slugify(f.q)), [faqs]);
+  if (!truncatedFaqs.length) return null;
 
   // On load: if hash matches a question, open it and scroll to it.
   React.useEffect(() => {
@@ -91,8 +98,6 @@ export default function FAQSectionXiphas({
     setOpenIndex((cur) => (cur === idx ? null : idx));
   }, []);
 
-  if (!faqs?.length) return null;
-
   return (
     <section
       id="faq"
@@ -101,36 +106,39 @@ export default function FAQSectionXiphas({
       className={`py-10 sm:py-12 md:py-14 ${className}`}
     >
       <div className="container mx-auto lg:max-w-screen-2xl px-4 sm:px-6 lg:px-8 overflow-x-clip">
-      <header className="mb-6 sm:mb-8 md:mb-10">
-  <div className="relative overflow-hidden rounded-2xl border border-[var(--c-border)] bg-[var(--c-card)] p-4 sm:p-5 md:p-6 shadow-sm ring-1 ring-black/[0.03] dark:ring-white/10">
-    {/* soft background accents (clipped inside) */}
-    <div aria-hidden className="pointer-events-none absolute inset-0">
-      <div className="absolute -top-20 -left-24 h-56 w-56 rounded-full bg-blue-300/20 blur-3xl dark:bg-blue-700/10" />
-      <div className="absolute -bottom-24 -right-20 h-64 w-64 rounded-full bg-indigo-300/20 blur-3xl dark:bg-indigo-700/10" />
-      <div className="absolute inset-0 opacity-40 dark:opacity-20 [mask-image:radial-gradient(70%_70%_at_10%_10%,black,transparent_75%)]">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.06)_1px,transparent_1px)] bg-[size:22px_22px]" />
-      </div>
-    </div>
+        <header className="mb-6 sm:mb-8 md:mb-10">
+          <div className="relative overflow-hidden rounded-2xl border border-[var(--c-border)] bg-[var(--c-card)] p-4 sm:p-5 md:p-6 shadow-sm ring-1 ring-black/[0.03] dark:ring-white/10">
+            {/* soft background accents (clipped inside) */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0"
+            >
+              <div className="absolute -top-20 -left-24 h-56 w-56 rounded-full bg-blue-300/20 blur-3xl dark:bg-blue-700/10" />
+              <div className="absolute -bottom-24 -right-20 h-64 w-64 rounded-full bg-indigo-300/20 blur-3xl dark:bg-indigo-700/10" />
+              <div className="absolute inset-0 opacity-40 dark:opacity-20 [mask-image:radial-gradient(70%_70%_at_10%_10%,black,transparent_75%)]">
+                <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.06)_1px,transparent_1px)] bg-[size:22px_22px]" />
+              </div>
+            </div>
 
-    {/* content */}
-    <div className="relative">
-      <div className="min-w-0">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-zinc-950 dark:text-white break-words">
-          {title}
-        </h2>
-        {subtitle && (
-          <p className="mt-2 max-w-3xl text-sm sm:text-base text-zinc-700 dark:text-zinc-300 break-words">
-            {subtitle}
-          </p>
-        )}
-      </div>
-    </div>
-  </div>
-</header>
+            {/* content */}
+            <div className="relative">
+              <div className="min-w-0">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-zinc-950 dark:text-white break-words">
+                  {title}
+                </h2>
+                {subtitle && (
+                  <p className="mt-2 max-w-3xl text-sm sm:text-base text-zinc-700 dark:text-zinc-300 break-words">
+                    {subtitle}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        </header>
 
         {/* Simple, clean accordion */}
         <div className="overflow-hidden rounded-2xl bg-white ring-1 ring-zinc-200 shadow-sm dark:bg-white/5 dark:ring-white/10 divide-y divide-zinc-200 dark:divide-white/10">
-          {faqs.slice(0, 6).map((f, i) => {
+          {truncatedFaqs.map((f, i) => {
             const isOpen = openIndex === i;
             const slug = slugs[i];
             const panelId = `faq-panel-${i}-${slug}`;
@@ -139,7 +147,7 @@ export default function FAQSectionXiphas({
             return (
               <div key={panelId} className="px-4 sm:px-5">
                 {/* anchor target so #hash scrolls correctly */}
-                <span id={slug} className="block scroll-mt-28" aria-hidden />
+                <span id={slug} className="block scroll-mt-28" aria-hidden="true" />
 
                 <h3 className="m-0">
                   <button
@@ -181,7 +189,8 @@ export default function FAQSectionXiphas({
         </div>
 
         <p className="mt-6 text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
-          Still curious? Book a private consultation—we’ll map your best options, documents and timelines.
+          Still curious? Book a private consultation—we’ll map your best options, documents and
+          timelines.
         </p>
       </div>
 
@@ -189,7 +198,7 @@ export default function FAQSectionXiphas({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(buildFaqLd(faqs.slice(0, 6))),
+          __html: JSON.stringify(buildFaqLd(truncatedFaqs)),
         }}
       />
     </section>

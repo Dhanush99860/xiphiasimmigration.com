@@ -1,4 +1,4 @@
-// FILE: src/components/Home/WhyChooseUs.tsx
+// FILE: src/components/Home/whychooseus/index.tsx
 import Link from "next/link";
 import { BOOKING_ROUTE } from "@/components/PersonalBooking/booking-flow";
 
@@ -63,7 +63,7 @@ export default function WhyChooseUs() {
         {/* ======= HEADER ======= */}
         <div className="max-w-3xl">
           <span className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-medium text-zinc-700 ring-1 ring-zinc-200 dark:bg-white/5 dark:text-zinc-200 dark:ring-white/10">
-            <Sparkles className="h-3.5 w-3.5" />
+            <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
             Why choose XIPHIAS
           </span>
 
@@ -71,12 +71,15 @@ export default function WhyChooseUs() {
             id="why-choose-heading"
             className="mt-3 break-words text-3xl font-bold tracking-tight text-zinc-950 dark:text-white sm:text-4xl md:text-5xl"
           >
-            A partner for <span className="text-blue-600 dark:text-blue-400">global growth</span> — reliable, compliant, outcome-focused
+            A partner for{" "}
+            <span className="text-blue-600 dark:text-blue-400">global growth</span> — reliable,
+            compliant, outcome-focused
           </h2>
 
           <p className="mt-4 max-w-2xl text-base text-zinc-700 dark:text-zinc-300 sm:text-lg">
             We help entrepreneurs, investors, families, and enterprises navigate residency and
-            citizenship pathways with clarity. No surprises—just a transparent process built for results.
+            citizenship pathways with clarity. No surprises—just a transparent process built for
+            results.
           </p>
         </div>
 
@@ -89,7 +92,7 @@ export default function WhyChooseUs() {
             >
               <div className="flex items-start gap-3">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700 ring-1 ring-blue-100 dark:bg-blue-950/30 dark:text-blue-300 dark:ring-blue-900/40">
-                  <Icon className="h-5 w-5" />
+                  <Icon className="h-5 w-5" aria-hidden="true" />
                 </div>
                 <div className="min-w-0">
                   <h3 className="text-base font-semibold text-zinc-900 dark:text-white break-words">
@@ -115,7 +118,7 @@ export default function WhyChooseUs() {
                 key={t}
                 className="flex items-center justify-center gap-2 rounded-xl bg-white px-3 py-2 text-center ring-1 ring-zinc-200 dark:bg-white/5 dark:ring-white/10"
               >
-                <ShieldCheck className="h-4 w-4 text-blue-600 dark:text-blue-300" />
+                <ShieldCheck className="h-4 w-4 text-blue-600 dark:text-blue-300" aria-hidden="true" />
                 <span className="break-words">{t}</span>
               </li>
             ))}
@@ -129,7 +132,7 @@ export default function WhyChooseUs() {
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white shadow ring-1 ring-blue-700/20 transition hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
           >
             Book a Private Consultation
-            <ArrowRight className="h-5 w-5" />
+            <ArrowRight className="h-5 w-5" aria-hidden="true" />
           </Link>
 
           <Link
@@ -139,23 +142,6 @@ export default function WhyChooseUs() {
             Learn more about us
           </Link>
         </div>
-
-        {/* Minimal schema to help SEO (optional; safe and generic) */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Organization",
-              name: "XIPHIAS Immigration",
-              url: "https://www.xiphiasimmigration.com",
-              description:
-                "Global immigration partner for entrepreneurs, investors, families, and enterprises.",
-              areaServed: "Worldwide",
-              brand: "XIPHIAS Immigration",
-            }),
-          }}
-        />
       </div>
     </section>
   );

@@ -1,4 +1,4 @@
-// components/about/CaseStudies.tsx
+// src/components/about/CaseStudies.tsx
 import React from "react";
 import Link from "next/link";
 
@@ -27,15 +27,18 @@ const cases: CaseItem[] = [
 ];
 
 export default function CaseStudies() {
-  const titleId = "case-studies-title";
+  const titleId = "about-case-studies-title";
 
   return (
-    <section className="py-6 md:py-6">
+    <section
+      id="case-studies"
+      aria-labelledby={titleId}
+      className="py-6 md:py-6"
+    >
       {/* container aligned with hero + overflow safety */}
       <div className="container mx-auto lg:max-w-screen-2xl px-4 sm:px-6 lg:px-8 overflow-x-clip">
         {/* gradient, ringed wrapper (hero aesthetic) */}
         <div
-          aria-labelledby={titleId}
           className={[
             "relative overflow-hidden rounded-3xl p-6 md:p-8 lg:p-10",
             "bg-gradient-to-br from-sky-50 via-white to-indigo-50",
@@ -67,7 +70,8 @@ export default function CaseStudies() {
               Selected Case Highlights
             </h2>
             <p className="mt-2 max-w-3xl text-sm text-zinc-700 dark:text-zinc-300">
-              Anonymized summaries illustrating our approach and results. Detailed references on request.
+              Anonymized summaries illustrating our approach and results. Detailed
+              references on request.
             </p>
           </header>
 
@@ -87,14 +91,18 @@ export default function CaseStudies() {
                     <span className="shrink-0 rounded-xl border border-zinc-200 bg-zinc-50 p-2 dark:border-white/10 dark:bg-black/30">
                       <CaseIcon />
                     </span>
-                    <h3 className="text-base font-semibold leading-tight break-words">{c.title}</h3>
+                    <h3 className="text-base font-semibold leading-tight break-words">
+                      {c.title}
+                    </h3>
                   </header>
 
                   <dl className="mt-3 space-y-2 text-sm">
                     <div className="flex items-start gap-2">
                       <Target className="mt-[2px]" />
                       <dt className="font-medium">Challenge:</dt>
-                      <dd className="ml-1 text-zinc-700 dark:text-zinc-300 break-words">{c.challenge}</dd>
+                      <dd className="ml-1 text-zinc-700 dark:text-zinc-300 break-words">
+                        {c.challenge}
+                      </dd>
                     </div>
 
                     <div className="flex items-start gap-2 text-emerald-700 dark:text-emerald-300">
@@ -124,7 +132,8 @@ export default function CaseStudies() {
               <div className="min-w-0">
                 <p className="font-medium">See how we work</p>
                 <p className="text-xs text-zinc-700 dark:text-zinc-300">
-                  Review our methodology, governance and confidentiality standards for private clients.
+                  Review our methodology, governance and confidentiality standards
+                  for private clients.
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -149,7 +158,8 @@ export default function CaseStudies() {
 
           {/* disclaimer */}
           <p className="relative mt-3 text-[11px] text-zinc-600 dark:text-zinc-400">
-            *Outcomes are specific to each client’s facts and jurisdictional rules. No guarantees. Eligibility & rules apply.
+            *Outcomes are specific to each client’s facts and jurisdictional rules. No
+            guarantees. Eligibility &amp; rules apply.
           </p>
         </div>
       </div>
@@ -159,32 +169,55 @@ export default function CaseStudies() {
 
 /* inline icons */
 function Dot({ className = "" }: { className?: string }) {
-  return <span className={`inline-block h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-blue-400 ${className}`} />;
+  return (
+    <span
+      className={`inline-block h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-blue-400 ${className}`}
+    />
+  );
 }
+
 function CaseIcon() {
   return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5 text-blue-600 dark:text-blue-300" fill="none" stroke="currentColor" strokeWidth="1.6">
+    <svg
+      viewBox="0 0 24 24"
+      className="h-5 w-5 text-blue-600 dark:text-blue-300"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+    >
       <rect x="3" y="5" width="18" height="14" rx="2" />
       <path d="M7 9h10M7 13h6" />
     </svg>
   );
 }
+
 function Target({ className = "" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" className={`h-4 w-4 text-zinc-600 dark:text-zinc-300 ${className}`} fill="none" stroke="currentColor" strokeWidth="1.8">
+    <svg
+      viewBox="0 0 24 24"
+      className={`h-4 w-4 text-zinc-600 dark:text-zinc-300 ${className}`}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+    >
       <circle cx="12" cy="12" r="9" />
       <circle cx="12" cy="12" r="4" />
       <path d="M12 3v3M21 12h-3M12 21v-3M3 12h3" />
     </svg>
   );
 }
+
 function Check({ className = "" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 20 20" className={`h-4 w-4 shrink-0 fill-emerald-600 dark:fill-emerald-400 ${className}`}>
+    <svg
+      viewBox="0 0 20 20"
+      className={`h-4 w-4 shrink-0 fill-emerald-600 dark:fill-emerald-400 ${className}`}
+    >
       <path d="M16.707 5.293a1 1 0 0 1 0 1.414l-7.25 7.25a1 1 0 0 1-1.414 0l-4-4A1 1 0 0 1 5.457 8.543l3.293 3.293 6.543-6.543a1 1 0 0 1 1.414 0z" />
     </svg>
   );
 }
+
 function ArrowRight() {
   return (
     <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4">

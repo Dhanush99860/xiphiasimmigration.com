@@ -7,7 +7,7 @@ export default function Leadership() {
   const titleId = "leadership-title";
 
   return (
-    <section className="py-6 md:py-6">
+    <section id="leadership" className="py-6 md:py-6">
       {/* container aligned with hero + overflow safety */}
       <div className="container mx-auto lg:max-w-screen-2xl px-4 sm:px-6 lg:px-8 overflow-x-clip">
         {/* gradient, ringed wrapper (hero aesthetic) */}
@@ -41,10 +41,11 @@ export default function Leadership() {
               id={titleId}
               className="mt-3 text-2xl font-semibold tracking-tight md:text-3xl lg:text-[32px] break-words"
             >
-              Guided by Experience & Ethics
+              Guided by Experience &amp; Ethics
             </h2>
             <p className="mt-2 max-w-3xl text-sm text-zinc-700 dark:text-zinc-300">
-              16+ years of global immigration expertise with an uncompromising stance on integrity and compliance.
+              16+ years of global immigration expertise with an uncompromising stance on integrity and
+              compliance.
             </p>
           </header>
 
@@ -54,7 +55,7 @@ export default function Leadership() {
             <div className="relative aspect-[2/2] w-full overflow-hidden rounded-3xl border border-blue-100/70 bg-white/70 ring-1 ring-blue-100/70 backdrop-blur dark:border-white/10 dark:bg-white/5 dark:ring-blue-900/40">
               <Image
                 src="/images/avtar/varun-singh.png"
-                alt="Varun Singh, Managing Director"
+                alt="Portrait of Varun Singh, Managing Director at XIPHIAS Immigration"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
@@ -70,8 +71,9 @@ export default function Leadership() {
               </p>
 
               <p className="mt-3 text-sm leading-relaxed text-zinc-700 dark:text-zinc-300 break-words">
-                Varun founded XIPHIAS Immigration to create a trusted, regulation-first partner for global citizens and
-                enterprises. He oversees priority investment migration and corporate programs to ensure impeccable standards.
+                Varun founded XIPHIAS Immigration to create a trusted, regulation-first partner for global
+                citizens and enterprises. He oversees priority investment migration and corporate programs to
+                help ensure impeccable standards.
               </p>
 
               {/* badges */}
@@ -94,7 +96,7 @@ export default function Leadership() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm text-white ring-1 ring-blue-700/20 transition hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
-                  aria-label="Open LinkedIn in a new tab"
+                  aria-label="View XIPHIAS Immigration on LinkedIn"
                 >
                   LinkedIn
                   <ArrowRight />
@@ -129,7 +131,7 @@ export default function Leadership() {
 /* small UI atoms (inline for portability) */
 function Badge({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-white/80 px-3 py-1 text-xs font-medium ring-1 ring-blue-200 backdrop-blur dark:bg-white/5 dark:ring-blue-800">
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-white/80 px-3 py-1 text-xs font-medium ring-1 ring-blue-200 backdrop-blur dark:bg:white/5 dark:bg-white/5 dark:ring-blue-800">
       {children}
     </span>
   );
@@ -138,23 +140,39 @@ function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl border border-zinc-200 bg-white p-3 dark:border-white/10 dark:bg-black/30">
       <div className="text-lg font-semibold">{value}</div>
-      <div className="text-[11px] uppercase tracking-widest text-zinc-600 dark:text-zinc-400">{label}</div>
+      <div className="text-[11px] uppercase tracking-widest text-zinc-600 dark:text-zinc-400">
+        {label}
+      </div>
     </div>
   );
 }
 function Dot({ className = "" }: { className?: string }) {
-  return <span className={`inline-block h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-blue-400 ${className}`} />;
+  return (
+    <span className={`inline-block h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-blue-400 ${className}`} />
+  );
 }
 function Shield() {
   return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4 text-blue-700 dark:text-blue-300" fill="none" stroke="currentColor" strokeWidth="1.8">
+    <svg
+      viewBox="0 0 24 24"
+      className="h-4 w-4 text-blue-700 dark:text-blue-300"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+    >
       <path d="M12 3l7 3v5c0 5-3.5 9-7 10-3.5-1-7-5-7-10V6l7-3z" />
     </svg>
   );
 }
 function Award() {
   return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4 text-blue-700 dark:text-blue-300" fill="none" stroke="currentColor" strokeWidth="1.8">
+    <svg
+      viewBox="0 0 24 24"
+      className="h-4 w-4 text-blue-700 dark:text-blue-300"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+    >
       <circle cx="12" cy="8" r="4" />
       <path d="M8 12l-2 8 6-3 6 3-2-8" />
     </svg>
@@ -162,7 +180,13 @@ function Award() {
 }
 function Globe() {
   return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4 text-blue-700 dark:text-blue-300" fill="none" stroke="currentColor" strokeWidth="1.8">
+    <svg
+      viewBox="0 0 24 24"
+      className="h-4 w-4 text-blue-700 dark:text-blue-300"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+    >
       <circle cx="12" cy="12" r="10" />
       <path d="M2 12h20M12 2c3 4 3 14 0 20M12 2c-3 4-3 14 0 20" />
     </svg>
@@ -171,7 +195,10 @@ function Globe() {
 function ArrowRight() {
   return (
     <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4">
-      <path fill="currentColor" d="M5 12.75h11.19l-3.72 3.72a.75.75 0 1 0 1.06 1.06l5.25-5.25a.75.75 0 0 0 0-1.06L13.53 5.97a.75.75 0 1 0-1.06 1.06l3.72 3.72H5a.75.75 0 0 0 0 1.5z" />
+      <path
+        fill="currentColor"
+        d="M5 12.75h11.19l-3.72 3.72a.75.75 0 1 0 1.06 1.06l5.25-5.25a.75.75 0 0 0 0-1.06L13.53 5.97a.75.75 0 1 0-1.06 1.06l3.72 3.72H5a.75.75 0 0 0 0 1.5z"
+      />
     </svg>
   );
 }

@@ -166,8 +166,13 @@ export default function Header() {
         const first = firstFocusableRef.current;
         const last = lastFocusableRef.current;
         if (!first || !last) return;
-        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
       }
     };
     window.addEventListener('keydown', onKey);
@@ -189,7 +194,9 @@ export default function Header() {
     const drawer = drawerRef.current;
     if (!drawer) return;
 
-    let startX = 0, currentX = 0, dragging = false;
+    let startX = 0,
+      currentX = 0,
+      dragging = false;
 
     const onStart = (e: TouchEvent) => {
       const touch = e.touches[0];
@@ -243,7 +250,7 @@ export default function Header() {
           'transition-[background-color,backdrop-filter,box-shadow,padding] ease-out',
           'bg-primary/95 dark:bg-zinc-950',
           'backdrop-blur-md',
-          (compact ? 'shadow-lg' : 'shadow-md'),
+          compact ? 'shadow-lg' : 'shadow-md',
         ].join(' ')}
       >
         {/* TopBar */}
@@ -253,7 +260,7 @@ export default function Header() {
             'topbar-clip',
             'hidden lg:block',
             'overflow-hidden transition-[max-height,opacity] ease-out',
-            (showTopBar ? 'max-h-[55px] opacity-100' : 'max-h-0 opacity-0'),
+            showTopBar ? 'max-h-[55px] opacity-100' : 'max-h-0 opacity-0',
           ].join(' ')}
         >
           <TopBar />
@@ -271,7 +278,7 @@ export default function Header() {
                 'before:absolute before:inset-0 before:-z-10 before:rounded-2xl',
                 'before:bg-[radial-gradient(120%_100%_at_50%_0%,rgba(255,255,255,0.12),transparent_60%)]',
                 'dark:before:bg-[radial-gradient(120%_100%_at_50%_0%,rgba(255,255,255,0.08),transparent_60%)]',
-                (compact ? 'px-3 py-2' : 'px-4 py-2.5'),
+                compact ? 'px-3 py-2' : 'px-4 py-2.5',
                 'transition-[padding,ring-color,transform,box-shadow] ease-out',
                 'hover:ring-white/20',
               ].join(' ')}
@@ -280,7 +287,10 @@ export default function Header() {
 
               {/* Center search (mobile) */}
               <div className="absolute inset-x-0 flex justify-center lg:hidden px-12 pointer-events-none">
-                <GlobalSearch className="max-w-[520px]" placeholder="Search…" />
+                <GlobalSearch
+                  className="pointer-events-auto max-w-[520px]"
+                  placeholder="Search…"
+                />
               </div>
 
               {/* Desktop nav */}
@@ -342,7 +352,8 @@ export default function Header() {
           data-state={drawerOpen ? 'open' : 'closed'}
           className={[
             'fixed right-0 top-0 z-[50] h-dvh w-[88%] max-w-[420px] rounded-l-2xl outline-none lg:hidden',
-            'transition-transform', (drawerOpen ? 'translate-x-0' : 'translate-x-full'),
+            'transition-transform',
+            drawerOpen ? 'translate-x-0' : 'translate-x-full',
             'bg-white dark:bg-zinc-900',
             'pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]',
           ].join(' ')}
@@ -390,7 +401,11 @@ export default function Header() {
             >
               <div className="rounded-xl bg-zinc-50 p-2 dark:bg-zinc-800">
                 {headerMenu.map((item, i) => (
-                  <MobileHeaderLink key={i} item={item} closeMenuAction={() => setDrawerOpen(false)} />
+                  <MobileHeaderLink
+                    key={i}
+                    item={item}
+                    closeMenuAction={() => setDrawerOpen(false)}
+                  />
                 ))}
               </div>
 

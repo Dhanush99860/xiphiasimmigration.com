@@ -6,12 +6,15 @@ export default function PrivateClientDesk() {
   const titleId = "private-client-desk-title";
 
   return (
-    <section className="py-6 md:py-6">
+    <section
+      id="private-client-desk"
+      className="py-6 md:py-6"
+      aria-labelledby={titleId}
+    >
       {/* container aligned with hero + overflow safety */}
       <div className="container mx-auto lg:max-w-screen-2xl px-4 sm:px-6 lg:px-8 overflow-x-clip">
         {/* gradient, ringed wrapper (hero aesthetic) */}
         <div
-          aria-labelledby={titleId}
           className={[
             "relative overflow-hidden rounded-3xl p-6 md:p-8 lg:p-10",
             "bg-gradient-to-br from-sky-50 via-white to-indigo-50",
@@ -55,9 +58,11 @@ export default function PrivateClientDesk() {
                   <Phone />
                 </span>
                 <div className="min-w-0">
-                  <h3 className="text-lg font-semibold leading-tight break-words">Free Discovery Call</h3>
+                  <h3 className="text-lg font-semibold leading-tight break-words">
+                    Free Discovery Call
+                  </h3>
                   <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300">
-                    15–20 min · eligibility triage & next steps.
+                    15–20 min · eligibility triage &amp; next steps.
                   </p>
                 </div>
               </div>
@@ -70,14 +75,14 @@ export default function PrivateClientDesk() {
 
               <div className="mt-4 flex flex-wrap gap-2 text-[11px]">
                 <Chip>No obligation</Chip>
-                <Chip>Private & confidential</Chip>
+                <Chip>Private &amp; confidential</Chip>
               </div>
 
               <Link
                 href="/contact"
                 prefetch={false}
                 className="mt-5 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-medium text-white ring-1 ring-blue-700/20 transition hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
-                aria-label="Book a Free Discovery Call"
+                aria-label="Book a free discovery call"
               >
                 Book Free Call
                 <ArrowRight />
@@ -91,16 +96,18 @@ export default function PrivateClientDesk() {
                   <Calendar />
                 </span>
                 <div className="min-w-0">
-                  <h3 className="text-lg font-semibold leading-tight break-words">Paid Expert Session</h3>
+                  <h3 className="text-lg font-semibold leading-tight break-words">
+                    Paid Expert Session
+                  </h3>
                   <p className="mt-1 text-sm text-zinc-800 dark:text-zinc-200">
-                    45–60 min · senior advisor · program strategy & structuring.
+                    45–60 min · senior advisor · program strategy &amp; structuring.
                   </p>
                 </div>
               </div>
 
               <ul className="mt-3 space-y-2 text-sm text-zinc-800 dark:text-zinc-200">
-                <Li>Tailored roadmap & timelines</Li>
-                <Li>Risk & compliance review</Li>
+                <Li>Tailored roadmap &amp; timelines</Li>
+                <Li>Risk &amp; compliance review</Li>
                 <Li>Investment route evaluation</Li>
               </ul>
 
@@ -113,7 +120,7 @@ export default function PrivateClientDesk() {
                 href="/personal-booking"
                 prefetch={false}
                 className="mt-5 inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-medium text-blue-700 ring-1 ring-blue-300 transition hover:bg-blue-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:bg-white/5 dark:text-blue-200 dark:ring-blue-800/60 dark:hover:bg-blue-950/20"
-                aria-label="Book a Paid Expert Session"
+                aria-label="Book a paid expert session"
               >
                 Book Paid Session
                 <ArrowRight />
@@ -134,7 +141,7 @@ export default function PrivateClientDesk() {
 
           {/* tiny note */}
           <p className="relative mt-3 text-[11px] text-zinc-600 dark:text-zinc-400">
-            *No guarantees. Eligibility & rules apply. Pricing (if any) is shown at booking.
+            *No guarantees. Eligibility &amp; rules apply. Pricing (if any) is shown at booking.
           </p>
         </div>
       </div>

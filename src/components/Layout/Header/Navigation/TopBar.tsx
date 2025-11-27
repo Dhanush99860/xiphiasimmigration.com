@@ -19,8 +19,17 @@ export default function TopBar() {
         >
           {/* Contact chips */}
           <div className="flex items-center gap-2 xl:gap-3">
-            <Chip href="tel:+919876543210" label="+91 9019400500" ariaLabel="Call +91 9019400500" />
-            <Chip href="mailto:immigration@xiphias.in" label="immigration@xiphias.in" ariaLabel="Email immigration@xiphias.in" />
+            {/* 🔧 FIXED: tel: now matches the displayed number +91 90194 00500 */}
+            <Chip
+              href="tel:+919019400500"
+              label="+91 9019400500"
+              ariaLabel="Call +91 9019400500"
+            />
+            <Chip
+              href="mailto:immigration@xiphias.in"
+              label="immigration@xiphias.in"
+              ariaLabel="Email immigration@xiphias.in"
+            />
           </div>
 
           {/* Center: GlobalSearch trigger (real, pill-style) */}
@@ -44,7 +53,10 @@ export default function TopBar() {
             <CircleLink href="https://www.youtube.com/@immigrationxiphias5228" label="Youtube">
               <Youtube className="h-4 w-4" aria-hidden />
             </CircleLink>
-            <CircleLink href="https://www.linkedin.com/company/xiphias-immigration-pvt-limited?trk=prof-following-company-logo" label="Linkedin">
+            <CircleLink
+              href="https://www.linkedin.com/company/xiphias-immigration-pvt-limited?trk=prof-following-company-logo"
+              label="Linkedin"
+            >
               <Linkedin className="h-4 w-4" aria-hidden />
             </CircleLink>
             <Link
@@ -61,7 +73,7 @@ export default function TopBar() {
 }
 
 /* ---------------------------------------------
-   Sub components (unchanged)
+   Sub components
 ---------------------------------------------- */
 
 function Chip({ href, label, ariaLabel }: { href: string; label: string; ariaLabel: string }) {
@@ -73,7 +85,11 @@ function Chip({ href, label, ariaLabel }: { href: string; label: string; ariaLab
       className="inline-flex min-h-[36px] items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-white/95 hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
     >
       <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/95 text-primary">
-        {isTel ? <Phone className="h-3.5 w-3.5" aria-hidden /> : <Mail className="h-3.5 w-3.5" aria-hidden />}
+        {isTel ? (
+          <Phone className="h-3.5 w-3.5" aria-hidden />
+        ) : (
+          <Mail className="h-3.5 w-3.5" aria-hidden />
+        )}
       </span>
       <span className="whitespace-nowrap">{label}</span>
     </a>

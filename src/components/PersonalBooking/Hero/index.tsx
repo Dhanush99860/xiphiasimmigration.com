@@ -44,18 +44,18 @@ export default function HeroPremium({
   ],
   align = "left",
   microNote = "Confidential • NDA on request",
-  priceNote = "Paid strategy call • 45–60 mins • Credited on engagement",
+  priceNote = "Paid strategy call • 45–90 mins • Credited on engagement",
 }: Props) {
   const isPdf =
     typeof secondaryHref === "string" &&
     secondaryHref.toLowerCase().endsWith(".pdf");
+
   const heroId = "hero-premium-title";
   const alignClasses =
     align === "center" ? "text-center md:max-w-3xl mx-auto" : "text-left";
 
   return (
     <>
-      {/* Outer container as requested */}
       <div className="mx-auto max-w-screen-2xl px-4 py-5">
         <section
           aria-labelledby={heroId}
@@ -67,7 +67,7 @@ export default function HeroPremium({
             className,
           ].join(" ")}
         >
-          {/* Subtle décor */}
+          {/* décor background */}
           <div aria-hidden className="pointer-events-none absolute inset-0">
             <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-blue-300/20 blur-3xl dark:bg-blue-700/10" />
             <div className="absolute -bottom-28 -left-10 h-72 w-72 rounded-full bg-indigo-300/20 blur-3xl dark:bg-indigo-700/10" />
@@ -77,7 +77,7 @@ export default function HeroPremium({
           </div>
 
           <div className={`relative ${alignClasses}`}>
-            {/* Eyebrow */}
+            {/* Eyebrow / badge */}
             {badge ? (
               <span className="inline-flex items-center rounded-full bg-white/80 px-3 py-1 text-xs font-medium ring-1 ring-blue-200 backdrop-blur dark:bg-white/5 dark:ring-blue-800">
                 <Dot className="mr-1.5" />
@@ -85,7 +85,7 @@ export default function HeroPremium({
               </span>
             ) : null}
 
-            {/* Title */}
+            {/* Page-level heading for this booking page */}
             <h1
               id={heroId}
               className="mt-3 text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight leading-tight"
@@ -93,12 +93,10 @@ export default function HeroPremium({
               {title}
             </h1>
 
-            {/* Subtitle */}
             <p className="mt-3 text-[15px] leading-7 text-zinc-700 dark:text-zinc-300 md:text-base">
               {subtitle}
             </p>
 
-            {/* Feature chips */}
             {features?.length ? (
               <ul className="mt-5 flex flex-wrap gap-2.5 text-xs">
                 {features.map((f) => (
@@ -130,31 +128,32 @@ export default function HeroPremium({
                 <ArrowRight />
               </Link>
 
-              {secondaryHref ? (
-                isPdf ? (
-                  <a
-                    href={secondaryHref}
-                    download
-                    className="inline-flex items-center gap-2 rounded-xl bg-white/90 px-4 py-2.5 text-blue-700 ring-1 ring-blue-300 hover:bg-blue-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:bg-white/5 dark:text-blue-200 dark:ring-blue-800/60 dark:hover:bg-blue-950/20 transition"
-                    aria-label={secondaryText}
-                  >
-                    <Download />
-                    {secondaryText}
-                  </a>
-                ) : (
-                  <Link
-                    href={secondaryHref}
-                    prefetch={false}
-                    className="inline-flex items-center gap-2 rounded-xl bg-white/90 px-4 py-2.5 text-blue-700 ring-1 ring-blue-300 hover:bg-blue-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:bg-white/5 dark:text-blue-200 dark:ring-blue-800/60 dark:hover:bg-blue-950/20 transition"
-                    aria-label={secondaryText}
-                  >
-                    <Open />
-                    {secondaryText}
-                  </Link>
-                )
-              ) : null}
+              {secondaryHref
+                ? isPdf
+                  ? (
+                    <a
+                      href={secondaryHref}
+                      download
+                      className="inline-flex items-center gap-2 rounded-xl bg-white/90 px-4 py-2.5 text-blue-700 ring-1 ring-blue-300 hover:bg-blue-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:bg-white/5 dark:text-blue-200 dark:ring-blue-800/60 dark:hover:bg-blue-950/20 transition"
+                      aria-label={secondaryText}
+                    >
+                      <Download />
+                      {secondaryText}
+                    </a>
+                  )
+                  : (
+                    <Link
+                      href={secondaryHref}
+                      prefetch={false}
+                      className="inline-flex items-center gap-2 rounded-xl bg-white/90 px-4 py-2.5 text-blue-700 ring-1 ring-blue-300 hover:bg-blue-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:bg:white/5 dark:text-blue-200 dark:ring-blue-800/60 dark:hover:bg-blue-950/20 transition"
+                      aria-label={secondaryText}
+                    >
+                      <Open />
+                      {secondaryText}
+                    </Link>
+                  )
+                : null}
 
-              {/* micro reassurance */}
               {microNote ? (
                 <span className="ml-0 md:ml-2 text-xs text-zinc-500 dark:text-zinc-400">
                   {microNote}
@@ -162,7 +161,6 @@ export default function HeroPremium({
               ) : null}
             </div>
 
-            {/* Price note */}
             {priceNote ? (
               <p className="mt-2 text-xs text-zinc-600 dark:text-zinc-400">
                 {priceNote}
@@ -175,7 +173,6 @@ export default function HeroPremium({
         <div className="mt-3">
           <Breadcrumb />
         </div>
-
       </div>
     </>
   );
@@ -194,6 +191,7 @@ function Check() {
     </svg>
   );
 }
+
 function ArrowRight() {
   return (
     <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4">
@@ -204,6 +202,7 @@ function ArrowRight() {
     </svg>
   );
 }
+
 function Download() {
   return (
     <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4">
@@ -214,6 +213,7 @@ function Download() {
     </svg>
   );
 }
+
 function Open() {
   return (
     <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4">
@@ -228,6 +228,7 @@ function Open() {
     </svg>
   );
 }
+
 function Dot({ className = "" }: { className?: string }) {
   return (
     <span

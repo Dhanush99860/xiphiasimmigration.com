@@ -40,12 +40,15 @@ export default function Compliance() {
   const titleId = "compliance-title";
 
   return (
-    <section className="py-6 md:py-6">
+    <section
+      id="compliance"
+      aria-labelledby={titleId}
+      className="py-6 md:py-6"
+    >
       {/* container aligned with hero + overflow safety */}
       <div className="container mx-auto lg:max-w-screen-2xl px-4 sm:px-6 lg:px-8 overflow-x-clip">
         {/* gradient, ringed wrapper (hero aesthetic) */}
         <div
-          aria-labelledby={titleId}
           className={[
             "relative overflow-hidden rounded-3xl p-6 md:p-8 lg:p-10",
             "bg-gradient-to-br from-sky-50 via-white to-indigo-50",
@@ -107,12 +110,17 @@ export default function Compliance() {
                     </span>
                     <div className="min-w-0">
                       <h3 className="text-base font-semibold leading-tight break-words">{title}</h3>
-                      <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300 break-words">{text}</p>
+                      <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300 break-words">
+                        {text}
+                      </p>
 
                       {points?.length ? (
                         <ul className="mt-3 space-y-2">
                           {points.map((p) => (
-                            <li key={p} className="flex items-start gap-2 text-sm text-zinc-700 dark:text-zinc-300">
+                            <li
+                              key={p}
+                              className="flex items-start gap-2 text-sm text-zinc-700 dark:text-zinc-300"
+                            >
                               <Check className="mt-[3px]" />
                               <span className="break-words">{p}</span>
                             </li>
@@ -159,8 +167,9 @@ export default function Compliance() {
 
           {/* disclaimer */}
           <p className="relative mt-3 text-[11px] text-zinc-600 dark:text-zinc-400">
-            *Alignment denotes internal policies and workflows built to mirror regulator expectations; it is not a license
-            assertion. Program availability and requirements may change. No guarantees. Eligibility & rules apply.
+            *Alignment denotes internal policies and workflows built to mirror regulator expectations; it is
+            not a license assertion. Program availability and requirements may change. No guarantees.
+            Eligibility &amp; rules apply.
           </p>
         </div>
       </div>
@@ -179,17 +188,27 @@ function Chip({ children }: { children: React.ReactNode }) {
 function Step({ n, label }: { n: string; label: string }) {
   return (
     <li className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-zinc-700 ring-1 ring-blue-100/60 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300">
-      <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-blue-600 text-xs font-semibold text-white">{n}</span>
+      <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-blue-600 text-xs font-semibold text-white">
+        {n}
+      </span>
       <span className="text-xs">{label}</span>
     </li>
   );
 }
 function Dot({ className = "" }: { className?: string }) {
-  return <span className={`inline-block h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-blue-400 ${className}`} />;
+  return (
+    <span
+      className={`inline-block h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-blue-400 ${className}`}
+    />
+  );
 }
 function Check({ className = "" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 20 20" className={`h-3.5 w-3.5 shrink-0 fill-blue-600 dark:fill-blue-400 ${className}`}>
+    <svg
+      viewBox="0 0 20 20"
+      className={`h-3.5 w-3.5 shrink-0 fill-blue-600 dark:fill-blue-400 ${className}`}
+      aria-hidden="true"
+    >
       <path d="M16.707 5.293a1 1 0 0 1 0 1.414l-7.25 7.25a1 1 0 0 1-1.414 0l-4-4A1 1 0 0 1 5.457 8.543l3.293 3.293 6.543-6.543a1 1 0 0 1 1.414 0z" />
     </svg>
   );
@@ -197,13 +216,23 @@ function Check({ className = "" }: { className?: string }) {
 function ArrowRight() {
   return (
     <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4">
-      <path fill="currentColor" d="M5 12.75h11.19l-3.72 3.72a.75.75 0 1 0 1.06 1.06l5.25-5.25a.75.75 0 0 0 0-1.06L13.53 5.97a.75.75 0 1 0-1.06 1.06l3.72 3.72H5a.75.75 0 0 0 0 1.5z" />
+      <path
+        fill="currentColor"
+        d="M5 12.75h11.19l-3.72 3.72a.75.75 0 1 0 1.06 1.06l5.25-5.25a.75.75 0 0 0 0-1.06L13.53 5.97a.75.75 0 1 0-1.06 1.06l3.72 3.72H5a.75.75 0 0 0 0 1.5z"
+      />
     </svg>
   );
 }
 function Lock() {
   return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5 text-blue-600 dark:text-blue-300" fill="none" stroke="currentColor" strokeWidth="1.6">
+    <svg
+      viewBox="0 0 24 24"
+      className="h-5 w-5 text-blue-600 dark:text-blue-300"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      aria-hidden="true"
+    >
       <rect x="4" y="10" width="16" height="10" rx="2" />
       <path d="M8 10V7a4 4 0 0 1 8 0v3" />
     </svg>
@@ -211,7 +240,14 @@ function Lock() {
 }
 function Eye() {
   return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5 text-blue-600 dark:text-blue-300" fill="none" stroke="currentColor" strokeWidth="1.6">
+    <svg
+      viewBox="0 0 24 24"
+      className="h-5 w-5 text-blue-600 dark:text-blue-300"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      aria-hidden="true"
+    >
       <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z" />
       <circle cx="12" cy="12" r="3" />
     </svg>
@@ -219,7 +255,14 @@ function Eye() {
 }
 function Alert() {
   return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5 text-blue-600 dark:text-blue-300" fill="none" stroke="currentColor" strokeWidth="1.6">
+    <svg
+      viewBox="0 0 24 24"
+      className="h-5 w-5 text-blue-600 dark:text-blue-300"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      aria-hidden="true"
+    >
       <path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" />
       <path d="M12 9v4M12 17h.01" />
     </svg>
@@ -227,7 +270,14 @@ function Alert() {
 }
 function Shield() {
   return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5 text-blue-600 dark:text-blue-300" fill="none" stroke="currentColor" strokeWidth="1.6">
+    <svg
+      viewBox="0 0 24 24"
+      className="h-5 w-5 text-blue-600 dark:text-blue-300"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      aria-hidden="true"
+    >
       <path d="M12 3l7 3v5c0 5-3.5 9-7 10-3.5-1-7-5-7-10V6l7-3z" />
     </svg>
   );

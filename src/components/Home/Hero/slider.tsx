@@ -22,7 +22,7 @@ type Item = {
 const FALLBACK_IMG =
   "data:image/svg+xml;charset=UTF-8," +
   encodeURIComponent(
-    `<svg xmlns='http://www.w3.org/2000/svg' width='300' height='160'><rect width='100%' height='100%' fill='#eef2f7'/></svg>`
+    `<svg xmlns='http://www.w3.org/2000/svg' width='300' height='160'><rect width='100%' height='100%' fill='#eef2f7'/></svg>`,
   );
 
 /* ─ helpers ─ */
@@ -136,6 +136,10 @@ export default function HighlightsRail() {
     const href = getUrl(item);
     const kind = getKind(item);
 
+    const imgAlt = item?.title
+      ? `${kind}: ${item.title}`
+      : `${kind} highlight from XIPHIAS Immigration`;
+
     return (
       <Link
         href={href}
@@ -149,13 +153,12 @@ export default function HighlightsRail() {
         <span className="relative h-[64px] w-[96px] shrink-0 overflow-hidden">
           <Image
             src={getImg(item)}
-            alt={item?.title || "highlight image"}
+            alt={imgAlt}
             fill
             sizes="160px"
             className="object-cover"
             loading="lazy"
             decoding="async"
-            unoptimized
           />
         </span>
 

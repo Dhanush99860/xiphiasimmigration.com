@@ -1,24 +1,28 @@
-// app/about/page.tsx
+// src/app/(site)/about/page.tsx
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 
-// sections
+// Above-the-fold hero (can be client or server)
 import HeroAbout from "@/components/about/HeroAbout";
-// Dynamically import below-the-fold sections to improve initial load performance.
-// Using next/dynamic splits these components into separate chunks and reduces
-// the main bundle size, which improves Lighthouse performance【330944343751455†L23-L112】.
-import nextDynamic from "next/dynamic";
 
-const Credibility = nextDynamic(() => import("@/components/about/Credibility"));
-const Services = nextDynamic(() => import("@/components/about/Services"));
-const WhyUs = nextDynamic(() => import("@/components/about/WhyUs"));
-const OutcomesHNIs = nextDynamic(() => import("@/components/about/OutcomesHNIs"));
-const ProgramsSpotlight = nextDynamic(() => import("@/components/about/ProgramsSpotlight"));
-const PrivateClientDesk = nextDynamic(() => import("@/components/about/PrivateClientDesk"));
-const CaseStudies = nextDynamic(() => import("@/components/about/CaseStudies"));
-const Leadership = nextDynamic(() => import("@/components/about/Leadership"));
-const Timeline = nextDynamic(() => import("@/components/about/Timeline"));
-const Compliance = nextDynamic(() => import("@/components/about/Compliance"));
-const FAQ = nextDynamic(() => import("@/components/about/FAQ"));
+// Below-the-fold sections loaded lazily to keep the initial JS bundle small.
+const Credibility = dynamic(() => import("@/components/about/Credibility"));
+const Services = dynamic(() => import("@/components/about/Services"));
+const WhyUs = dynamic(() => import("@/components/about/WhyUs"));
+const OutcomesHNIs = dynamic(
+  () => import("@/components/about/OutcomesHNIs")
+);
+const ProgramsSpotlight = dynamic(
+  () => import("@/components/about/ProgramsSpotlight")
+);
+const PrivateClientDesk = dynamic(
+  () => import("@/components/about/PrivateClientDesk")
+);
+const CaseStudies = dynamic(() => import("@/components/about/CaseStudies"));
+const Leadership = dynamic(() => import("@/components/about/Leadership"));
+const Timeline = dynamic(() => import("@/components/about/Timeline"));
+const Compliance = dynamic(() => import("@/components/about/Compliance"));
+const FAQ = dynamic(() => import("@/components/about/FAQ"));
 
 export const metadata: Metadata = {
   title:
@@ -35,7 +39,12 @@ export const metadata: Metadata = {
     siteName: "XIPHIAS Immigration",
     locale: "en_US",
     images: [
-      { url: "/og/about.jpg", width: 1200, height: 630, alt: "XIPHIAS Immigration" },
+      {
+        url: "/og/about.jpg",
+        width: 1200,
+        height: 630,
+        alt: "XIPHIAS Immigration",
+      },
     ],
     type: "website",
   },
@@ -50,6 +59,7 @@ export const metadata: Metadata = {
   },
 };
 
+// Route-specific JSON-LD (kept static so it’s safe for SSR)
 const orgJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
@@ -71,7 +81,7 @@ const orgJsonLd = {
       availableLanguage: ["en"],
     },
   ],
-};
+} as const;
 
 const faqJsonLd = {
   "@context": "https://schema.org",
@@ -105,23 +115,23 @@ const faqJsonLd = {
       },
     },
   ],
-};
+} as const;
 
 export default function AboutPage() {
   return (
     <>
-      {/* JSON-LD for SEO */}
+      {/* JSON-LD for SEO (in-body scripts are fine for schema) */}
       <script
         type="application/ld+json"
-        // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
       />
       <script
         type="application/ld+json"
-        // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
-      <main className="min-h-screen bg-white text-zinc-900 dark:bg-[#0A0B0F] dark:text-white">
+
+      {/* RootLayout already renders the <main> element, so we just use a div here */}
+      <div className="min-h-screen bg-white text-zinc-900 dark:bg-[#0A0B0F] dark:text-white">
         <HeroAbout />
         <Credibility />
         <Services />
@@ -134,7 +144,7 @@ export default function AboutPage() {
         <Timeline />
         <Compliance />
         <FAQ />
-      </main>
+      </div>
     </>
   );
 }

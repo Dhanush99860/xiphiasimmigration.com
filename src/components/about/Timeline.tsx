@@ -13,7 +13,8 @@ const milestones: Milestone[] = [
   {
     year: "2009",
     title: "Founded in Bangalore",
-    text: "XIPHIAS established with a regulation-first approach across skilled, investor and corporate tracks.",
+    text:
+      "XIPHIAS established with a regulation-first approach across skilled, investor and corporate tracks.",
     tone: "brand",
   },
   {
@@ -26,25 +27,29 @@ const milestones: Milestone[] = [
   {
     year: "2017",
     title: "Enterprise Mobility",
-    text: "Scaled corporate immigration and compliance programs for multi-country deployments.",
+    text:
+      "Scaled corporate immigration and compliance programs for multi-country deployments.",
     tone: "brand",
   },
   {
     year: "2021",
     title: "HNI Investment Migration",
-    text: "Expanded Golden Visa and investment migration advisory with white-glove handling.",
+    text:
+      "Expanded Golden Visa and investment migration advisory with white-glove handling.",
     tone: "brand",
   },
   {
     year: "2024",
     title: "Multi-country Footprint",
-    text: "On-ground presence and representation across key markets, including the Gulf & EU corridors.",
+    text:
+      "On-ground presence and representation across key markets, including the Gulf & EU corridors.",
     tone: "brand",
   },
   {
     year: "2025",
     title: "Thought Leadership Elevation",
-    text: "Strengthened positioning in investment migration via strategic communications and media features.",
+    text:
+      "Strengthened positioning in investment migration via strategic communications and media features.",
     tone: "brand",
   },
 ];
@@ -53,12 +58,15 @@ export default function Timeline() {
   const titleId = "timeline-title";
 
   return (
-    <section className="py-6 md:py-6">
+    <section
+      id="timeline"
+      className="py-6 md:py-6"
+      aria-labelledby={titleId}
+    >
       {/* container aligned with hero + overflow safety */}
       <div className="container mx-auto lg:max-w-screen-2xl px-4 sm:px-6 lg:px-8 overflow-x-clip">
         {/* gradient, ringed wrapper (hero aesthetic) */}
         <div
-          aria-labelledby={titleId}
           className={[
             "relative overflow-hidden rounded-3xl p-6 md:p-8 lg:p-10",
             "bg-gradient-to-br from-sky-50 via-white to-indigo-50",
@@ -114,9 +122,11 @@ export default function Timeline() {
                   ].join(" ")}
                 />
 
-                <div className="rounded-2xl bg-white/90 p-4 ring-1 ring-blue-100/70 backdrop-blur dark:bg-white/5 dark:ring-blue-900/40">
+                <div className="rounded-2xl bg-white/90 p-4 ring-1 ring-blue-100/70 backdrop-blur dark:bg:white/5 dark:ring-blue-900/40">
                   <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-xs uppercase tracking-widest text-blue-700 dark:text-blue-300">{m.year}</p>
+                    <p className="text-xs uppercase tracking-widest text-blue-700 dark:text-blue-300">
+                      {m.year}
+                    </p>
                     {m.tone && (
                       <span
                         className={[
@@ -136,8 +146,12 @@ export default function Timeline() {
                     )}
                   </div>
 
-                  <h3 className="mt-1 text-base font-semibold leading-tight break-words">{m.title}</h3>
-                  <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300 break-words">{m.text}</p>
+                  <h3 className="mt-1 text-base font-semibold leading-tight break-words">
+                    {m.title}
+                  </h3>
+                  <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300 break-words">
+                    {m.text}
+                  </p>
                 </div>
               </li>
             ))}
@@ -145,8 +159,8 @@ export default function Timeline() {
 
           {/* disclaimer */}
           <p className="relative mt-4 text-[11px] text-zinc-600 dark:text-zinc-400">
-            *Timeline blends brand and legal milestones sourced from publicly available records and company materials.
-            No guarantees. Eligibility & rules apply.
+            *Timeline blends brand and legal milestones sourced from publicly available records and
+            company materials. No guarantees. Eligibility & rules apply.
           </p>
         </div>
       </div>
@@ -156,7 +170,11 @@ export default function Timeline() {
 
 /* tiny UI atoms */
 function Dot({ className = "" }: { className?: string }) {
-  return <span className={`inline-block h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-blue-400 ${className}`} />;
+  return (
+    <span
+      className={`inline-block h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-blue-400 ${className}`}
+    />
+  );
 }
 function LegendChip({
   tone,
@@ -170,7 +188,9 @@ function LegendChip({
       ? "bg-amber-500/10 text-amber-800 ring-amber-300 dark:text-amber-200 dark:ring-amber-700"
       : "bg-blue-600/10 text-blue-800 ring-blue-300 dark:text-blue-200 dark:ring-blue-800";
   return (
-    <span className={`inline-flex items-center rounded-full px-2 py-0.5 ring-1 ${cls}`}>
+    <span
+      className={`inline-flex items-center rounded-full px-2 py-0.5 ring-1 ${cls}`}
+    >
       {children}
     </span>
   );

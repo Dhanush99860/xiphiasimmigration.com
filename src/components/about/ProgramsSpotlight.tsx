@@ -10,10 +10,30 @@ type Program = {
 };
 
 const programs: Program[] = [
-  { tag: "Residency",   title: "UAE Golden Visa",    text: "Investor & talent pathways with regional benefits.", href: "/residency/uae" },
-  { tag: "Residency",   title: "Portugal Residency", text: "Compliant routes with family inclusion & mobility.",   href: "/residency/portugal" },
-  { tag: "Citizenship", title: "Grenada CBI",      text: "Efficient donation & real-estate options.",           href: "/citizenship/grenada" },
-  { tag: "Citizenship", title: "Dominica  CBI",    text: "Special routes in select EU jurisdictions.",          href: "/citizenship/dominica" },
+  {
+    tag: "Residency",
+    title: "UAE Golden Visa",
+    text: "Investor & talent pathways with regional benefits.",
+    href: "/residency/uae",
+  },
+  {
+    tag: "Residency",
+    title: "Portugal Residency",
+    text: "Compliant routes with family inclusion & mobility.",
+    href: "/residency/portugal",
+  },
+  {
+    tag: "Citizenship",
+    title: "Grenada CBI",
+    text: "Donation and real-estate based citizenship options.",
+    href: "/citizenship/grenada",
+  },
+  {
+    tag: "Citizenship",
+    title: "Dominica CBI",
+    text: "Established Caribbean citizenship by investment program.",
+    href: "/citizenship/dominica",
+  },
 ];
 
 function tagStyles(tag: Program["tag"]) {
@@ -26,12 +46,15 @@ export default function ProgramsSpotlight() {
   const titleId = "programs-spotlight-title";
 
   return (
-    <section className="py-6 md:py-6">
+    <section
+      id="programs-spotlight"
+      className="py-6 md:py-6"
+      aria-labelledby={titleId}
+    >
       {/* container aligned with hero + overflow safety */}
       <div className="container mx-auto lg:max-w-screen-2xl px-4 sm:px-6 lg:px-8 overflow-x-clip">
         {/* gradient & rings wrapper (hero aesthetic) */}
         <div
-          aria-labelledby={titleId}
           className={[
             "relative overflow-hidden rounded-3xl p-6 md:p-8 lg:p-10",
             "bg-gradient-to-br from-sky-50 via-white to-indigo-50",
@@ -81,7 +104,7 @@ export default function ProgramsSpotlight() {
                     "transition will-change-transform",
                     "hover:-translate-y-0.5 hover:shadow-md",
                     "focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600",
-                    "dark:bg-white/5 dark:ring-blue-900/40",
+                    "dark:bg:white/5 dark:ring-blue-900/40",
                   ].join(" ")}
                   aria-label={`${p.title} — View Program`}
                 >
@@ -100,8 +123,12 @@ export default function ProgramsSpotlight() {
                         {p.tag}
                       </span>
 
-                      <h3 className="mt-1 text-base font-semibold leading-tight break-words">{p.title}</h3>
-                      <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300 break-words">{p.text}</p>
+                      <h3 className="mt-1 text-base font-semibold leading-tight break-words">
+                        {p.title}
+                      </h3>
+                      <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300 break-words">
+                        {p.text}
+                      </p>
 
                       <span className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-blue-700 underline-offset-4 group-hover:underline dark:text-blue-300">
                         View Program
@@ -156,7 +183,13 @@ function Dot({ className = "" }: { className?: string }) {
 }
 function Globe2() {
   return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5 text-blue-600 dark:text-blue-300" fill="none" stroke="currentColor" strokeWidth="1.6">
+    <svg
+      viewBox="0 0 24 24"
+      className="h-5 w-5 text-blue-600 dark:text-blue-300"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+    >
       <circle cx="12" cy="12" r="10" />
       <path d="M2 12h20M12 2c3 4 3 14 0 20M12 2c-3 4-3 14 0 20" />
     </svg>
@@ -164,7 +197,13 @@ function Globe2() {
 }
 function Passport() {
   return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5 text-blue-600 dark:text-blue-300" fill="none" stroke="currentColor" strokeWidth="1.6">
+    <svg
+      viewBox="0 0 24 24"
+      className="h-5 w-5 text-blue-600 dark:text-blue-300"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+    >
       <rect x="5" y="3" width="14" height="18" rx="2" />
       <circle cx="12" cy="10" r="3" />
       <path d="M8 16h8" />

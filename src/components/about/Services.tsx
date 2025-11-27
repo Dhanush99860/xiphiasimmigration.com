@@ -3,22 +3,45 @@ import React from "react";
 import Link from "next/link";
 
 const items = [
-  { icon: Globe2, title: "Residency", text: "Golden Visa & investment routes, relocation readiness.", href: "/residency" },
-  { icon: Passport, title: "Citizenship", text: "Citizenship-by-investment with rigorous due diligence.", href: "/citizenship" },
-  { icon: Building, title: "Corporate Mobility", text: "Enterprise immigration & compliant deployments.", href: "/corporate" },
-  { icon: Briefcase, title: "Skilled Migration", text: "End-to-end skilled worker pathways.", href: "/skilled" },
+  {
+    icon: Globe2,
+    title: "Residency",
+    text: "Golden Visa & investment routes, relocation readiness.",
+    href: "/residency",
+  },
+  {
+    icon: Passport,
+    title: "Citizenship",
+    text: "Citizenship-by-investment with rigorous due diligence.",
+    href: "/citizenship",
+  },
+  {
+    icon: Building,
+    title: "Corporate Mobility",
+    text: "Enterprise immigration & compliant deployments.",
+    href: "/corporate",
+  },
+  {
+    icon: Briefcase,
+    title: "Skilled Migration",
+    text: "End-to-end skilled worker pathways.",
+    href: "/skilled",
+  },
 ];
 
 export default function Services() {
   const titleId = "services-title";
 
   return (
-    <section className="py-6 md:py-6">
+    <section
+      id="services"
+      className="py-6 md:py-6"
+      aria-labelledby={titleId}
+    >
       {/* container matches hero spacing + mobile safety */}
       <div className="container mx-auto lg:max-w-screen-2xl px-4 sm:px-6 lg:px-8 overflow-x-clip">
         {/* gradient card wrapper (same vibe as hero) */}
         <div
-          aria-labelledby={titleId}
           className={[
             "relative overflow-hidden rounded-3xl p-6 md:p-8 lg:p-10",
             "bg-gradient-to-br from-sky-50 via-white to-indigo-50",
@@ -77,8 +100,12 @@ export default function Services() {
                     </span>
 
                     <div className="min-w-0">
-                      <h3 className="text-base font-semibold leading-tight break-words">{title}</h3>
-                      <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300 break-words">{text}</p>
+                      <h3 className="text-base font-semibold leading-tight break-words">
+                        {title}
+                      </h3>
+                      <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300 break-words">
+                        {text}
+                      </p>
 
                       <span className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-blue-700 underline-offset-4 group-hover:underline dark:text-blue-300">
                         Explore
@@ -99,7 +126,13 @@ export default function Services() {
 /* inline icons */
 function Globe2() {
   return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5 text-blue-600 dark:text-blue-300" fill="none" stroke="currentColor" strokeWidth="1.6">
+    <svg
+      viewBox="0 0 24 24"
+      className="h-5 w-5 text-blue-600 dark:text-blue-300"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+    >
       <circle cx="12" cy="12" r="10" />
       <path d="M2 12h20M12 2c3 4 3 14 0 20M12 2c-3 4-3 14 0 20" />
     </svg>
@@ -107,7 +140,13 @@ function Globe2() {
 }
 function Passport() {
   return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5 text-blue-600 dark:text-blue-300" fill="none" stroke="currentColor" strokeWidth="1.6">
+    <svg
+      viewBox="0 0 24 24"
+      className="h-5 w-5 text-blue-600 dark:text-blue-300"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+    >
       <rect x="5" y="3" width="14" height="18" rx="2" />
       <circle cx="12" cy="10" r="3" />
       <path d="M8 16h8" />
@@ -116,7 +155,13 @@ function Passport() {
 }
 function Building() {
   return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5 text-blue-600 dark:text-blue-300" fill="none" stroke="currentColor" strokeWidth="1.6">
+    <svg
+      viewBox="0 0 24 24"
+      className="h-5 w-5 text-blue-600 dark:text-blue-300"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+    >
       <rect x="3" y="3" width="8" height="18" rx="1" />
       <rect x="13" y="7" width="8" height="14" rx="1" />
       <path d="M7 7h2M7 11h2M7 15h2M17 11h2M17 15h2" />
@@ -125,7 +170,13 @@ function Building() {
 }
 function Briefcase() {
   return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5 text-blue-600 dark:text-blue-300" fill="none" stroke="currentColor" strokeWidth="1.6">
+    <svg
+      viewBox="0 0 24 24"
+      className="h-5 w-5 text-blue-600 dark:text-blue-300"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+    >
       <path d="M9 6V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1" />
       <rect x="3" y="7" width="18" height="13" rx="2" />
       <path d="M3 12h18" />
@@ -133,12 +184,19 @@ function Briefcase() {
   );
 }
 function Dot({ className = "" }: { className?: string }) {
-  return <span className={`inline-block h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-blue-400 ${className}`} />;
+  return (
+    <span
+      className={`inline-block h-1.5 w-1.5 rounded-full bg-blue-600 dark:bg-blue-400 ${className}`}
+    />
+  );
 }
 function ArrowRight() {
   return (
     <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4">
-      <path fill="currentColor" d="M5 12.75h11.19l-3.72 3.72a.75.75 0 1 0 1.06 1.06l5.25-5.25a.75.75 0 0 0 0-1.06L13.53 5.97a.75.75 0 1 0-1.06 1.06l3.72 3.72H5a.75.75 0 0 0 0 1.5z" />
+      <path
+        fill="currentColor"
+        d="M5 12.75h11.19l-3.72 3.72a.75.75 0 1 0 1.06 1.06l5.25-5.25a.75.75 0 0 0 0-1.06L13.53 5.97a.75.75 0 1 0-1.06 1.06l3.72 3.72H5a.75.75 0 0 0 0 1.5z"
+      />
     </svg>
   );
 }
