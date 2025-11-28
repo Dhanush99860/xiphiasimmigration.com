@@ -15,14 +15,14 @@ export const dynamic = "force-static"; // build-time; FS-driven
 const SITE = "https://www.xiphiasimmigration.com";
 
 export const metadata: Metadata = {
-  title: "Careers at XIPHIAS Immigration | Remote Jobs & Open Roles",
+  title: "Careers at XIPHIAS Immigration | Jobs & Open Roles",
   description:
-    "Join our global team. Explore remote-friendly careers in citizenship, residency, skilled migration, and corporate immigration.",
+    "Join our India-based team. Explore careers in citizenship, residency, skilled migration, and corporate immigration from our offices.",
   alternates: { canonical: `${SITE}/careers` },
   robots: { index: true, follow: true },
   openGraph: {
     title: "Careers at XIPHIAS Immigration",
-    description: "Remote-first roles across immigration services.",
+    description: "On-site roles across immigration services.",
     url: `${SITE}/careers`,
     type: "website",
     siteName: "XIPHIAS Immigration",
@@ -45,15 +45,19 @@ function orgJsonLd() {
 
 export default function Page() {
   const jobs = getAllJobs();
-  const depts = Array.from(new Set(jobs.map((j) => j.dept).filter(Boolean))) as string[];
+  const depts = Array.from(
+    new Set(jobs.map((j) => j.dept).filter(Boolean))
+  ) as string[];
 
   return (
     <>
       {/* Organization structured data (OK on listing page) */}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: orgJsonLd() }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: orgJsonLd() }}
+      />
 
       <main className="mx-auto max-w-7xl px-4 pb-16 pt-10 sm:px-6 lg:px-8">
-
         {/* Breadcrumb */}
         <Breadcrumb />
 
@@ -61,12 +65,17 @@ export default function Page() {
         <Hero />
 
         {/* Filters + listing */}
-        <section id="open-roles" aria-label="Filters and Open roles" className="mt-10 md:mt-14">
+        <section
+          id="open-roles"
+          aria-label="Filters and Open roles"
+          className="mt-10 md:mt-14"
+        >
           <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
             Open Roles
           </h2>
           <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
-            Remote-first opportunities across consulting, sales, processing, design, and marketing.
+            On-site opportunities across consulting, sales, processing, design,
+            and marketing from our Bengaluru and branch offices.
           </p>
 
           <div className="mt-4">

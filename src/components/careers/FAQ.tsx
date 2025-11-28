@@ -2,16 +2,16 @@
 export default function FAQ() {
   const faqs = [
     {
-      q: "Do you hire fully remote?",
-      a: "Yes. Most roles are remote-first with flexible hours. Some teams offer optional hybrid time in Bengaluru.",
+      q: "Do you offer remote roles?",
+      a: "We are currently hiring for work-from-office positions from our Bengaluru headquarters and branch offices in India.",
     },
     {
       q: "What documents should I prepare?",
-      a: "A current resume, LinkedIn profile, and any portfolio/case samples relevant to the role.",
+      a: "A current resume, LinkedIn profile, and any portfolio or case samples relevant to the role.",
     },
     {
       q: "Do you support career growth?",
-      a: "We offer certification reimbursements, mentorship, and role-specific learning budgets.",
+      a: "We offer certification reimbursements, mentorship, and role-specific learning and development support.",
     },
     {
       q: "What’s the typical timeline?",
@@ -36,7 +36,10 @@ export default function FAQ() {
   return (
     <section aria-labelledby="faq">
       {/* SEO: FAQPage structured data */}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: faqJsonLd }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: faqJsonLd }}
+      />
 
       <div
         className={[
@@ -46,7 +49,9 @@ export default function FAQ() {
           "text-black dark:text-white",
         ].join(" ")}
       >
-        <h2 id="faq" className="text-xl font-bold tracking-tight">FAQ</h2>
+        <h2 id="faq" className="text-xl font-bold tracking-tight">
+          FAQ
+        </h2>
 
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
           {faqs.map((f) => (
@@ -83,9 +88,7 @@ export default function FAQ() {
                   </svg>
                 </span>
               </summary>
-              <p className="mt-2 text-sm">
-                {f.a}
-              </p>
+              <p className="mt-2 text-sm">{f.a}</p>
             </details>
           ))}
         </div>
@@ -93,7 +96,10 @@ export default function FAQ() {
         <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
           <p className="text-xs opacity-80">
             Still have questions?{" "}
-            <a href="mailto:hr@xiphias.in" className="underline decoration-2 underline-offset-2">
+            <a
+              href="mailto:hr@xiphias.in"
+              className="underline decoration-2 underline-offset-2"
+            >
               hr@xiphias.in
             </a>
           </p>

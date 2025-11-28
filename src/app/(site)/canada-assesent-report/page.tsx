@@ -598,27 +598,27 @@ const reportHtml = `
                                     <tr>
                                       <td style="padding:0 5px;">
                                         <a href="https://www.facebook.com/xiphiasimmigration" target="_blank" style="text-decoration:none;">
-                                          <img src="/images/footer/social/facebook.svg" width="18" height="18" style="display:block;border:0;" alt="Facebook" />
+                                          <img src="https://xiphiasimmigration-com.vercel.app/images/footer/social/facebook.svg" width="18" height="18" style="display:block;border:0;" alt="Facebook" />
                                         </a>
                                       </td>
                                       <td style="padding:0 5px;">
                                         <a href="https://twitter.com/XiphiasInfo" target="_blank" style="text-decoration:none;">
-                                          <img src="/images/footer/social/x.svg" width="18" height="18" style="display:block;border:0;" alt="Twitter" />
+                                          <img src="https://xiphiasimmigration-com.vercel.app/images/footer/social/x.svg" width="18" height="18" style="display:block;border:0;" alt="Twitter" />
                                         </a>
                                       </td>
                                       <td style="padding:0 5px;">
                                         <a href="https://www.linkedin.com/company/xiphias-immigration-pvt-limited?trk=prof-following-company-logo" target="_blank" style="text-decoration:none;">
-                                          <img src="/images/footer/social/linkedin.svg" width="18" height="18" style="display:block;border:0;" alt="LinkedIn" />
+                                          <img src="https://xiphiasimmigration-com.vercel.app/images/footer/social/linkedin.svg" width="18" height="18" style="display:block;border:0;" alt="LinkedIn" />
                                         </a>
                                       </td>
                                       <td style="padding:0 5px;">
                                         <a href="https://www.instagram.com/xiphias.immigration/" target="_blank" style="text-decoration:none;">
-                                          <img src="/images/footer/social/instagram.svg" width="18" height="18" style="display:block;border:0;" alt="Instagram" />
+                                          <img src="https://xiphiasimmigration-com.vercel.app/images/footer/social/instagram.svg" width="18" height="18" style="display:block;border:0;" alt="Instagram" />
                                         </a>
                                       </td>
                                       <td style="padding:0 5px;">
                                         <a href="https://www.youtube.com/@immigrationxiphias5228" target="_blank" style="text-decoration:none;">
-                                          <img src="/images/footer/social/youtube.svg" width="18" height="18" style="display:block;border:0;" alt="YouTube" />
+                                          <img src="https://xiphiasimmigration-com.vercel.app/images/footer/social/youtube.svg" width="18" height="18" style="display:block;border:0;" alt="YouTube" />
                                         </a>
                                       </td>
                                     </tr>
