@@ -317,6 +317,31 @@ const reportHtml = `
                               <td style="padding:6px 8px;font-size:13px;font-weight:bold;border-top:1px solid #222222;">Total:</td>
                               <td style="padding:6px 8px;font-size:13px;font-weight:bold;border-top:1px solid #222222;text-align:right;">427</td>
                             </tr>
+                            <tr>
+                              <td colspan="2" style="padding:6px 8px;font-size:13px;font-weight:bold;background-color:#4a7cc9;color:#ffffff;">
+                                Additional points (to a maximum of 600 points)
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style="padding:6px 8px;font-size:13px;border-bottom:1px solid #222222;">Provincial nomination</td>
+                              <td style="padding:6px 8px;font-size:13px;border-bottom:1px solid #222222;text-align:right;">0</td>
+                            </tr>
+                            <tr>
+                              <td style="padding:6px 8px;font-size:13px;border-bottom:1px solid #222222;">Study in Canada</td>
+                              <td style="padding:6px 8px;font-size:13px;border-bottom:1px solid #222222;text-align:right;">0</td>
+                            </tr>
+                            <tr>
+                              <td style="padding:6px 8px;font-size:13px;border-bottom:1px solid #222222;">Sibling in Canada</td>
+                              <td style="padding:6px 8px;font-size:13px;border-bottom:1px solid #222222;text-align:right;">15</td>
+                            </tr>
+                            <tr>
+                              <td style="padding:6px 8px;font-size:13px;border-bottom:1px solid #222222;">French-language skills</td>
+                              <td style="padding:6px 8px;font-size:13px;border-bottom:1px solid #222222;text-align:right;">0</td>
+                            </tr>
+                            <tr>
+                              <td style="padding:6px 8px;font-size:13px;font-weight:bold;border-top:1px solid #222222;">Subtotal Additional points:</td>
+                              <td style="padding:6px 8px;font-size:13px;font-weight:bold;border-top:1px solid #222222;text-align:right;">15</td>
+                            </tr>
                           </tbody>
                         </table>
                       </td>
