@@ -717,7 +717,7 @@ function SquareThumb({ program }: { program: ProgramMeta }) {
   const hero = ensureAbs((program as any).heroImage);
   const heroPoster = ensureAbs((program as any).heroPoster);
   const countryPost = `/images/countries/${program.countrySlug}-hero-poster.jpg`;
-  const og = `/og.jpg`;
+  const og = `/xiphias-immigration.png`;
   const svgFallback =
     "data:image/svg+xml;utf8," +
     encodeURIComponent(

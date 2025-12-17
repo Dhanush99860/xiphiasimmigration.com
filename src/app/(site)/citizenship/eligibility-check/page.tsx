@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og.jpg",
+        url: "/xiphias-immigration.png",
         width: 1200,
         height: 630,
         alt: "Citizenship Eligibility Check – XIPHIAS Immigration",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     title: "Citizenship Eligibility Check (Free) | Interactive Assessment",
     description:
       "Explore citizenship by investment, by descent, or via residency-to-naturalization. Instant results + downloadable summary.",
-    images: ["/og.jpg"],
+    images: ["/xiphias-immigration.png"],
   },
   robots: { index: true, follow: true },
 };

@@ -1,11 +1,11 @@
 // FILE: src/app/(site)/anti-fraud/page.tsx
-// Anti-fraud Notice — black/white theme, responsive, SEO+JSON-LD, with Breadcrumb.
-// Uses your Breadcrumb component: import Breadcrumb from "@/components/Common/Breadcrumb";
-
 import type { Metadata } from "next";
 import Breadcrumb from "@/components/Common/Breadcrumb";
 import Link from "next/link";
 import React from "react";
+
+// ✅ Keep one canonical domain everywhere
+const SITE_URL = "https://www.xiphiasimmigration.com";
 
 // ───────────────── SEO METADATA ─────────────────
 export const metadata: Metadata = {
@@ -14,14 +14,32 @@ export const metadata: Metadata = {
     "Protect yourself from scams. Learn how to verify genuine communication from XIPHIAS Immigration Private Limited and report suspected fraud.",
   alternates: { canonical: "/anti-fraud" },
   robots: { index: true, follow: true },
+
+  // ✅ Add OG image here so this page doesn't lose the global OG image
   openGraph: {
     title: "Anti-fraud Notice · XIPHIAS Immigration Private Limited",
     description:
       "How to identify scams, what we never ask for, and how to verify official contact from XIPHIAS Immigration Private Limited.",
-    url: "/anti-fraud",
-    type: "article",
+    url: `${SITE_URL}/anti-fraud`,
+    siteName: "XIPHIAS Immigration",
+    type: "website",
+    images: [
+      {
+        url: "/xiphias-immigration.png",
+        width: 1200,
+        height: 630,
+        alt: "XIPHIAS Immigration",
+      },
+    ],
   },
-  twitter: { card: "summary" },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Anti-fraud Notice · XIPHIAS Immigration Private Limited",
+    description:
+      "How to identify scams, what we never ask for, and how to verify official contact from XIPHIAS Immigration Private Limited.",
+    images: ["/xiphias-immigration.png"],
+  },
 };
 
 // ──────────────── SMALL UI HELPERS (black/white only) ────────────────
@@ -54,14 +72,15 @@ const Card = ({ children }: { children: React.ReactNode }) => (
 // ───────────────── PAGE ─────────────────
 export default function AntiFraudPage() {
   const effectiveDate = "09 Oct 2025";
+
   const company = {
     name: "XIPHIAS Immigration Private Limited",
     city: "Bengaluru",
     state: "Karnataka",
     country: "India",
-    site: "https://xiphiasimmigration.com",
-    contact: "support@immigration.in",
-    report: "report-fraud@xiphiasimmigration.com",
+    site: SITE_URL,
+    contact: "immigration@xiphias.in",
+    report: "immigration@xiphias.in",
     domain: "xiphiasimmigration.com",
   } as const;
 
@@ -80,10 +99,16 @@ export default function AntiFraudPage() {
   const jsonLdWebPage = {
     "@context": "https://schema.org",
     "@type": "WebPage",
+    "@id": `${company.site}/anti-fraud#webpage`,
     name: "Anti-fraud Notice",
     url: `${company.site}/anti-fraud`,
     dateModified: "2025-10-09",
-    isPartOf: { "@type": "WebSite", name: company.name, url: company.site },
+    isPartOf: {
+      "@type": "WebSite",
+      "@id": `${company.site}/#website`,
+      name: "XIPHIAS Immigration",
+      url: company.site,
+    },
   };
 
   const jsonLdBreadcrumbs = {
@@ -91,7 +116,12 @@ export default function AntiFraudPage() {
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: `${company.site}/` },
-      { "@type": "ListItem", position: 2, name: "Anti-fraud Notice", item: `${company.site}/anti-fraud` },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Anti-fraud Notice",
+        item: `${company.site}/anti-fraud`,
+      },
     ],
   };
 
@@ -115,8 +145,11 @@ export default function AntiFraudPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10 md:py-14">
           <div className="flex items-start justify-between gap-6">
             <div className="max-w-3xl">
-              <h1 className="text-2xl md:text-4xl font-semibold tracking-tight">Anti-fraud Notice</h1>
+              <h1 className="text-2xl md:text-4xl font-semibold tracking-tight">
+                Anti-fraud Notice
+              </h1>
               <p className="mt-2 text-sm/6 opacity-80">Effective: {effectiveDate}</p>
+
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
                 <Card>
                   <ul className="list-disc pl-5 space-y-1 text-sm">
@@ -125,12 +158,21 @@ export default function AntiFraudPage() {
                     <li>Report suspicious activity to our team.</li>
                   </ul>
                 </Card>
+
                 <Card>
                   <p className="text-sm">
                     Related policies:{" "}
-                    <Link href="/privacy-policy" className="underline">Privacy Policy</Link>{" "}
-                    · <Link href="/terms" className="underline">Terms of Use</Link>{" "}
-                    · <Link href="/disclaimer" className="underline">Disclaimer</Link>
+                    <Link href="/privacy-policy" className="underline">
+                      Privacy Policy
+                    </Link>{" "}
+                    ·{" "}
+                    <Link href="/terms" className="underline">
+                      Terms of Use
+                    </Link>{" "}
+                    ·{" "}
+                    <Link href="/disclaimer" className="underline">
+                      Disclaimer
+                    </Link>
                   </p>
                 </Card>
               </div>
@@ -139,7 +181,9 @@ export default function AntiFraudPage() {
             {/* Right rail (desktop TOC) */}
             <aside className="hidden lg:block w-64 shrink-0">
               <nav aria-label="On this page" className="sticky top-28">
-                <p className="text-xs uppercase tracking-wide opacity-70 mb-2">On this page</p>
+                <p className="text-xs uppercase tracking-wide opacity-70 mb-2">
+                  On this page
+                </p>
                 <ul className="space-y-1">
                   {toc.map((n) => (
                     <li key={n.id}>
@@ -164,9 +208,9 @@ export default function AntiFraudPage() {
           <div className="lg:col-span-9 space-y-10">
             <Section id="overview" title="1. Overview">
               <p>
-                Fraudsters may impersonate {company.name} or claim affiliation to solicit money, personal
-                information, or documents. This page explains how to protect yourself and how to confirm
-                that a message is genuinely from us.
+                Fraudsters may impersonate {company.name} or claim affiliation to solicit money,
+                personal information, or documents. This page explains how to protect yourself and how
+                to confirm that a message is genuinely from us.
               </p>
             </Section>
 
@@ -183,18 +227,26 @@ export default function AntiFraudPage() {
                   <tbody>
                     <tr className="border-t border-black/10 dark:border-white/20">
                       <td className="p-2">Unsolicited job offers / visa guarantees</td>
-                      <td className="p-2">“Guaranteed visa/job”, pressure to pay immediately, unrealistic salary</td>
+                      <td className="p-2">
+                        “Guaranteed visa/job”, pressure to pay immediately, unrealistic salary
+                      </td>
                       <td className="p-2">Do not pay. Verify sender domain and contact us.</td>
                     </tr>
                     <tr className="border-t border-black/10 dark:border-white/20">
                       <td className="p-2">Payments to personal accounts or wallets</td>
                       <td className="p-2">UPI/crypto/personal bank details shared on chat apps</td>
-                      <td className="p-2">We accept payments only via official company accounts and invoices.</td>
+                      <td className="p-2">
+                        We accept payments only via official company accounts and invoices.
+                      </td>
                     </tr>
                     <tr className="border-t border-black/10 dark:border-white/20">
                       <td className="p-2">WhatsApp/Telegram impersonation</td>
-                      <td className="p-2">Display names without our domain email, blurry IDs, no company signature</td>
-                      <td className="p-2">Ask for a confirmation email from <strong>@{company.domain}</strong>.</td>
+                      <td className="p-2">
+                        Display names without our domain email, blurry IDs, no company signature
+                      </td>
+                      <td className="p-2">
+                        Ask for a confirmation email from <strong>@{company.domain}</strong>.
+                      </td>
                     </tr>
                     <tr className="border-t border-black/10 dark:border-white/20">
                       <td className="p-2">Document forgery offers</td>
@@ -209,21 +261,27 @@ export default function AntiFraudPage() {
             <Section id="verify" title="3. How to verify you’re dealing with us">
               <ul className="list-disc pl-5 space-y-2">
                 <li>
-                  <strong>Email domain:</strong> Official emails come from <strong>@{company.domain}</strong>.
-                  If in doubt, forward to{" "}
-                  <a className="underline" href={`mailto:${company.report}`}>{company.report}</a> for verification.
+                  <strong>Email domain:</strong> Official emails come from{" "}
+                  <strong>@{company.domain}</strong>. If in doubt, forward to{" "}
+                  <a className="underline" href={`mailto:${company.report}`}>
+                    {company.report}
+                  </a>{" "}
+                  for verification.
                 </li>
                 <li>
-                  <strong>Invoices & receipts:</strong> Issued on {company.name} letterhead only; payments are
-                  accepted to company bank accounts—never personal accounts or wallets.
+                  <strong>Invoices & receipts:</strong> Issued on {company.name} letterhead only;
+                  payments are accepted to company bank accounts—never personal accounts or wallets.
                 </li>
                 <li>
                   <strong>Website:</strong> Confirm links resolve to{" "}
-                  <a className="underline" href={company.site}>{company.site.replace("https://","")}</a>.
+                  <a className="underline" href={company.site}>
+                    {company.site.replace("https://", "")}
+                  </a>
+                  .
                 </li>
                 <li>
-                  <strong>Call-back:</strong> If contacted on chat apps, request a confirmation email and a
-                  scheduled call via official channels.
+                  <strong>Call-back:</strong> If contacted on chat apps, request a confirmation email and
+                  a scheduled call via official channels.
                 </li>
               </ul>
             </Section>
@@ -244,14 +302,14 @@ export default function AntiFraudPage() {
                   <a className="underline" href={`mailto:${company.report}`}>
                     {company.report}
                   </a>{" "}
-                  with the subject <strong>“Suspected Fraud”</strong>.
-                  Include the sender address/phone, screenshots, payment instructions received, and any
-                  links or attachments you were sent.
+                  with the subject <strong>“Suspected Fraud”</strong>. Include the sender
+                  address/phone, screenshots, payment instructions received, and any links or
+                  attachments you were sent.
                 </p>
               </Card>
               <p className="mt-3 text-sm">
-                If you have already paid, also contact your bank/payment provider immediately to try
-                to stop or dispute the transaction.
+                If you have already paid, also contact your bank/payment provider immediately to try to
+                stop or dispute the transaction.
               </p>
             </Section>
 
@@ -266,9 +324,9 @@ export default function AntiFraudPage() {
 
             <Section id="legal" title="7. Legal disclaimer">
               <p>
-                {company.name} is not responsible for losses arising from dealings with unaffiliated third
-                parties or impersonators. We will cooperate with authorities where appropriate and may
-                provide information to aid investigations.
+                {company.name} is not responsible for losses arising from dealings with unaffiliated
+                third parties or impersonators. We will cooperate with authorities where appropriate and
+                may provide information to aid investigations.
               </p>
             </Section>
 
@@ -277,13 +335,19 @@ export default function AntiFraudPage() {
                 <Card>
                   <h3 className="text-sm font-semibold mb-2">Report fraud</h3>
                   <p className="text-sm">
-                    Email: <a className="underline" href={`mailto:${company.report}`}>{company.report}</a>
+                    Email:{" "}
+                    <a className="underline" href={`mailto:${company.report}`}>
+                      {company.report}
+                    </a>
                   </p>
                 </Card>
                 <Card>
                   <h3 className="text-sm font-semibold mb-2">Privacy enquiries</h3>
                   <p className="text-sm">
-                    Email: <a className="underline" href={`mailto:${company.contact}`}>{company.contact}</a>
+                    Email:{" "}
+                    <a className="underline" href={`mailto:${company.contact}`}>
+                      {company.contact}
+                    </a>
                   </p>
                 </Card>
               </div>

@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og.jpg",
+        url: "/xiphias-immigration.png",
         width: 1200,
         height: 630,
         alt: "Insights – Articles, News, Media & Blog Updates – XIPHIAS Immigration",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     title: "Insights – Articles, News, Media & Blog Updates",
     description:
       "Explore our latest insights: articles, news, media, and blog updates covering residency, citizenship and investment migration programs.",
-    images: ["/og.jpg"],
+    images: ["/xiphias-immigration.png"],
   },
 };
 import { getAllInsights, getInsightsFacets } from "@/lib/insights-content";

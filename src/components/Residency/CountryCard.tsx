@@ -17,6 +17,9 @@ type AnyCountry =
 
 type Variant = "compact" | "standard" | "plush";
 
+// ✅ CHANGE ONLY HERE if your canonical domain changes later
+const SITE_URL = "https://www.xiphiasimmigration.com";
+
 /* ---------------- utils ---------------- */
 function baseFromCategory(cat?: AnyCountry["category"]) {
   switch (cat) {
@@ -32,13 +35,23 @@ function baseFromCategory(cat?: AnyCountry["category"]) {
   }
 }
 
+function serviceTypeFromCategory(cat?: AnyCountry["category"]) {
+  switch (cat) {
+    case "citizenship":
+      return "Citizenship by Investment";
+    case "skilled":
+      return "Skilled Immigration";
+    case "corporate":
+      return "Corporate Mobility";
+    case "residency":
+    default:
+      return "Residency by Investment";
+  }
+}
+
 function ensureAbsoluteForImage(src?: string) {
   if (!src) return undefined;
-  if (
-    src.startsWith("http://") ||
-    src.startsWith("https://") ||
-    src.startsWith("/")
-  )
+  if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("/"))
     return src;
   return `/${src.replace(/^\.?\/*/, "")}`;
 }
@@ -73,9 +86,7 @@ function slugify(s: string) {
 function stableIds(country: AnyCountry, title: string) {
   const base =
     "cc-" +
-    (country.countrySlug
-      ? slugify(country.countrySlug)
-      : slugify(title || "untitled"));
+    (country.countrySlug ? slugify(country.countrySlug) : slugify(title || "untitled"));
   return {
     headingId: `${base}-h`,
     descId: `${base}-d`,
@@ -90,7 +101,6 @@ export default function CountryCard({
   country: AnyCountry;
   variant?: Variant;
 }) {
-  // sizes keep your old API but the rest of the UI matches CountryCardPro
   const sizes = {
     compact: { pad: "p-3", imgAspect: "aspect-[6/3]" },
     standard: { pad: "p-4", imgAspect: "aspect-[16/10] sm:aspect-[4/3]" },
@@ -100,18 +110,18 @@ export default function CountryCard({
   // Pull common fields (tolerant to vertical meta differences)
   const title = (country as any).title as string;
   const summary = (country as any).summary as string | undefined;
-  const heroImage = ensureAbsoluteForImage(
-    (country as any).heroImage as string | undefined,
-  );
+  const heroImage = ensureAbsoluteForImage((country as any).heroImage as string | undefined);
   const minInvestment = (country as any).minInvestment as number | undefined;
   const currency = ((country as any).currency as string | undefined) || "USD";
   const timelineMonths = (country as any).timelineMonths as number | undefined;
   const tags = ((country as any).tags as string[] | undefined) || [];
 
-  // Safe URL compute; if missing, render non-link card
   const computedHref = country?.countrySlug
     ? `${baseFromCategory(country.category)}/${country.countrySlug}`
     : undefined;
+
+  const absoluteUrl = computedHref ? `${SITE_URL}${computedHref}` : undefined;
+  const serviceType = serviceTypeFromCategory(country.category);
 
   const price = fmtCurrency(minInvestment, currency, "en-US");
   const time = plural(timelineMonths, "mo");
@@ -150,21 +160,42 @@ export default function CountryCard({
 
   return (
     <CardShell>
-      {/* SEO microdata lives inside to work for both link/non-link shells */}
-      <article itemScope itemType="https://schema.org/Product">
-        {computedHref ? <meta itemProp="url" content={computedHref} /> : null}
-        <meta itemProp="name" content={title} />
-        {summary ? <meta itemProp="description" content={summary} /> : null}
+      {/* ✅ SEO microdata (Service) — NO UI impact (hidden/sr-only only) */}
+      <article itemScope itemType="https://schema.org/Service">
+        {/* Using <data> / <span> avoids invalid <meta> tags in body */}
+        {absoluteUrl ? (
+          <data itemProp="url" value={absoluteUrl} className="hidden" />
+        ) : null}
+
+        <span itemProp="name" className="sr-only">
+          {title}
+        </span>
+
+        {summary ? (
+          <span itemProp="description" className="sr-only">
+            {summary}
+          </span>
+        ) : null}
+
+        <span itemProp="serviceType" className="sr-only">
+          {serviceType}
+        </span>
+
+        <div
+          itemProp="provider"
+          itemScope
+          itemType="https://schema.org/Organization"
+          className="hidden"
+        >
+          <span itemProp="name">XIPHIAS Immigration</span>
+          <data itemProp="url" value={SITE_URL} />
+        </div>
+
         {typeof minInvestment === "number" ? (
-          <div
-            itemProp="offers"
-            itemScope
-            itemType="https://schema.org/Offer"
-            className="hidden"
-          >
-            <meta itemProp="priceCurrency" content={currency.toUpperCase()} />
-            <meta itemProp="price" content={String(minInvestment)} />
-            <link itemProp="availability" href="https://schema.org/InStock" />
+          <div itemProp="offers" itemScope itemType="https://schema.org/Offer" className="hidden">
+            <data itemProp="priceCurrency" value={currency.toUpperCase()} />
+            <data itemProp="price" value={String(minInvestment)} />
+            <data itemProp="availability" value="https://schema.org/InStock" />
           </div>
         ) : null}
 
@@ -187,9 +218,7 @@ export default function CountryCard({
             />
           ) : (
             <div className="h-full w-full grid place-items-center">
-              <span className="text-xs text-neutral-600 dark:text-neutral-300">
-                Program
-              </span>
+              <span className="text-xs text-neutral-600 dark:text-neutral-300">Program</span>
             </div>
           )}
         </div>
@@ -212,20 +241,16 @@ export default function CountryCard({
             </p>
           ) : null}
 
-          {/* Key metrics (parity with CountryCardPro) */}
+          {/* Key metrics */}
           <div className="mt-3 grid grid-cols-2 gap-2 text-[13px]">
             <div className="rounded-xl p-2 bg-neutral-50 dark:bg-neutral-900 ring-1 ring-neutral-200 dark:ring-neutral-800">
-              <div className="font-medium text-neutral-900 dark:text-neutral-100">
-                {price}
-              </div>
+              <div className="font-medium text-neutral-900 dark:text-neutral-100">{price}</div>
               <div className="text-[11px] text-neutral-600 dark:text-neutral-400">
                 Min investment
               </div>
             </div>
             <div className="rounded-xl p-2 bg-neutral-50 dark:bg-neutral-900 ring-1 ring-neutral-200 dark:ring-neutral-800">
-              <div className="font-medium text-neutral-900 dark:text-neutral-100">
-                {time}
-              </div>
+              <div className="font-medium text-neutral-900 dark:text-neutral-100">{time}</div>
               <div className="text-[11px] text-neutral-600 dark:text-neutral-400">
                 Typical timeline
               </div>
@@ -242,10 +267,7 @@ export default function CountryCard({
                              bg-white text-neutral-900 ring-1 ring-neutral-200
                              dark:bg-neutral-900 dark:text-neutral-100 dark:ring-neutral-700"
                 >
-                  <span
-                    className="h-1.5 w-1.5 rounded-full bg-blue-600"
-                    aria-hidden
-                  />
+                  <span className="h-1.5 w-1.5 rounded-full bg-blue-600" aria-hidden />
                   {t}
                 </span>
               ))}

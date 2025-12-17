@@ -1,11 +1,11 @@
 // FILE: src/app/(site)/cookies/page.tsx
-// Cookies Policy — black/white theme only, fully responsive, SEO+JSON-LD, with Breadcrumb.
-// Uses your Breadcrumb component: import Breadcrumb from "@/components/Common/Breadcrumb";
-
 import type { Metadata } from "next";
 import Link from "next/link";
 import Breadcrumb from "@/components/Common/Breadcrumb";
 import React from "react";
+
+// ✅ Keep one canonical domain everywhere
+const SITE_URL = "https://www.xiphiasimmigration.com";
 
 // ───────────────── SEO METADATA ─────────────────
 export const metadata: Metadata = {
@@ -14,14 +14,31 @@ export const metadata: Metadata = {
     "How XIPHIAS Immigration Private Limited uses cookies and similar technologies, and how you can manage your preferences.",
   alternates: { canonical: "/cookies" },
   robots: { index: true, follow: true },
+
   openGraph: {
     title: "Cookies Policy · XIPHIAS Immigration Private Limited",
     description:
       "How we use cookies and similar technologies, and how to manage your preferences.",
-    url: "/cookies",
-    type: "article",
+    url: `${SITE_URL}/cookies`,
+    siteName: "XIPHIAS Immigration",
+    type: "website",
+    images: [
+      {
+        url: "/xiphias-immigration.png",
+        width: 1200,
+        height: 630,
+        alt: "XIPHIAS Immigration",
+      },
+    ],
   },
-  twitter: { card: "summary" },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Cookies Policy · XIPHIAS Immigration Private Limited",
+    description:
+      "How we use cookies and similar technologies, and how to manage your preferences.",
+    images: ["/xiphias-immigration.png"],
+  },
 };
 
 // ──────────────── SMALL UI HELPERS (black/white only) ────────────────
@@ -56,8 +73,8 @@ export default function CookiesPage() {
   const effectiveDate = "09 Oct 2025";
   const company = {
     name: "XIPHIAS Immigration Private Limited",
-    site: "https://xiphiasimmigration.com",
-    privacyEmail: "support@immigration.in",
+    site: SITE_URL,
+    privacyEmail: "immigration@xiphias.in",
   } as const;
 
   const toc = [
@@ -73,10 +90,16 @@ export default function CookiesPage() {
   const jsonLdWebPage = {
     "@context": "https://schema.org",
     "@type": "WebPage",
+    "@id": `${company.site}/cookies#webpage`,
     name: "Cookies Policy",
     url: `${company.site}/cookies`,
     dateModified: "2025-10-09",
-    isPartOf: { "@type": "WebSite", name: company.name, url: company.site },
+    isPartOf: {
+      "@type": "WebSite",
+      "@id": `${company.site}/#website`,
+      name: "XIPHIAS Immigration",
+      url: company.site,
+    },
   };
 
   const jsonLdBreadcrumbs = {
@@ -108,8 +131,11 @@ export default function CookiesPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10 md:py-14">
           <div className="flex items-start justify-between gap-6">
             <div className="max-w-3xl">
-              <h1 className="text-2xl md:text-4xl font-semibold tracking-tight">Cookies Policy</h1>
+              <h1 className="text-2xl md:text-4xl font-semibold tracking-tight">
+                Cookies Policy
+              </h1>
               <p className="mt-2 text-sm/6 opacity-80">Effective: {effectiveDate}</p>
+
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
                 <Card>
                   <ul className="list-disc pl-5 space-y-1 text-sm">
@@ -119,12 +145,14 @@ export default function CookiesPage() {
                     <li>How we honor Global Privacy Control (GPC).</li>
                   </ul>
                 </Card>
+
                 <Card>
                   <p className="text-sm">
                     See also the{" "}
                     <Link href="/privacy-policy" className="underline">
                       Privacy Policy
-                    </Link>{" "}.
+                    </Link>
+                    .
                   </p>
                 </Card>
               </div>
@@ -133,7 +161,9 @@ export default function CookiesPage() {
             {/* Right rail (desktop TOC) */}
             <aside className="hidden lg:block w-64 shrink-0">
               <nav aria-label="On this page" className="sticky top-28">
-                <p className="text-xs uppercase tracking-wide opacity-70 mb-2">On this page</p>
+                <p className="text-xs uppercase tracking-wide opacity-70 mb-2">
+                  On this page
+                </p>
                 <ul className="space-y-1">
                   {toc.map((n) => (
                     <li key={n.id}>
@@ -226,20 +256,12 @@ export default function CookiesPage() {
 
             <Section id="manage" title="4. Manage your preferences">
               <p>
-                You can change your settings anytime via{" "}
-                <Link href="/cookies" className="underline">
-                  Manage Cookies
-                </Link>
-                . Most browsers also let you block or delete cookies in settings. California
-                residents can also use the{" "}
-                <Link href="/contact" className="underline">
-                  Do Not Sell/Share
-                </Link>{" "}
-                page to opt out of cross-context behavioral advertising.
+                You can change your settings anytime by opening your cookie preferences. Most browsers
+                also let you block or delete cookies in settings.
               </p>
 
               <Card>
-                {/* Link styled as a button; no onClick on the server component */}
+                {/* Link styled as a button; safe for server component */}
                 <a
                   href="#open-cookie-preferences"
                   role="button"
@@ -247,26 +269,33 @@ export default function CookiesPage() {
                 >
                   Open cookie preferences
                 </a>
+
                 <p className="text-xs mt-2 opacity-80">
-                  If your site uses a cookie banner/CMP, wire it to auto-open when the URL hash is
-                  <code> #open-cookie-preferences</code>.
+                  If your site uses a cookie banner/CMP, wire it so that this hash triggers the
+                  preference modal: <code>#open-cookie-preferences</code>.
                 </p>
               </Card>
+
+              <p className="mt-3 text-sm">
+                California residents can also use the{" "}
+                <Link href="/contact" className="underline">
+                  contact page
+                </Link>{" "}
+                to request assistance with opt-out preferences where applicable.
+              </p>
             </Section>
 
             <Section id="gpc" title="5. Global Privacy Control (GPC)">
               <p>
-                We make reasonable efforts to honor the Global Privacy Control signal where
-                supported, treating it as a request to opt out of sale/sharing for the current
-                browser.
+                We make reasonable efforts to honor the Global Privacy Control signal where supported,
+                treating it as a request to opt out of sale/sharing for the current browser.
               </p>
             </Section>
 
             <Section id="updates" title="6. Updates to this policy">
               <p>
-                We may update this Cookies Policy from time to time. If changes are material, we
-                will post a prominent notice on this page. The date at the top indicates the last
-                update.
+                We may update this Cookies Policy from time to time. If changes are material, we will
+                post a prominent notice on this page. The date at the top indicates the last update.
               </p>
             </Section>
 
@@ -304,10 +333,12 @@ export default function CookiesPage() {
       {/* JSON-LD (SEO) */}
       <script
         type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebPage) }}
       />
       <script
         type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumbs) }}
       />
 

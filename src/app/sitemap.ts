@@ -5,13 +5,21 @@ import path from "node:path";
 import matter from "gray-matter";
 import { getSiteUrl } from "../lib/seo/site";
 
+export const runtime = "nodejs";
+// regenerate periodically (good for content sites)
+export const revalidate = 21600; // ✅ 6 hours
+
 /* ------------------------------ config ---------------------------------- */
 
 const APP_DIR = path.join(process.cwd(), "src", "app");
-const CONTENT_DIRS = [
+
+const RAW_CONTENT_DIRS = [
   path.join(process.cwd(), "content"),
   path.join(process.cwd(), "src", "content"),
 ];
+
+// Only keep dirs that actually exist (prevents confusion + extra work)
+const CONTENT_DIRS = RAW_CONTENT_DIRS.filter((p) => fs.existsSync(p));
 
 // Keep this aligned with /app/robots.ts block list
 const BLOCKLIST: Array<string | RegExp> = [
@@ -36,9 +44,13 @@ function isBlocked(route: string): boolean {
 }
 
 /** Walk a directory recursively and return matching files */
-function walk(dir: string, filter: (fullPath: string, d?: fs.Dirent) => boolean): string[] {
+function walk(
+  dir: string,
+  filter: (fullPath: string, d?: fs.Dirent) => boolean,
+): string[] {
   const out: string[] = [];
   if (!fs.existsSync(dir)) return out;
+
   for (const d of fs.readdirSync(dir, { withFileTypes: true })) {
     const p = path.join(dir, d.name);
     if (d.isDirectory()) out.push(...walk(p, filter));
@@ -49,14 +61,25 @@ function walk(dir: string, filter: (fullPath: string, d?: fs.Dirent) => boolean)
 
 /** Remove route groups like (site) */
 function cleanSegment(seg: string) {
-  return seg.startsWith("(") && seg.endsWith(")") ? "" : seg;
+  if (seg.startsWith("(") && seg.endsWith(")")) return "";
+  return seg;
+}
+
+/** Remove accidental ranking suffix like "foo|3" */
+function stripPipeSuffix(seg: string) {
+  return seg.replace(/\|\d+$/, "");
 }
 
 /** Build route path from a folder containing a page.* under src/app */
 function dirToRoute(dir: string): string | null {
   const rel = path.relative(APP_DIR, dir).replace(/\\/g, "/");
   if (!rel) return "/"; // app root
-  const parts = rel.split("/").map(cleanSegment).filter(Boolean);
+
+  const parts = rel
+    .split("/")
+    .map(cleanSegment)
+    .map(stripPipeSuffix)
+    .filter(Boolean);
 
   // Skip dynamic segments and any segment starting with '_' (internal)
   if (parts.some((p) => p.includes("[") || p.startsWith("_"))) return null;
@@ -70,8 +93,11 @@ function contentPathToRoute(file: string): string | null {
   if (!base) return null;
 
   const rel = path.relative(base, file).replace(/\\/g, "/");
-  const noExt = rel.replace(/\.mdx$/, "");
-  let parts = noExt.split("/");
+  const noExt = rel.replace(/\.mdx?$/, "");
+  let parts = noExt
+    .split("/")
+    .map(stripPipeSuffix)
+    .filter(Boolean);
 
   // If leaf is "index" or starts with "_" (e.g. _country), drop it (map to parent)
   const leaf = parts[parts.length - 1];
@@ -91,7 +117,10 @@ function parseMaybeDate(v: unknown): Date | null {
 }
 
 /** Infer changefreq & priority from route depth */
-function seoHintsFor(route: string): { changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"]; priority: number } {
+function seoHintsFor(route: string): {
+  changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"];
+  priority: number;
+} {
   if (route === "/") return { changeFrequency: "daily", priority: 1.0 };
 
   const depth = route.split("/").filter(Boolean).length;
@@ -129,9 +158,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     });
   }
 
-  // 2) Content-driven routes from /content/**/*.mdx and /src/content/**/*.mdx
+  // 2) Content-driven routes from /content/**/*.md(x) and /src/content/**/*.md(x)
   for (const root of CONTENT_DIRS) {
-    const mdxFiles = walk(root, (f) => f.endsWith(".mdx"));
+    const mdxFiles = walk(root, (f) => /\.mdx?$/.test(f));
     for (const file of mdxFiles) {
       try {
         const raw = fs.readFileSync(file, "utf8");

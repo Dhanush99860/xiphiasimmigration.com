@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og.jpg",
+        url: "/xiphias-immigration.png",
         width: 1200,
         height: 630,
         alt: "Residency Eligibility Check – XIPHIAS Immigration",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     title: "Residency Eligibility Check (Free) | Interactive Assessment",
     description:
       "Check your residency eligibility in minutes. Answer a few questions and get instant results plus a personalized PDF report.",
-    images: ["/og.jpg"],
+    images: ["/xiphias-immigration.png"],
   },
   robots: { index: true, follow: true },
 };

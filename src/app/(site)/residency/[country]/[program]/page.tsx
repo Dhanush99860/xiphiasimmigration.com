@@ -69,7 +69,7 @@ export async function generateMetadata(props: {
         locale: "en_US",
         images: [
           {
-            url: heroImage ?? "/og.jpg",
+            url: heroImage ?? "/xiphias-immigration.png",
             width: 1200,
             height: 630,
             alt: `${title} – XIPHIAS Immigration`,
@@ -80,7 +80,7 @@ export async function generateMetadata(props: {
         card: "summary_large_image",
         title,
         description,
-        images: [heroImage ?? "/og.jpg"],
+        images: [heroImage ?? "/xiphias-immigration.png"],
       },
       robots: { index: true, follow: true },
     };
@@ -354,7 +354,7 @@ export default async function ProgramPage(props: {
               imageSrc={heroImage}
               actions={[
                 {
-                  href: "/personal-booking",
+                  href: "/contact",
                   label: "Book a Free Consultation",
                   variant: "primary",
                 },

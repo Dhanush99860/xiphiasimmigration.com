@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og.jpg",
+        url: "/xiphias-immigration.png",
         width: 1200,
         height: 630,
         alt: "Free Immigration Eligibility Check – XIPHIAS Immigration",
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
       "Free Immigration Eligibility Check | Residency • Citizenship • Corporate • Skilled",
     description:
       "Answer a few smart questions and get instant eligibility results plus a personalized PDF.",
-    images: ["/og.jpg"],
+    images: ["/xiphias-immigration.png"],
   },
 };
 

@@ -99,7 +99,7 @@ export async function generateMetadata({
       locale: "en_US",
       images: [
         {
-          url: doc.heroImage ?? "/og.jpg",
+          url: doc.heroImage ?? "/xiphias-immigration.png",
           width: 1200,
           height: 630,
           alt: `${title} – XIPHIAS Immigration`,
@@ -110,7 +110,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title,
       description,
-      images: [doc.heroImage ?? "/og.jpg"],
+      images: [doc.heroImage ?? "/xiphias-immigration.png"],
     },
   };
 }

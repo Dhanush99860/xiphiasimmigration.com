@@ -38,7 +38,7 @@ function safeHref(p: AnyProgram) {
   return prog ? `${base}/${c}/${prog}` : `${base}/${c}`;
 }
 
-function normalizeImageSrc(src?: string, fallback = "/og.jpg") {
+function normalizeImageSrc(src?: string, fallback = "/xiphias-immigration.png") {
   const val = (src && src.trim()) || fallback;
   if (/^https?:\/\//i.test(val) || val.startsWith("/")) return val;
   return `/${val.replace(/^\/+/, "")}`;

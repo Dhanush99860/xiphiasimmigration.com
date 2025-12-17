@@ -76,7 +76,7 @@ export async function generateMetadata(props: {
       type: "website",
       images: [
         {
-          url: heroImage ?? "/og.jpg",
+          url: heroImage ?? "/xiphias-immigration.png",
           width: 1200,
           height: 630,
           alt: `${title} – XIPHIAS Immigration`,
@@ -87,7 +87,7 @@ export async function generateMetadata(props: {
       card: "summary_large_image",
       title,
       description,
-      images: [heroImage ?? "/og.jpg"],
+      images: [heroImage ?? "/xiphias-immigration.png"],
     },
   };
 }

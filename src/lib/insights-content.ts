@@ -29,6 +29,9 @@ import type {
 const INSIGHT_KINDS: InsightKind[] = ["articles", "news", "media", "blog"];
 const DEV = process.env.NODE_ENV !== "production";
 
+// Safety caps (no UI changes; just prevents edge-case abuse)
+const MAX_PAGE_SIZE = 50;
+
 /* ────────────────────────────────────────────────────────────────────────── */
 /* types                                                                     */
 /* ────────────────────────────────────────────────────────────────────────── */
@@ -113,6 +116,24 @@ function extractHeadingsForToc(source: string): Heading[] {
   return res;
 }
 
+// Safe date parsing: never returns NaN
+function safeDateMs(meta: Pick<InsightMeta, "updated" | "date">) {
+  const s = meta.updated || meta.date;
+  if (!s) return 0;
+  const t = Date.parse(s);
+  return Number.isFinite(t) ? t : 0;
+}
+
+function sortByDateDesc(a: InsightMeta, b: InsightMeta) {
+  return safeDateMs(b) - safeDateMs(a);
+}
+
+function clampInt(n: unknown, fallback: number) {
+  const x = typeof n === "number" ? n : Number(n);
+  if (!Number.isFinite(x)) return fallback;
+  return Math.floor(x);
+}
+
 /* ────────────────────────────────────────────────────────────────────────── */
 /* disk scan                                                                 */
 /* ────────────────────────────────────────────────────────────────────────── */
@@ -160,7 +181,7 @@ async function loadRawDocs(): Promise<RawDoc[]> {
 }
 
 /* ────────────────────────────────────────────────────────────────────────── */
-/* meta + sort                                                               */
+/* meta                                                                       */
 /* ────────────────────────────────────────────────────────────────────────── */
 
 function metaFromRaw(raw: RawDoc): InsightMeta {
@@ -223,6 +244,7 @@ function metaFromRaw(raw: RawDoc): InsightMeta {
   const updated =
     coerceString((raw.data as any).updated) ||
     coerceString((raw.data as any).lastmod);
+
   const url = toUrl(raw.kind, raw.slug);
   const readingTime = readingTimeMins(raw.source);
 
@@ -244,12 +266,6 @@ function metaFromRaw(raw: RawDoc): InsightMeta {
     readingTimeMins: readingTime,
     url,
   };
-}
-
-function sortByDateDesc(a: InsightMeta, b: InsightMeta) {
-  const da = new Date(a.updated || a.date || 0).getTime();
-  const db = new Date(b.updated || b.date || 0).getTime();
-  return db - da;
 }
 
 /* ────────────────────────────────────────────────────────────────────────── */
@@ -275,23 +291,33 @@ async function ensureCache() {
 
 export async function getAllInsights(params: GetAllInsightsParams = {}) {
   const { metas } = await ensureCache();
-  const { q, kind, country, program, tag, page = 1, pageSize = 12 } = params;
+  const { q, kind, country, program, tag } = params;
+
+  // Clamp page/pageSize safely (no UI changes for normal usage)
+  const safePage = Math.max(1, clampInt((params as any).page ?? 1, 1));
+  const safePageSize = Math.min(
+    MAX_PAGE_SIZE,
+    Math.max(1, clampInt((params as any).pageSize ?? 12, 12)),
+  );
 
   let filtered = metas.slice();
 
   if (kind) filtered = filtered.filter((m) => m.kind === kind);
+
   if (country)
     filtered = filtered.filter((m) =>
       (m.country ?? [])
         .map((c: string) => c.toLowerCase())
         .includes(country.toLowerCase()),
     );
+
   if (program)
     filtered = filtered.filter((m) =>
       (m.program ?? [])
         .map((p: string) => p.toLowerCase())
         .includes(program.toLowerCase()),
     );
+
   if (tag)
     filtered = filtered.filter((m) =>
       (m.tags ?? [])
@@ -319,11 +345,11 @@ export async function getAllInsights(params: GetAllInsightsParams = {}) {
   filtered.sort(sortByDateDesc);
 
   const total = filtered.length;
-  const start = (page - 1) * pageSize;
-  const end = start + pageSize;
+  const start = (safePage - 1) * safePageSize;
+  const end = start + safePageSize;
   const items = filtered.slice(start, end);
 
-  return { items, total, page, pageSize };
+  return { items, total, page: safePage, pageSize: safePageSize };
 }
 
 export async function getInsightsFacets(): Promise<Facets> {
@@ -331,15 +357,19 @@ export async function getInsightsFacets(): Promise<Facets> {
   const kinds: InsightKind[] = Array.from(
     new Set(metas.map((m) => m.kind)),
   ) as InsightKind[];
+
   const countries = Array.from(
     new Set(metas.flatMap((m) => m.country ?? [])),
   ).sort((a, b) => a.localeCompare(b));
+
   const programs = Array.from(
     new Set(metas.flatMap((m) => m.program ?? [])),
   ).sort((a, b) => a.localeCompare(b));
+
   const tags = Array.from(new Set(metas.flatMap((m) => m.tags ?? []))).sort(
     (a, b) => a.localeCompare(b),
   );
+
   return { kinds, countries, programs, tags };
 }
 
@@ -357,7 +387,6 @@ export async function getInsightBySlug(
   const componentsMap = (mdxComponents as Record<string, unknown>) || {};
   if (DEV) console.log("[mdx components keys]", Object.keys(componentsMap));
 
-  // Components at TOP LEVEL (required for your runtime)
   const args = {
     source: entry.source,
     components: componentsMap as Record<string, any>,
@@ -379,7 +408,19 @@ export async function getInsightBySlug(
     },
   } as unknown as Parameters<typeof compileMDX>[0];
 
-  const { content } = await compileMDX(args);
+  // Harden: one broken MDX should not 500 in production
+  let content: any;
+  try {
+    const res = await compileMDX(args);
+    content = res.content;
+  } catch (err) {
+    if (DEV) throw err; // fail loudly in dev so you fix the MDX fast
+    console.error(
+      `[insights] MDX compile failed: kind=${kind} slug=${slug} file=${entry.filePath}`,
+      err,
+    );
+    return null; // becomes 404 instead of 500
+  }
 
   const meta = metaFromRaw(entry);
   return { ...meta, headings, content };
@@ -390,6 +431,9 @@ export async function getRelatedContent(
   limit = 3,
 ): Promise<InsightMeta[]> {
   const { metas } = await ensureCache();
+
+  const safeLimit = Math.max(1, Math.min(12, clampInt(limit, 3)));
+
   const curTags = new Set(
     (current.tags ?? []).map((t: string) => t.toLowerCase()),
   );
@@ -416,5 +460,5 @@ export async function getRelatedContent(
     .filter((x) => x.score > 0)
     .sort((a, b) => b.score - a.score || sortByDateDesc(a.m, b.m));
 
-  return scored.slice(0, limit).map((x) => x.m);
+  return scored.slice(0, safeLimit).map((x) => x.m);
 }

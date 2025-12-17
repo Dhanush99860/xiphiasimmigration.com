@@ -12,7 +12,7 @@ export const revalidate = 86400; // 1 day
 export const metadata: Metadata = {
   title: "Book a Private Consultation",
   description:
-    "Book a personal consultation with XIPHIAS Immigration. With over 15 years of expertise and a 92% success rate in Golden Visa, PR, and Investment Migration programs, we empower investors, entrepreneurs, and families worldwide.",
+    "Book a personal consultation with XIPHIAS Immigration. With over 17 years of expertise and a 92% success rate in Golden Visa, PR, and Investment Migration programs, we empower investors, entrepreneurs, and families worldwide.",
   keywords: [
     "XIPHIAS Immigration",
     "Golden Visa Consultation",
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Book a Private Consultation | XIPHIAS Immigration",
     description:
-      "Trusted advisors with 15+ years of excellence and a 92% success rate in global investment migration programs. Book your private consultation today.",
+      "Trusted advisors with 17+ years of excellence and a 92% success rate in global investment migration programs. Book your private consultation today.",
     url: "https://www.xiphiasimmigration.com/personal-booking",
     siteName: "XIPHIAS Immigration",
     locale: "en_US",

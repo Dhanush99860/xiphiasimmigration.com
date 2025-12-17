@@ -59,7 +59,7 @@ function truncateWords(text = "", maxWords = 15) {
     ? (text || "").trim()
     : words.slice(0, maxWords).join(" ") + "…";
 }
-function normalizeImageSrc(src?: string, fallback = "/og.jpg") {
+function normalizeImageSrc(src?: string, fallback = "/xiphias-immigration.png") {
   const val = (src && src.trim()) || fallback;
   if (/^https?:\/\//i.test(val) || val.startsWith("/")) return val;
   return `/${val.replace(/^\/+/, "")}`;

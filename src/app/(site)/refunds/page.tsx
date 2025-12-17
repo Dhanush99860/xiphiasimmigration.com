@@ -1,11 +1,14 @@
 // FILE: src/app/(site)/refunds/page.tsx
 // Refund Policy — black/white theme, responsive, SEO+JSON-LD, with Breadcrumb.
-// Uses your Breadcrumb component: import Breadcrumb from "@/components/Common/Breadcrumb";
 
 import type { Metadata } from "next";
 import Breadcrumb from "@/components/Common/Breadcrumb";
 import Link from "next/link";
 import React from "react";
+
+// ✅ Keep one canonical domain everywhere (matches your layout.tsx metadataBase)
+const SITE_URL = "https://www.xiphiasimmigration.com";
+const OG_IMAGE = "/xiphias-immigration.png";
 
 // ───────────────── SEO METADATA ─────────────────
 export const metadata: Metadata = {
@@ -14,14 +17,31 @@ export const metadata: Metadata = {
     "Refunds, cancellations, and chargeback rules for services provided by XIPHIAS Immigration Private Limited.",
   alternates: { canonical: "/refunds" },
   robots: { index: true, follow: true },
+
   openGraph: {
     title: "Refund Policy · XIPHIAS Immigration Private Limited",
     description:
       "Refunds, cancellations, and chargeback rules for services provided by XIPHIAS Immigration Private Limited.",
-    url: "/refunds",
+    url: `${SITE_URL}/refunds`,
+    siteName: "XIPHIAS Immigration",
     type: "article",
+    images: [
+      {
+        url: OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: "XIPHIAS Immigration",
+      },
+    ],
   },
-  twitter: { card: "summary" },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Refund Policy · XIPHIAS Immigration Private Limited",
+    description:
+      "Refunds, cancellations, and chargeback rules for services provided by XIPHIAS Immigration Private Limited.",
+    images: [OG_IMAGE],
+  },
 };
 
 // ──────────────── SMALL UI HELPERS (black/white only) ────────────────
@@ -59,8 +79,8 @@ export default function RefundsPage() {
     city: "Bengaluru",
     state: "Karnataka",
     country: "India",
-    site: "https://xiphiasimmigration.com",
-    contact: "support@immigration.in",
+    site: SITE_URL,
+    contact: "immigration@xiphias.in",
   } as const;
 
   const toc = [
@@ -76,13 +96,20 @@ export default function RefundsPage() {
     { id: "changes", label: "Changes to this policy" },
   ];
 
+  // ✅ JSON-LD with absolute URLs + stable @id
   const jsonLdWebPage = {
     "@context": "https://schema.org",
     "@type": "WebPage",
+    "@id": `${company.site}/refunds#webpage`,
     name: "Refund Policy",
     url: `${company.site}/refunds`,
     dateModified: "2025-10-09",
-    isPartOf: { "@type": "WebSite", name: company.name, url: company.site },
+    isPartOf: {
+      "@type": "WebSite",
+      "@id": `${company.site}/#website`,
+      name: "XIPHIAS Immigration",
+      url: company.site,
+    },
   };
 
   const jsonLdBreadcrumbs = {
@@ -114,8 +141,11 @@ export default function RefundsPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10 md:py-14">
           <div className="flex items-start justify-between gap-6">
             <div className="max-w-3xl">
-              <h1 className="text-2xl md:text-4xl font-semibold tracking-tight">Refund Policy</h1>
+              <h1 className="text-2xl md:text-4xl font-semibold tracking-tight">
+                Refund Policy
+              </h1>
               <p className="mt-2 text-sm/6 opacity-80">Effective: {effectiveDate}</p>
+
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
                 <Card>
                   <ul className="list-disc pl-5 space-y-1 text-sm">
@@ -125,6 +155,7 @@ export default function RefundsPage() {
                     <li>Chargeback rules and contact details.</li>
                   </ul>
                 </Card>
+
                 <Card>
                   <p className="text-sm">
                     Related pages:{" "}
@@ -143,7 +174,9 @@ export default function RefundsPage() {
             {/* Right rail (desktop TOC) */}
             <aside className="hidden lg:block w-64 shrink-0">
               <nav aria-label="On this page" className="sticky top-28">
-                <p className="text-xs uppercase tracking-wide opacity-70 mb-2">On this page</p>
+                <p className="text-xs uppercase tracking-wide opacity-70 mb-2">
+                  On this page
+                </p>
                 <ul className="space-y-1">
                   {toc.map((n) => (
                     <li key={n.id}>
@@ -168,8 +201,8 @@ export default function RefundsPage() {
           <div className="lg:col-span-9 space-y-10">
             <Section id="scope" title="1. Scope">
               <p>
-                This Refund Policy applies to fees paid for services purchased from {company.name} via our
-                website or through our authorized representatives.
+                This Refund Policy applies to fees paid for services purchased from {company.name} via
+                our website or through our authorized representatives.
               </p>
             </Section>
 

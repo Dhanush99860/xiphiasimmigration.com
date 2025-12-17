@@ -131,7 +131,7 @@ export default function ProgramHero({
     heroImage,
     heroPoster,
     derivedPoster,
-    "/og.jpg",
+    "/xiphias-immigration.png",
     finalDataUri,
   ]);
 
@@ -221,7 +221,7 @@ export default function ProgramHero({
                 <video
                   className="h-full w-full object-cover"
                   poster={normalizeAssetPath(
-                    heroPoster || derivedPoster || "/og.jpg",
+                    heroPoster || derivedPoster || "/xiphias-immigration.png",
                   )}
                   controls
                   playsInline

@@ -29,14 +29,14 @@ export const metadata: Metadata = {
     siteName: "XIPHIAS Immigration",
     locale: "en_US",
     type: "website",
-    images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "Corporate Setup & Employment Visas – XIPHIAS Immigration" }],
+    images: [{ url: "/xiphias-immigration.png", width: 1200, height: 630, alt: "Corporate Setup & Employment Visas – XIPHIAS Immigration" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Corporate Setup & Employment Visas — Countries & Options",
     description:
       "Explore corporate routes by country: free zone & mainland company formation, investor/entrepreneur options, employment/work permits, and residence sponsorship. Compare timelines, eligibility, and fees.",
-    images: ["/og.jpg"],
+    images: ["/xiphias-immigration.png"],
   },
 };
 

@@ -18,7 +18,7 @@ import {
 const FEATURES = [
   {
     icon: Globe2,
-    title: "15+ Years, 25+ Jurisdictions",
+    title: "17+ Years, 25+ Jurisdictions",
     blurb:
       "Deep, up-to-date program knowledge across Europe, the Middle East, and Asia.",
   },

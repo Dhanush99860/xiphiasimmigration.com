@@ -1,11 +1,14 @@
 // FILE: src/app/(site)/terms/page.tsx
-// Terms & Conditions — black/white theme only, fully responsive, SEO+JSON-LD, with Breadcrumb.
-// Uses your Breadcrumb component: import Breadcrumb from "@/components/Common/Breadcrumb";
+// Terms & Conditions — black/white theme, responsive, SEO+JSON-LD, with Breadcrumb.
 
 import type { Metadata } from "next";
 import Link from "next/link";
 import Breadcrumb from "@/components/Common/Breadcrumb";
 import React from "react";
+
+// ✅ Keep one canonical domain everywhere (match robots/sitemap/canonicals)
+const SITE_URL = "https://www.xiphiasimmigration.com";
+const OG_IMAGE = "/xiphias-immigration.png";
 
 // ───────────────── SEO METADATA ─────────────────
 export const metadata: Metadata = {
@@ -14,14 +17,31 @@ export const metadata: Metadata = {
     "The terms that govern your use of our website and services, including consulting scope, fees and refunds, acceptable use, disclaimers, and dispute resolution.",
   alternates: { canonical: "/terms" },
   robots: { index: true, follow: true },
+
   openGraph: {
     title: "Terms & Conditions · XIPHIAS Immigration Private Limited",
     description:
       "Read the terms that govern your use of our website and consulting services.",
-    url: "/terms",
+    url: `${SITE_URL}/terms`,
+    siteName: "XIPHIAS Immigration",
     type: "article",
+    images: [
+      {
+        url: OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: "XIPHIAS Immigration",
+      },
+    ],
   },
-  twitter: { card: "summary" },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Terms & Conditions · XIPHIAS Immigration Private Limited",
+    description:
+      "Read the terms that govern your use of our website and consulting services.",
+    images: [OG_IMAGE],
+  },
 };
 
 // ──────────────── SMALL UI HELPERS (black/white only) ────────────────
@@ -56,8 +76,8 @@ export default function TermsPage() {
   const effectiveDate = "05 Nov 2025";
   const company = {
     name: "XIPHIAS Immigration Private Limited",
-    site: "https://www.xiphiasimmigration.com",
-    legalEmail: "support@immigration.in", // keep in sync with your Cookies page until you update
+    site: SITE_URL,
+    legalEmail: "immigration@xiphias.in",
     registeredOffice:
       "Aurbis Prime, 11, Kaveri Regent Coronet, 80 Feet Road, 3rd Block, Koramangala, Bangalore - 560034",
     jurisdiction: "Bengaluru, Karnataka, India",
@@ -90,10 +110,16 @@ export default function TermsPage() {
   const jsonLdWebPage = {
     "@context": "https://schema.org",
     "@type": "WebPage",
+    "@id": `${company.site}/terms#webpage`,
     name: "Terms & Conditions",
     url: `${company.site}/terms`,
     dateModified: "2025-11-05",
-    isPartOf: { "@type": "WebSite", name: company.name, url: company.site },
+    isPartOf: {
+      "@type": "WebSite",
+      "@id": `${company.site}/#website`,
+      name: "XIPHIAS Immigration",
+      url: company.site,
+    },
   };
 
   const jsonLdBreadcrumbs = {
@@ -101,7 +127,12 @@ export default function TermsPage() {
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: `${company.site}/` },
-      { "@type": "ListItem", position: 2, name: "Terms & Conditions", item: `${company.site}/terms` },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Terms & Conditions",
+        item: `${company.site}/terms`,
+      },
     ],
   };
 
@@ -152,9 +183,10 @@ export default function TermsPage() {
           <div className="flex items-start justify-between gap-6">
             <div className="max-w-3xl">
               <h1 className="text-2xl md:text-4xl font-semibold tracking-tight">
-                Terms & Conditions
+                Terms &amp; Conditions
               </h1>
               <p className="mt-2 text-sm/6 opacity-80">Effective: {effectiveDate}</p>
+
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
                 <Card>
                   <ul className="list-disc pl-5 space-y-1 text-sm">
@@ -164,6 +196,7 @@ export default function TermsPage() {
                     <li>Acceptable use, IP, and dispute resolution</li>
                   </ul>
                 </Card>
+
                 <Card>
                   <p className="text-sm">
                     See also our{" "}
@@ -212,17 +245,15 @@ export default function TermsPage() {
           <div className="lg:col-span-9 space-y-10">
             <Section id="acceptance" title="1. Acceptance of these Terms">
               <p>
-                These Terms &amp; Conditions (“<strong>Terms</strong>”) govern your access to and
-                use of the website located at{" "}
+                These Terms &amp; Conditions (“<strong>Terms</strong>”) govern your access to and use
+                of the website located at{" "}
                 <a className="underline" href={company.site}>
                   {company.site}
                 </a>{" "}
                 and any related pages, tools, and services (collectively, the “<strong>Site</strong>”),
                 provided by {company.name} (“<strong>we</strong>”, “<strong>us</strong>”, “<strong>our</strong>”).
                 By accessing or using the Site, booking a consultation, or engaging our services,
-                you agree to be bound by these Terms. If you are entering into these Terms on behalf
-                of a company or other legal entity, you represent that you have authority to bind
-                such entity.
+                you agree to be bound by these Terms.
               </p>
             </Section>
 
@@ -230,45 +261,42 @@ export default function TermsPage() {
               <ul className="list-disc pl-5 space-y-1">
                 <li>
                   <strong>“Services”</strong> means our immigration and related consulting, document
-                  preparation, application support, appointments scheduling and other advisory
-                  offerings as described on the Site or in an engagement/retainer letter.
+                  preparation, application support, appointment scheduling and other advisory offerings.
                 </li>
                 <li>
                   <strong>“Engagement Letter”</strong> means the written scope, deliverables, fees,
-                  and terms agreed with you for specific Services. If there is a conflict, the
-                  Engagement Letter prevails for that scope.
+                  and terms agreed with you for specific Services. If there is a conflict, the Engagement
+                  Letter prevails for that scope.
                 </li>
               </ul>
             </Section>
 
             <Section id="eligibility" title="3. Eligibility & Accounts">
               <p>
-                You must have the legal capacity to contract under the laws that apply to you.
-                To use certain features (e.g., client portal), you may need to create an account and
-                keep credentials confidential. You are responsible for all activity under your
-                account.
+                You must have the legal capacity to contract under the laws that apply to you. To use
+                certain features (e.g., client portal), you may need to create an account and keep
+                credentials confidential. You are responsible for all activity under your account.
               </p>
             </Section>
 
             <Section id="scope" title="4. Scope of Services">
               <p>
-                We provide professional consulting related to immigration pathways, investment or
-                study options, and application preparation. We do not issue visas, permits, or
-                approvals; all decisions are made by the relevant government authorities. Service
-                timelines depend on your timely cooperation and third-party/government processing.
+                We provide professional consulting related to immigration pathways, investment or study
+                options, and application preparation. We do not issue visas, permits, or approvals; all
+                decisions are made by the relevant government authorities.
               </p>
             </Section>
 
             <Section id="noguarantee" title="5. No Guarantee; Not Legal Advice">
               <ul className="list-disc pl-5 space-y-1">
                 <li>
-                  <strong>No outcome guarantee.</strong> We do not guarantee any approval, result,
-                  or timeline. Decisions rest solely with government authorities.
+                  <strong>No outcome guarantee.</strong> We do not guarantee any approval, result, or
+                  timeline. Decisions rest solely with government authorities.
                 </li>
                 <li>
-                  <strong>Not a law firm.</strong> Unless expressly stated in writing, we are not a
-                  law firm and do not provide legal representation. Our content and consultants’
-                  guidance are general information and strategy; they are not legal advice.
+                  <strong>Not a law firm.</strong> Unless expressly stated in writing, we are not a law
+                  firm and do not provide legal representation. Our guidance is general information and
+                  strategy; it is not legal advice.
                 </li>
               </ul>
             </Section>
@@ -277,14 +305,8 @@ export default function TermsPage() {
               <ul className="list-disc pl-5 space-y-1">
                 <li>Provide complete, accurate, and up-to-date information and documents.</li>
                 <li>Disclose material facts and promptly notify changes in circumstances.</li>
-                <li>
-                  Review drafts carefully; you are responsible for the accuracy of applications
-                  and statements submitted on your behalf.
-                </li>
-                <li>
-                  Comply with all applicable laws, including anti-bribery and sanctions rules; we
-                  will not facilitate improper payments or misrepresentations.
-                </li>
+                <li>Review drafts carefully before submission.</li>
+                <li>Comply with applicable laws (including anti-bribery and sanctions rules).</li>
               </ul>
             </Section>
 
@@ -302,24 +324,24 @@ export default function TermsPage() {
                     <tr className="border-t border-black/10 dark:border-white/20">
                       <td className="p-2">Professional Fees</td>
                       <td className="p-2">
-                        Our consulting charges for the scope in your Engagement Letter; does not
-                        include government, translation, courier, or third-party vendor charges.
+                        Our consulting charges for the scope in your Engagement Letter; does not include
+                        government, translation, courier, or third-party vendor charges.
                       </td>
                       <td className="p-2">As per invoice/Engagement Letter</td>
                     </tr>
                     <tr className="border-t border-black/10 dark:border-white/20">
                       <td className="p-2">Government/Vendor Fees</td>
                       <td className="p-2">
-                        Fees charged by authorities (e.g., visa application centers, ECA bodies) or
-                        vendors; amounts and policies are set by those third parties.
+                        Fees charged by authorities or vendors; amounts and policies are set by those
+                        third parties.
                       </td>
                       <td className="p-2">Before filing/booking, as applicable</td>
                     </tr>
                     <tr className="border-t border-black/10 dark:border-white/20">
                       <td className="p-2">Taxes</td>
                       <td className="p-2">
-                        All fees are exclusive of taxes (e.g., GST) unless expressly stated; you are
-                        responsible for applicable taxes.
+                        Fees are exclusive of taxes (e.g., GST) unless stated; you are responsible for
+                        applicable taxes.
                       </td>
                       <td className="p-2">As applicable</td>
                     </tr>
@@ -334,51 +356,44 @@ export default function TermsPage() {
 
             <Section id="refunds" title="8. Cancellations & Refunds">
               <p>
-                Our professional fees compensate time, expertise, and allocated resources, and are
-                generally non-refundable once work has commenced. Where permitted in your Engagement
-                Letter or under our{" "}
+                Our professional fees generally become non-refundable once work has commenced. Where
+                permitted in your Engagement Letter or under our{" "}
                 <Link href="/refunds" className="underline">
                   Refund Policy
                 </Link>
-                , we may provide a partial refund for unperformed portions of services that are
-                within our control. Government and third-party fees follow their own policies.
+                , we may provide a partial refund for unperformed portions within our control.
+                Government and third-party fees follow their own policies.
               </p>
             </Section>
 
             <Section id="thirdparty" title="9. Government & Third-Party Services">
               <p>
-                We may help you interact with third parties (e.g., medical exams, translations,
-                ECAs, courier, payment gateways). You authorize us to share necessary information to
-                enable such services. Third-party terms and privacy policies apply; we are not
-                responsible for their acts, omissions, or service levels.
+                Third-party terms and privacy policies apply. We are not responsible for their acts,
+                omissions, or service levels.
               </p>
             </Section>
 
             <Section id="ip" title="10. Intellectual Property">
               <p>
-                The Site, its content, design, logos, and software are owned by or licensed to us
-                and protected by IP laws. You receive a limited, revocable, non-transferable license
-                to access and use the Site for personal or internal business purposes. You may not
-                copy, modify, reverse engineer, or commercially exploit Site content except as
-                permitted by law or with our prior written consent.
+                The Site, its content, design, logos, and software are owned by or licensed to us and
+                protected by IP laws. You receive a limited license to use the Site for personal or
+                internal business purposes.
               </p>
             </Section>
 
             <Section id="acceptable-use" title="11. Acceptable Use">
               <ul className="list-disc pl-5 space-y-1">
                 <li>No unlawful, fraudulent, misleading, or harmful activity.</li>
-                <li>No scraping, automated data collection, or load testing without consent.</li>
-                <li>No uploading malware or interfering with security or access controls.</li>
-                <li>No impersonation or misrepresentation of identity or eligibility.</li>
+                <li>No scraping or automated collection without consent.</li>
+                <li>No malware or interference with security/access controls.</li>
+                <li>No impersonation or misrepresentation.</li>
               </ul>
             </Section>
 
             <Section id="user-content" title="12. User Content & Reviews">
               <p>
-                If you post or submit reviews, testimonials, or materials, you grant us a
-                non-exclusive, worldwide, royalty-free license to use, host, reproduce, and display
-                such content in connection with the Site and our Services, subject to applicable
-                law. Please do not submit content you do not own or that violates others’ rights.
+                If you submit reviews or materials, you grant us a non-exclusive license to use and
+                display such content in connection with the Site and our Services, subject to law.
               </p>
             </Section>
 
@@ -388,80 +403,64 @@ export default function TermsPage() {
                 <Link href="/privacy-policy" className="underline">
                   Privacy Policy
                 </Link>{" "}
-                explains how we collect and process personal data, including compliance with
-                applicable laws such as India’s Digital Personal Data Protection Act, 2023, where
-                relevant. You agree to that policy and to our{" "}
+                and{" "}
                 <Link href="/cookies" className="underline">
                   Cookies Policy
-                </Link>
-                .
+                </Link>{" "}
+                explain how we process data and cookies.
               </p>
             </Section>
 
             <Section id="disclaimers" title="14. Disclaimers">
               <ul className="list-disc pl-5 space-y-1">
-                <li>
-                  The Site is provided on an “as is” and “as available” basis. We disclaim all
-                  warranties to the maximum extent permitted by law, including implied warranties of
-                  merchantability, fitness for a particular purpose, and non-infringement.
-                </li>
-                <li>
-                  Information on the Site may be general and subject to change without notice;
-                  immigration rules and fees are set by governments and may change frequently.
-                </li>
+                <li>The Site is provided “as is” and “as available”.</li>
+                <li>Information may be general and subject to change without notice.</li>
               </ul>
             </Section>
 
             <Section id="liability" title="15. Limitation of Liability">
               <p>
                 To the fullest extent permitted by law, we will not be liable for indirect,
-                incidental, consequential, special, punitive, or exemplary damages, or for loss of
-                profits, data, goodwill, or opportunity, even if advised of the possibility. Our
-                aggregate liability arising out of or relating to the Site or Services shall not
-                exceed the amount you paid to us for the specific Service giving rise to the claim
-                in the 6 months preceding the event.
+                incidental, consequential, special, punitive, or exemplary damages. Our aggregate
+                liability will not exceed the amount you paid to us for the specific Service giving rise
+                to the claim in the 6 months preceding the event.
               </p>
             </Section>
 
             <Section id="indemnity" title="16. Indemnity">
               <p>
-                You agree to defend, indemnify, and hold harmless {company.name}, its directors,
-                officers, employees, and agents from and against claims, damages, losses, and
-                expenses (including reasonable legal fees) arising from your breach of these Terms,
-                your misuse of the Site/Services, or your violation of law or third-party rights.
+                You agree to indemnify and hold harmless {company.name} from claims arising from your
+                breach of these Terms, misuse of the Site/Services, or violation of law/third-party
+                rights.
               </p>
             </Section>
 
             <Section id="force-majeure" title="17. Force Majeure">
               <p>
                 We are not responsible for delays or failures caused by events beyond our reasonable
-                control, including governmental actions, changes to immigration rules, strikes,
-                epidemics, system failures, or network outages.
+                control, including governmental actions and system/network outages.
               </p>
             </Section>
 
             <Section id="termination" title="18. Termination">
               <p>
-                We may suspend or terminate access to the Site or Services (in whole or part) if you
-                breach these Terms, fail to pay, or where required by law. You may stop using the
-                Site at any time. Sections intended to survive (e.g., IP, Disclaimers, Liability,
-                Indemnity, Law & Disputes) survive termination.
+                We may suspend/terminate access if you breach these Terms, fail to pay, or where required
+                by law. Sections intended to survive will survive termination.
               </p>
             </Section>
 
             <Section id="law" title="19. Governing Law & Disputes">
               <p>
-                These Terms are governed by the laws of India, without regard to conflict of laws
-                principles. Subject to any mandatory arbitration clause in your Engagement Letter,
-                the courts located in {company.jurisdiction} shall have exclusive jurisdiction.
+                These Terms are governed by the laws of India. Courts in {company.jurisdiction} have
+                exclusive jurisdiction, subject to any mandatory dispute mechanism in your Engagement
+                Letter.
               </p>
             </Section>
 
             <Section id="changes" title="20. Changes to these Terms">
               <p>
-                We may update these Terms from time to time. If changes are material, we will post a
-                prominent notice on this page. The date at the top indicates the last update.
-                Continued use after changes means you accept the updated Terms.
+                We may update these Terms from time to time. The date at the top indicates the last
+                update. Continued use after changes means you accept the updated Terms.
               </p>
             </Section>
 
@@ -504,18 +503,12 @@ export default function TermsPage() {
       </div>
 
       {/* JSON-LD (SEO) */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebPage) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebPage) }} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumbs) }}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdFaq) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdFaq) }} />
     </main>
   );
 }

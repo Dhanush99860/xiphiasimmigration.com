@@ -106,7 +106,7 @@ export default async function InsightDetailView({
           actions={[
             {
               href: "/personal-booking",
-              label: "Book a Free Consultation",
+              label: "Book a Paid Consultation",
               variant: "primary",
             },
             { href: "/contact", label: "Contact Us", variant: "ghost" },

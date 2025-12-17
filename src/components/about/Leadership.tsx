@@ -44,7 +44,7 @@ export default function Leadership() {
               Guided by Experience &amp; Ethics
             </h2>
             <p className="mt-2 max-w-3xl text-sm text-zinc-700 dark:text-zinc-300">
-              16+ years of global immigration expertise with an uncompromising stance on integrity and
+              17+ years of global immigration expertise with an uncompromising stance on integrity and
               compliance.
             </p>
           </header>
@@ -71,9 +71,7 @@ export default function Leadership() {
               </p>
 
               <p className="mt-3 text-sm leading-relaxed text-zinc-700 dark:text-zinc-300 break-words">
-                Varun founded XIPHIAS Immigration to create a trusted, regulation-first partner for global
-                citizens and enterprises. He oversees priority investment migration and corporate programs to
-                help ensure impeccable standards.
+                With over 17 years of expertise in investment migration, resettlement, and international business expansion, Varun Singh is a trusted advisor to global investors, entrepreneurs, and high-net-worth individuals. As Managing Director of XIPHIAS Immigration and XIPHIAS Projects, and a certified IMC Fellow with CPD credentials, he leads award-winning teams delivering compliant, future-ready solutions across citizenship- and residency-by-investment, global real estate, and cross-border business growth—backed by a strong network of government partners, legal specialists, and developers to secure high-impact, high-yield outcomes.
               </p>
 
               {/* badges */}
@@ -82,7 +80,7 @@ export default function Leadership() {
                   <Shield /> Regulation-first practice
                 </Badge>
                 <Badge>
-                  <Award /> 16+ years leadership
+                  <Award /> 17+ years leadership
                 </Badge>
                 <Badge>
                   <Globe /> Multi-jurisdiction programs
@@ -92,7 +90,7 @@ export default function Leadership() {
               {/* CTA row */}
               <div className="mt-5 flex flex-wrap gap-2">
                 <Link
-                  href="https://www.linkedin.com/company/xiphias-immigration/"
+                  href="https://www.linkedin.com/in/varunxiphias/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm text-white ring-1 ring-blue-700/20 transition hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
@@ -113,7 +111,7 @@ export default function Leadership() {
 
               {/* small fact strip */}
               <div className="mt-6 grid grid-cols-3 gap-3 text-center">
-                <Stat label="Years" value="16+" />
+                <Stat label="Years" value="17+" />
                 <Stat label="Countries" value="50+" />
                 <Stat label="Programs" value="160+" />
               </div>

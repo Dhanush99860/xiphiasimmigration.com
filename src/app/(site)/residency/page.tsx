@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og.jpg",
+        url: "/xiphias-immigration.png",
         width: 1200,
         height: 630,
         alt: "Residency Programs – Countries & Options – XIPHIAS Immigration",
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     title: "Residency Programs – Countries & Options",
     description:
       "Explore residency pathways by country. Compare timelines, requirements and costs. Book a personal consultation.",
-    images: ["/og.jpg"],
+    images: ["/xiphias-immigration.png"],
   },
 };
 

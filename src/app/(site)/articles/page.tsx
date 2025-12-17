@@ -1,12 +1,13 @@
-// app/(site)/articles/page.tsx
+// src/app/(site)/articles/page.tsx
 import Link from "next/link";
+import type { Metadata } from "next";
 import { getAllInsights } from "@/lib/insights-content";
-// Dynamically import the article list to reduce the initial JS bundle size and
-// improve performance. Static links are small and can remain.
 import nextDynamic from "next/dynamic";
+
 const InsightsList = nextDynamic(() => import("@/components/Insights/InsightsList"));
 
-import type { Metadata } from "next";
+const SITE_URL = "https://www.xiphiasimmigration.com";
+const OG_IMAGE = "/xiphias-immigration.png";
 
 // SEO metadata for the articles listing page
 export const metadata: Metadata = {
@@ -14,17 +15,18 @@ export const metadata: Metadata = {
   description:
     "Stay informed with the latest articles on investment migration, residency and citizenship programs. Browse our expert insights and updates.",
   alternates: { canonical: "/articles" },
+  robots: { index: true, follow: true },
   openGraph: {
     title: "Articles – Immigration Insights & Updates",
     description:
       "Stay informed with the latest articles on investment migration, residency and citizenship programs. Browse our expert insights and updates.",
-    url: "https://www.xiphiasimmigration.com/articles",
+    url: `${SITE_URL}/articles`,
     siteName: "XIPHIAS Immigration",
     locale: "en_US",
     type: "website",
     images: [
       {
-        url: "/og.jpg",
+        url: `${SITE_URL}${OG_IMAGE}`,
         width: 1200,
         height: 630,
         alt: "Articles – Immigration Insights & Updates – XIPHIAS Immigration",
@@ -36,25 +38,26 @@ export const metadata: Metadata = {
     title: "Articles – Immigration Insights & Updates",
     description:
       "Stay informed with the latest articles on investment migration, residency and citizenship programs. Browse our expert insights and updates.",
-    images: ["/og.jpg"],
+    images: [`${SITE_URL}${OG_IMAGE}`],
   },
 };
 
 export const revalidate = 86400;
 
-// Next 15: searchParams must be a Promise and awaited
+// Compatible typing: supports either plain object or Promise (varies by Next versions/tooling)
+type SearchParams = Record<string, string | string[] | undefined>;
 type PageProps = {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
+  searchParams?: SearchParams | Promise<SearchParams>;
 };
 
 const first = (v?: string | string[]) => (Array.isArray(v) ? v[0] : v);
 
 export default async function ArticlesListPage({ searchParams }: PageProps) {
-  const sp = await searchParams; // ✅ await
+  const sp = await Promise.resolve(searchParams ?? {});
   const page = Math.max(1, Number(first(sp.page) ?? "1"));
   const pageSize = 12;
 
-  // ⚠️ getAllInsights MUST support page + pageSize and return total
+  // getAllInsights must support page + pageSize and return total
   const { items, total } = await getAllInsights({
     kind: "articles",
     page,
@@ -62,8 +65,10 @@ export default async function ArticlesListPage({ searchParams }: PageProps) {
   });
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
-  const startIdx = total === 0 ? 0 : (page - 1) * pageSize + 1;
-  const endIdx = Math.min(total, page * pageSize);
+  const safePage = Math.min(page, totalPages);
+
+  const startIdx = total === 0 ? 0 : (safePage - 1) * pageSize + 1;
+  const endIdx = Math.min(total, safePage * pageSize);
 
   const makePageHref = (p: number) => (p > 1 ? `/articles?page=${p}` : `/articles`);
 
@@ -86,28 +91,50 @@ export default async function ArticlesListPage({ searchParams }: PageProps) {
   // Build compact list with ellipses (desktop/tablet)
   const pageNumbers = (() => {
     const arr: (number | "...")[] = [];
-    const firstPage = 1, last = totalPages, window = 1;
+    const firstPage = 1;
+    const last = totalPages;
+    const window = 1;
+
     if (totalPages <= 7) {
       for (let i = 1; i <= totalPages; i++) arr.push(i);
       return arr;
     }
+
     arr.push(firstPage);
-    if (page > firstPage + window + 1) arr.push("...");
-    for (let i = Math.max(firstPage + 1, page - window); i <= Math.min(last - 1, page + window); i++) {
+    if (safePage > firstPage + window + 1) arr.push("...");
+
+    for (
+      let i = Math.max(firstPage + 1, safePage - window);
+      i <= Math.min(last - 1, safePage + window);
+      i++
+    ) {
       if (i !== firstPage && i !== last) arr.push(i);
     }
-    if (page < last - window - 1) arr.push("...");
+
+    if (safePage < last - window - 1) arr.push("...");
     arr.push(last);
     return arr;
   })();
 
   return (
-    <main className="container mx-auto w-full lg:max-w-screen-xl md:max-w-screen-md px-4 pt-6 sm:pt-8 pb-24 sm:pb-12">
-      <h1 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-6 text-black dark:text-white">Articles</h1>
+    <main className="container mx-auto w-full lg:max-w-screen-xl md:max-w-screen-md px-4 pt-6 sm:pt-8 pb-28 sm:pb-12">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-6 text-black dark:text-white">
+        Articles
+      </h1>
 
       {/* Meta */}
-      <div className="text-sm text-black/70 dark:text-white/70 mb-3 sm:mb-4" aria-live="polite" aria-atomic="true">
-        {total > 0 ? <>Showing {startIdx}–{endIdx} of {total} articles</> : <>No articles found</>}
+      <div
+        className="text-sm text-black dark:text-white opacity-70 mb-3 sm:mb-4"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        {total > 0 ? (
+          <>
+            Showing {startIdx}–{endIdx} of {total} articles
+          </>
+        ) : (
+          <>No articles found</>
+        )}
       </div>
 
       <InsightsList items={items} />
@@ -120,10 +147,18 @@ export default async function ArticlesListPage({ searchParams }: PageProps) {
           aria-label="Pagination"
         >
           <div className="flex items-center gap-2">
-            <Link href={makePageHref(1)} aria-disabled={page === 1} className={`${baseBtn} ${page === 1 ? disabledBtn : ""}`}>
+            <Link
+              href={makePageHref(1)}
+              aria-disabled={safePage === 1}
+              className={`${baseBtn} ${safePage === 1 ? disabledBtn : ""}`}
+            >
               First
             </Link>
-            <Link href={makePageHref(Math.max(1, page - 1))} aria-disabled={page === 1} className={`${baseBtn} ${page === 1 ? disabledBtn : ""}`}>
+            <Link
+              href={makePageHref(Math.max(1, safePage - 1))}
+              aria-disabled={safePage === 1}
+              className={`${baseBtn} ${safePage === 1 ? disabledBtn : ""}`}
+            >
               Previous
             </Link>
           </div>
@@ -131,13 +166,23 @@ export default async function ArticlesListPage({ searchParams }: PageProps) {
           <ul className="flex items-center gap-2 max-w-full overflow-x-auto no-scrollbar px-1" aria-label="Page list">
             {pageNumbers.map((p, idx) =>
               p === "..." ? (
-                <li key={`ellipsis-${idx}`} aria-hidden="true" className="px-2 text-black/60 dark:text-white/60 select-none">…</li>
+                <li
+                  key={`ellipsis-${idx}`}
+                  aria-hidden="true"
+                  className="px-2 text-black dark:text-white opacity-60 select-none"
+                >
+                  …
+                </li>
               ) : (
                 <li key={p} className="shrink-0">
-                  {p === page ? (
-                    <span aria-current="page" className={pagePillActive}>{p}</span>
+                  {p === safePage ? (
+                    <span aria-current="page" className={pagePillActive}>
+                      {p}
+                    </span>
                   ) : (
-                    <Link href={makePageHref(p)} className={pagePill}>{p}</Link>
+                    <Link href={makePageHref(p)} className={pagePill}>
+                      {p}
+                    </Link>
                   )}
                 </li>
               )
@@ -145,10 +190,18 @@ export default async function ArticlesListPage({ searchParams }: PageProps) {
           </ul>
 
           <div className="flex items-center gap-2">
-            <Link href={makePageHref(Math.min(totalPages, page + 1))} aria-disabled={page === totalPages} className={`${baseBtn} ${page === totalPages ? disabledBtn : ""}`}>
+            <Link
+              href={makePageHref(Math.min(totalPages, safePage + 1))}
+              aria-disabled={safePage === totalPages}
+              className={`${baseBtn} ${safePage === totalPages ? disabledBtn : ""}`}
+            >
               Next
             </Link>
-            <Link href={makePageHref(totalPages)} aria-disabled={page === totalPages} className={`${baseBtn} ${page === totalPages ? disabledBtn : ""}`}>
+            <Link
+              href={makePageHref(totalPages)}
+              aria-disabled={safePage === totalPages}
+              className={`${baseBtn} ${safePage === totalPages ? disabledBtn : ""}`}
+            >
               Last
             </Link>
           </div>
@@ -162,12 +215,21 @@ export default async function ArticlesListPage({ searchParams }: PageProps) {
           <div className="sm:hidden mt-5">
             <div className="flex items-center justify-center">
               <div className="flex items-center gap-2 max-w-full overflow-x-auto no-scrollbar px-1">
-                {Array.from(new Set([1, page - 2, page - 1, page, page + 1, page + 2, totalPages]
-                  .filter(n => n >= 1 && n <= totalPages))).map(n =>
-                  n === page ? (
-                    <span key={`m-${n}`} aria-current="page" className={pagePillActive}>{n}</span>
+                {Array.from(
+                  new Set(
+                    [1, safePage - 2, safePage - 1, safePage, safePage + 1, safePage + 2, totalPages].filter(
+                      (n) => n >= 1 && n <= totalPages
+                    )
+                  )
+                ).map((n) =>
+                  n === safePage ? (
+                    <span key={`m-${n}`} aria-current="page" className={pagePillActive}>
+                      {n}
+                    </span>
                   ) : (
-                    <Link key={`m-${n}`} href={makePageHref(n)} className={pagePill}>{n}</Link>
+                    <Link key={`m-${n}`} href={makePageHref(n)} className={pagePill}>
+                      {n}
+                    </Link>
                   )
                 )}
               </div>
@@ -177,15 +239,23 @@ export default async function ArticlesListPage({ searchParams }: PageProps) {
           <div className="sm:hidden fixed inset-x-0 bottom-0 z-30 bg-white/95 dark:bg-black/90 backdrop-blur border-t border-black/10 dark:border-white/10">
             <div className="mx-auto max-w-screen-xl px-4 py-2">
               <div className="flex gap-3">
-                <Link href={makePageHref(Math.max(1, page - 1))} aria-disabled={page === 1} className={`flex-1 ${baseBtn} h-12 text-base ${page === 1 ? disabledBtn : ""}`}>
+                <Link
+                  href={makePageHref(Math.max(1, safePage - 1))}
+                  aria-disabled={safePage === 1}
+                  className={`flex-1 ${baseBtn} h-12 text-base ${safePage === 1 ? disabledBtn : ""}`}
+                >
                   ← Previous
                 </Link>
-                <Link href={makePageHref(Math.min(totalPages, page + 1))} aria-disabled={page === totalPages} className={`flex-1 ${baseBtn} h-12 text-base ${page === totalPages ? disabledBtn : ""}`}>
+                <Link
+                  href={makePageHref(Math.min(totalPages, safePage + 1))}
+                  aria-disabled={safePage === totalPages}
+                  className={`flex-1 ${baseBtn} h-12 text-base ${safePage === totalPages ? disabledBtn : ""}`}
+                >
                   Next →
                 </Link>
               </div>
-              <div className="mt-2 text-center text-xs text-black/70 dark:text-white/70">
-                Page {page} of {totalPages}
+              <div className="mt-2 text-center text-xs text-black dark:text-white opacity-70">
+                Page {safePage} of {totalPages}
               </div>
             </div>
           </div>

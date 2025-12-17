@@ -131,7 +131,7 @@ export default function HeroAbout({
               >
                 <div className="mx-auto w-full max-w-md rounded-2xl border border-blue-100 bg-white/90 p-5 shadow-sm ring-1 ring-blue-100/70 backdrop-blur dark:border-white/10 dark:bg-white/5 dark:ring-blue-900/40">
                   <div className="grid grid-cols-3 gap-4 text-center">
-                    <Stat label="Years" value="16+" />
+                    <Stat label="Years" value="17+" />
                     <Stat label="Countries" value="50+" />
                     <Stat label="Programs" value="100+" />
                   </div>

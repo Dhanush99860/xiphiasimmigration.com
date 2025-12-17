@@ -3,7 +3,7 @@ import Link from "next/link";
 import React from "react";
 
 export type RelatedItem = {
-  url: string;
+  url: string; // ideally internal like "/citizenship/malta"
   title: string;
   country: string;
   minInvestment?: number;
@@ -15,13 +15,14 @@ export type RelatedItem = {
 
 type Props = { items: RelatedItem[]; className?: string; title?: string };
 
+// ✅ Change this only if your canonical domain changes later
+const SITE_URL = "https://www.xiphiasimmigration.com";
+const SERVICE_TYPE = "Citizenship by Investment";
+
 /**
  * RelatedCompare — professional, readable cards for similar programs
  * - Server-component friendly (no state/effect)
- * - White cards, neutral text; blue only for emphasis (AA)
- * - 100% responsive (1 → 2 → 3 cols), print-friendly
- * - A11y: descriptive link, sr summary, focus-visible rings
- * - SEO: ItemList JSON-LD with Offer data
+ * - SEO: Service microdata + ItemList JSON-LD (NO Product)
  */
 export default function RelatedCompare({
   items,
@@ -64,12 +65,17 @@ export default function RelatedCompare({
           const time = isNum(r.timelineMonths)
             ? plural(r.timelineMonths!, "mo")
             : "Varies";
-          const hero = ensureAbsolute(r.heroImage);
+
+          // ✅ Make sure Link always receives an internal path
+          const href = toInternalPath(r.url);
+          const absoluteUrl = ensureAbsoluteUrl(href);
+
+          const hero = ensureAbsoluteImage(r.heroImage);
 
           return (
             <li key={`${r.url}-${idx}`} className="group">
               <Link
-                href={r.url}
+                href={href}
                 aria-label={`${r.title} — ${r.country}. Minimum ${price}. Timeline ${time}.`}
                 className={[
                   "block overflow-hidden rounded-2xl",
@@ -79,10 +85,33 @@ export default function RelatedCompare({
                   "focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70",
                 ].join(" ")}
               >
-                <article itemScope itemType="https://schema.org/Product">
+                {/* ✅ Microdata: Service (NO Product) */}
+                <article itemScope itemType="https://schema.org/Service">
+                  {/* Hidden schema values - no UI impact */}
+                  <link itemProp="url" href={absoluteUrl} />
                   <meta itemProp="name" content={r.title} />
-                  <meta itemProp="brand" content={r.country} />
-                  <meta itemProp="url" content={r.url} />
+                  <meta itemProp="serviceType" content={SERVICE_TYPE} />
+
+                  {/* areaServed as Country object */}
+                  <div
+                    itemProp="areaServed"
+                    itemScope
+                    itemType="https://schema.org/Country"
+                    className="hidden"
+                  >
+                    <meta itemProp="name" content={r.country} />
+                  </div>
+
+                  <div
+                    itemProp="provider"
+                    itemScope
+                    itemType="https://schema.org/Organization"
+                    className="hidden"
+                  >
+                    <meta itemProp="name" content="XIPHIAS Immigration" />
+                    <link itemProp="url" href={SITE_URL} />
+                  </div>
+
                   {isNum(r.minInvestment) ? (
                     <div
                       className="hidden"
@@ -90,10 +119,7 @@ export default function RelatedCompare({
                       itemScope
                       itemType="https://schema.org/Offer"
                     >
-                      <meta
-                        itemProp="price"
-                        content={String(r.minInvestment)}
-                      />
+                      <meta itemProp="price" content={String(r.minInvestment)} />
                       <meta
                         itemProp="priceCurrency"
                         content={(r.currency || "USD").toUpperCase()}
@@ -117,7 +143,7 @@ export default function RelatedCompare({
                         sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                         onError={(e) => {
-                          e.currentTarget.src = "/og.jpg";
+                          e.currentTarget.src = "/xiphias-immigration.png";
                         }}
                       />
                     ) : (
@@ -218,7 +244,7 @@ export default function RelatedCompare({
         })}
       </ul>
 
-      {/* SEO: JSON-LD ItemList */}
+      {/* ✅ SEO: JSON-LD ItemList (Service items, NOT Product) */}
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
@@ -235,43 +261,75 @@ export default function RelatedCompare({
 function isNum(x: unknown): x is number {
   return typeof x === "number" && Number.isFinite(x);
 }
+
 function fmtCurrency(amount: number, currency?: string) {
   const cur = (currency || "USD").toUpperCase();
+  const locale = "en-IN";
   try {
-    return new Intl.NumberFormat(undefined, {
+    return new Intl.NumberFormat(locale, {
       style: "currency",
       currency: cur,
       maximumFractionDigits: 0,
     }).format(amount);
   } catch {
-    return `${amount.toLocaleString()} ${cur}`;
+    return `${amount.toLocaleString(locale)} ${cur}`;
   }
 }
+
 function plural(n: number, unit: string) {
   return `${n} ${unit}${n === 1 ? "" : "s"}`;
 }
-function ensureAbsolute(src?: string) {
+
+function ensureAbsoluteImage(src?: string) {
   if (!src) return undefined;
-  return src.startsWith("/") ? src : `/${src.replace(/^\.?\/*/, "")}`;
+  if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("/")) return src;
+  return `/${src.replace(/^\.?\/*/, "")}`;
 }
+
+function toInternalPath(url: string) {
+  try {
+    if (url.startsWith("http://") || url.startsWith("https://")) {
+      const u = new URL(url);
+      return u.pathname || "/";
+    }
+  } catch {
+    // ignore parsing errors and fallback below
+  }
+  return url.startsWith("/") ? url : `/${url}`;
+}
+
+function ensureAbsoluteUrl(url: string) {
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  return `${SITE_URL}${url.startsWith("/") ? url : `/${url}`}`;
+}
+
 function toItemListJsonLd(items: RelatedItem[]) {
   const itemListElement = items.map((r, i) => {
-    const offer: any = {
-      "@type": "Product",
+    const href = toInternalPath(r.url);
+    const item: any = {
+      "@type": "Service",
       name: r.title,
-      brand: r.country,
-      url: r.url,
+      url: ensureAbsoluteUrl(href),
+      serviceType: SERVICE_TYPE,
+      areaServed: { "@type": "Country", name: r.country },
+      provider: {
+        "@type": "Organization",
+        name: "XIPHIAS Immigration",
+        url: SITE_URL,
+      },
     };
+
     if (isNum(r.minInvestment)) {
-      offer.offers = {
+      item.offers = {
         "@type": "Offer",
         price: r.minInvestment,
         priceCurrency: (r.currency || "USD").toUpperCase(),
         availability: "https://schema.org/InStock",
       };
     }
+
     if (isNum(r.timelineMonths)) {
-      offer.additionalProperty = [
+      item.additionalProperty = [
         {
           "@type": "PropertyValue",
           name: "Typical timeline",
@@ -279,7 +337,8 @@ function toItemListJsonLd(items: RelatedItem[]) {
         },
       ];
     }
-    return { "@type": "ListItem", position: i + 1, item: offer };
+
+    return { "@type": "ListItem", position: i + 1, item };
   });
 
   return {

@@ -31,12 +31,12 @@ const HAS_VIDEO: boolean =
 
 // Keep copy neutral (no unverified claims)
 const BIO: string =
-  "With more than 15 years of experience, Varun Singh, MD, Cert IMC, is an experienced advisor in international immigration and investment migration, known for his focus on integrity, precision, and client service as Managing Director of XIPHIAS Immigration.";
+  "With more than 17 years of experience, Varun Singh, MD, Cert IMC, is an experienced advisor in international immigration and investment migration, known for his focus on integrity, precision, and client service as Managing Director of XIPHIAS Immigration.";
 
 const HIGHLIGHTS: Highlight[] = [
   {
     icon: <Award className="w-5 h-5 text-primary relative z-10" />,
-    text: <>15+ years of experience & IMC-certified leadership</>,
+    text: <>17+ years of experience & IMC-certified leadership</>,
   },
   {
     icon: <Globe className="w-5 h-5 text-primary relative z-10" />,

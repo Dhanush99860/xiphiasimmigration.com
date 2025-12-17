@@ -74,7 +74,7 @@ function thumbForProgram(p: AnyProgram) {
   const countryPoster = p.countrySlug
     ? `/images/countries/${p.countrySlug}-hero-poster.jpg`
     : undefined;
-  return heroImage || heroPoster || countryPoster || "/og.jpg";
+  return heroImage || heroPoster || countryPoster || "/xiphias-immigration.png";
 }
 
 /* ================================

@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og.jpg",
+        url: "/xiphias-immigration.png",
         width: 1200,
         height: 630,
         alt: "Corporate Immigration Eligibility Check – XIPHIAS Immigration",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     title: "Corporate Immigration Eligibility Check (Free)",
     description:
       "Assess corporate immigration options for entity setup, sponsorship, and global mobility. Instant results + downloadable summary.",
-    images: ["/og.jpg"],
+    images: ["/xiphias-immigration.png"],
   },
   robots: { index: true, follow: true },
 };

@@ -1,7 +1,6 @@
 import React from "react";
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
-import ClientOnly from "@/components/Common/ClientOnly";
 
 // Hero + all big home sections are code-split
 const Hero = dynamic(() => import("@/components/Home/Hero"));
@@ -41,33 +40,33 @@ export const metadata: Metadata = {
     siteName: "XIPHIAS Immigration",
     locale: "en_US",
     type: "website",
-    images: ["/og.jpg"],
+    images: ["/xiphias-immigration.png"],
   },
   twitter: {
     card: "summary_large_image",
     title: "Best Immigration Consultants in India – XIPHIAS Immigration",
     description:
       "Build your global future with XIPHIAS Immigration — experts in residency, citizenship, and migration",
-    images: ["/og.jpg"],
+    images: ["/xiphias-immigration.png"],
   },
 };
 
 export default function Home() {
   return (
     <>
-      <ClientOnly>
-        <Hero />
-        <WhyChooseUs />
-        <CitizenshipPreview />
-        <ResidencyPreview />
-        <section className="scroll-mt-28 mx-auto lg:max-w-screen-2xl sm:px-6 lg:px-4">
-          <AdvisorConsultationCard bookingHref="/booking?book=paid" />
-        </section>
-        <CorporatePreview />
-        <SkilledPreview />
-        <FAQJourney />
-        <InsightsPreview />
-      </ClientOnly>
+      <Hero />
+      <WhyChooseUs />
+      <CitizenshipPreview />
+      <ResidencyPreview />
+
+      <section className="scroll-mt-28 mx-auto lg:max-w-screen-2xl sm:px-6 lg:px-4">
+        <AdvisorConsultationCard bookingHref="/booking?book=paid" />
+      </section>
+
+      <CorporatePreview />
+      <SkilledPreview />
+      <FAQJourney />
+      <InsightsPreview />
     </>
   );
 }

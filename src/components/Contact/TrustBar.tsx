@@ -27,7 +27,7 @@ type Props = {
 
 const DEFAULT_ITEMS: TrustItem[] = [
   { label: "ISO 9001:2015", sub: "Quality Management", icon: <BadgeIcon /> },
-  { label: "15+ years", sub: "Industry experience", icon: <AwardIcon /> },
+  { label: "17+ years", sub: "Industry experience", icon: <AwardIcon /> },
   { label: "30K+", sub: "Consultations", icon: <UsersIcon /> },
   { label: "Global", sub: "India · UAE · Canada", icon: <GlobeIcon /> },
 ];

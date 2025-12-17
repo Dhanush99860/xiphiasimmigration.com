@@ -13,7 +13,7 @@ export const revalidate = 86400;
 type PageProps = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { slug } = await params; // ✅ await
+  const { slug } = await params;
   const record = await getInsightBySlug("news", slug);
   if (!record) return { title: "Not Found" };
 
@@ -50,9 +50,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function Page({ params }: PageProps) {
-  const { slug } = await params; // ✅ await
+  const { slug } = await params;
   const record = await getInsightBySlug("news", slug);
-  if (!record) return notFound(); // ✅ proper 404
+  if (!record) return notFound();
 
   return (
     <>

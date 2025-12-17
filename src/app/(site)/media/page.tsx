@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og.jpg",
+        url: "/xiphias-immigration.png",
         width: 1200,
         height: 630,
         alt: "Media – Videos & Interviews – XIPHIAS Immigration",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     title: "Media – Videos & Interviews",
     description:
       "Watch our latest interviews, webinars and media appearances covering investment migration, residency and citizenship programs.",
-    images: ["/og.jpg"],
+    images: ["/xiphias-immigration.png"],
   },
 };
 

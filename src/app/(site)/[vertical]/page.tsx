@@ -44,7 +44,7 @@ export async function generateMetadata({
       type: "website",
       images: [
         {
-          url: "/og.jpg",
+          url: "/xiphias-immigration.png",
           width: 1200,
           height: 630,
           alt: `${title} – XIPHIAS Immigration`,
@@ -55,7 +55,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title,
       description,
-      images: ["/og.jpg"],
+      images: ["/xiphias-immigration.png"],
     },
   };
 }

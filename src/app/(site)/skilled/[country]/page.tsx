@@ -100,7 +100,7 @@ export async function generateMetadata(
       type: "website",
       images: [
         {
-          url: heroImage ?? "/og.jpg",
+          url: heroImage ?? "/xiphias-immigration.png",
           width: 1200,
           height: 630,
           alt: `${title} – XIPHIAS`,

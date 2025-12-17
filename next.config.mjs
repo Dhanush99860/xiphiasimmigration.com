@@ -33,25 +33,45 @@ const nextConfig = {
 
   async redirects() {
     return [
-      { source: "/:path*/_country",  destination: "/:path*", permanent: true },
+      // ✅ Force non-www → www (helps canonical + sitemap consistency)
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "(?:www\\.)?xiphiasimmigration\\.com" }],
+        destination: "https://www.xiphiasimmigration.com/:path*",
+        permanent: true,
+      },
+
+      // Existing cleanup (keep)
+      { source: "/:path*/_country", destination: "/:path*", permanent: true },
       { source: "/:path*/_country/", destination: "/:path*", permanent: true },
-      { source: "/newsroom", destination: "/news", permanent: false },
+
+      // ✅ Old site URLs (fix 404/5xx noise)
+      { source: "/RealEstate/:path*", destination: "/residency", permanent: true },
+      { source: "/realestate/:path*", destination: "/residency", permanent: true },
+
+      { source: "/blogs/:path*", destination: "/blog/:path*", permanent: true },
+      { source: "/blogs", destination: "/blog", permanent: true },
+
+      // ✅ Consolidate old /insights paths to canonical routes (prevents duplicate indexing)
+      { source: "/insights/blog/:slug*", destination: "/blog/:slug*", permanent: true },
+      { source: "/insights/news/:slug*", destination: "/news/:slug*", permanent: true },
+      { source: "/insights/articles/:slug*", destination: "/articles/:slug*", permanent: true },
+      { source: "/insights/media/:slug*", destination: "/media/:slug*", permanent: true },
+
+      { source: "/insights/blog", destination: "/blog", permanent: true },
+      { source: "/insights/news", destination: "/news", permanent: true },
+      { source: "/insights/articles", destination: "/articles", permanent: true },
+      { source: "/insights/media", destination: "/media", permanent: true },
+
+      // ✅ newsroom is old path → make it 301
+      { source: "/newsroom", destination: "/news", permanent: true },
     ];
   },
 
+  // ✅ Remove rewrites: redirects are better for SEO (no duplicate URLs)
   async rewrites() {
-    return [
-      { source: "/insights/news/:slug",     destination: "/news/:slug" },
-      { source: "/insights/articles/:slug", destination: "/articles/:slug" },
-      { source: "/insights/media/:slug",    destination: "/media/:slug" },
-      { source: "/insights/blog/:slug",     destination: "/blog/:slug" },
-      { source: "/insights/news",     destination: "/news" },
-      { source: "/insights/articles", destination: "/articles" },
-      { source: "/insights/media",    destination: "/media" },
-      { source: "/insights/blog",     destination: "/blog" },
-    ];
+    return [];
   },
 };
 
-// IMPORTANT: wrap MDX with bundle analyzer
 export default withBundleAnalyzer(withMDX(nextConfig));

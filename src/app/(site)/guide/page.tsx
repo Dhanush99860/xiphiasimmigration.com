@@ -107,13 +107,13 @@ export async function generateMetadata(): Promise<Metadata> {
       url,
       siteName: SITE_NAME,
       type: "website",
-      images: [{ url: "/og.jpg", width: 1200, height: 630, alt: `${SITE_NAME} – Resource Guide` }],
+      images: [{ url: "/xiphias-immigration.png", width: 1200, height: 630, alt: `${SITE_NAME} – Resource Guide` }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: ["/og.jpg"],
+      images: ["/xiphias-immigration.png"],
     },
     robots: {
       index: true,
@@ -174,7 +174,7 @@ function JsonLd({ items, absoluteBase }: { items: ProgramItem[]; absoluteBase: s
       "Skilled Immigration",
       "Corporate Formation",
     ],
-    primaryImageOfPage: `${absoluteBase}/og.jpg`,
+    primaryImageOfPage: `${absoluteBase}/xiphias-immigration.png`,
   };
 
   const faq = {

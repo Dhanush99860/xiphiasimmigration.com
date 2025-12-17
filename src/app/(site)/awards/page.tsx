@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og.jpg",
+        url: "/xiphias-immigration.png",
         width: 1200,
         height: 630,
         alt: "Awards & Recognition – XIPHIAS Immigration",
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     title: "Awards & Recognition",
     description:
       "Independent accolades that recognize our quality, leadership, and client service.",
-    images: ["/og.jpg"],
+    images: ["/xiphias-immigration.png"],
   },
 };
 

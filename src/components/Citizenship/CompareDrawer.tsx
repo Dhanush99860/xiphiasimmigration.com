@@ -45,7 +45,7 @@ function safeThumbSrc(it: CompareItem) {
   const raw = it.heroImage;
   if (raw && raw.startsWith("/")) return raw;
   // final fallback
-  return "/og.jpg";
+  return "/xiphias-immigration.png";
 }
 
 /* square thumbnail with two-step fallback */
@@ -62,7 +62,7 @@ function SquareThumb({ item }: { item: CompareItem }) {
         className="object-cover"
         onError={() => {
           if (stage === 0) {
-            setSrc("/og.jpg");
+            setSrc("/xiphias-immigration.png");
             setStage(1);
           }
         }}

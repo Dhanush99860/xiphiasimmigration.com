@@ -30,12 +30,18 @@ type Item = {
 const pick = <T,>(...vals: (T | undefined)[]) =>
   vals.find((v) => v !== undefined && v !== null && v !== "") as T | undefined;
 
+const DATE_FMT = new Intl.DateTimeFormat("en-IN", {
+  day: "2-digit",
+  month: "short",
+  year: "numeric",
+  timeZone: "UTC",
+});
+
 const formatDate = (input?: string) => {
   if (!input) return "";
-  const d = new Date(input);
-  return Number.isNaN(d.getTime())
-    ? input
-    : d.toLocaleDateString(undefined, { day: "2-digit", month: "short", year: "numeric" });
+  const t = Date.parse(input);
+  if (Number.isNaN(t)) return input;
+  return DATE_FMT.format(new Date(t));
 };
 
 /** Fix common bad URLs (spaces, //cdn, missing scheme, Drive/Dropbox) */

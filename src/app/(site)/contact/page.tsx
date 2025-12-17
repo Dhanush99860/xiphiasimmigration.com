@@ -55,7 +55,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og.jpg", // reuse a known valid image to avoid 404s
+        url: "/xiphias-immigration.png", // reuse a known valid image to avoid 404s
         width: 1200,
         height: 630,
         alt: "Contact XIPHIAS Immigration",
@@ -68,7 +68,7 @@ export const metadata: Metadata = {
     title: "Contact XIPHIAS | Speak to an Immigration Expert",
     description:
       "Talk to licensed experts. Bengaluru HQ with India, UAE & Canada presence.",
-    images: ["/og.jpg"],
+    images: ["/xiphias-immigration.png"],
     creator: "@xiphiasimmig",
   },
 };
@@ -113,7 +113,7 @@ export default function ContactPage() {
         ctaLabel="Book Paid Expert"
         stats={[
           { value: "24h", label: "Average response" },
-          { value: "15+", label: "Years experience" },
+          { value: "17+", label: "Years experience" },
           { value: "30K+", label: "Consultations" },
         ]}
       />

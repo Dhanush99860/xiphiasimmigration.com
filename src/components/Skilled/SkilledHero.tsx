@@ -28,7 +28,7 @@ type Props = {
 export default function SkilledHero({
   title = "Discover Skilled Migration & Work Permits",
   subtitle = "Points-tested PR, employer sponsorships, and priority talent visas across top destinations.",
-  primaryHref = "/personal-booking",
+  primaryHref = "/contact",
   primaryText = "Book a Free Consultation",
   secondaryHref = "/images/citizenship/antigua/xiphias-immigration.pdf",
   secondaryText = "Download Guide",

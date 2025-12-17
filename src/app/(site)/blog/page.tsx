@@ -1,11 +1,10 @@
-// app/(site)/blog/page.tsx
+// src/app/(site)/blog/page.tsx
 import Link from "next/link";
-import { getAllInsights } from "@/lib/insights-content";
-// Dynamically import the blog listing component to reduce initial bundle size and improve performance.
-import nextDynamic from "next/dynamic";
-const InsightsList = nextDynamic(() => import("@/components/Insights/InsightsList"));
-
 import type { Metadata } from "next";
+import { getAllInsights } from "@/lib/insights-content";
+import nextDynamic from "next/dynamic";
+
+const InsightsList = nextDynamic(() => import("@/components/Insights/InsightsList"));
 
 // SEO metadata for the blog listing page
 export const metadata: Metadata = {
@@ -13,17 +12,18 @@ export const metadata: Metadata = {
   description:
     "Read our latest blog posts on immigration stories, expert tips and program updates. Stay informed with XIPHIAS Immigration.",
   alternates: { canonical: "/blog" },
+  robots: { index: true, follow: true },
   openGraph: {
     title: "Blog – Immigration Stories & Updates",
     description:
       "Read our latest blog posts on immigration stories, expert tips and program updates. Stay informed with XIPHIAS Immigration.",
-    url: "https://www.xiphiasimmigration.com/blog",
+    url: "/blog",
     siteName: "XIPHIAS Immigration",
     locale: "en_US",
     type: "website",
     images: [
       {
-        url: "/og.jpg",
+        url: "/xiphias-immigration.png",
         width: 1200,
         height: 630,
         alt: "Blog – Immigration Stories & Updates – XIPHIAS Immigration",
@@ -35,37 +35,39 @@ export const metadata: Metadata = {
     title: "Blog – Immigration Stories & Updates",
     description:
       "Read our latest blog posts on immigration stories, expert tips and program updates. Stay informed with XIPHIAS Immigration.",
-    images: ["/og.jpg"],
+    images: ["/xiphias-immigration.png"],
   },
 };
 
 export const revalidate = 86400;
 
-// Next 15: searchParams is a Promise and values can be string | string[]
+// Compatible typing: supports either plain object or Promise (varies by Next versions/tooling)
+type SearchParams = Record<string, string | string[] | undefined>;
 type PageProps = {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
+  searchParams?: SearchParams | Promise<SearchParams>;
 };
 
 const first = (v?: string | string[]) => (Array.isArray(v) ? v[0] : v);
 
 export default async function BlogListPage({ searchParams }: PageProps) {
-  const sp = await searchParams;                       // ✅ await searchParams
-  const page = Math.max(1, Number(first(sp.page) ?? "1"));
+  const sp = await Promise.resolve(searchParams ?? {});
+  const requestedPage = Math.max(1, Number(first(sp.page) ?? "1"));
   const pageSize = 12;
 
   const { items, total } = await getAllInsights({
     kind: "blog",
-    page,
+    page: requestedPage,
     pageSize,
   });
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const page = Math.min(requestedPage, totalPages);
+
   const startIdx = total === 0 ? 0 : (page - 1) * pageSize + 1;
   const endIdx = Math.min(total, page * pageSize);
 
   const makePageHref = (p: number) => (p > 1 ? `/blog?page=${p}` : `/blog`);
 
-  // Shared styles (black/white with opacity)
   const baseBtn =
     "inline-flex items-center justify-center rounded-md px-4 py-2 text-base sm:text-sm " +
     "border text-black dark:text-white border-black/20 dark:border-white/20 " +
@@ -82,39 +84,51 @@ export default async function BlogListPage({ searchParams }: PageProps) {
     "text-base sm:text-sm bg-black text-white dark:bg-white dark:text-black " +
     "border border-black dark:border-white";
 
-  // Numbered page list with ellipses (desktop/tablet)
   const pageNumbers = (() => {
     const arr: (number | "...")[] = [];
-    const firstPage = 1, last = totalPages, window = 1;
+    const firstPage = 1;
+    const last = totalPages;
+    const window = 1;
+
     if (totalPages <= 7) {
       for (let i = 1; i <= totalPages; i++) arr.push(i);
       return arr;
     }
+
     arr.push(firstPage);
     if (page > firstPage + window + 1) arr.push("...");
+
     for (let i = Math.max(firstPage + 1, page - window); i <= Math.min(last - 1, page + window); i++) {
       if (i !== firstPage && i !== last) arr.push(i);
     }
+
     if (page < last - window - 1) arr.push("...");
     arr.push(last);
     return arr;
   })();
 
   return (
-    <main className="container mx-auto w-full lg:max-w-screen-xl md:max-w-screen-md px-4 pt-6 sm:pt-8 pb-24 sm:pb-12">
+    <main className="container mx-auto w-full lg:max-w-screen-xl md:max-w-screen-md px-4 pt-6 sm:pt-8 pb-28 sm:pb-12">
       <h1 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-6 text-black dark:text-white">
         Blog
       </h1>
 
-      {/* Meta */}
-      <div className="text-sm text-black/70 dark:text-white/70 mb-3 sm:mb-4" aria-live="polite" aria-atomic="true">
-        {total > 0 ? <>Showing {startIdx}–{endIdx} of {total} posts</> : <>No posts found</>}
+      <div
+        className="text-sm text-black dark:text-white opacity-70 mb-3 sm:mb-4"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        {total > 0 ? (
+          <>
+            Showing {startIdx}–{endIdx} of {total} posts
+          </>
+        ) : (
+          <>No posts found</>
+        )}
       </div>
 
-      {/* List */}
       <InsightsList items={items} />
 
-      {/* Desktop/Tablet Pagination */}
       {totalPages > 1 && (
         <nav
           className="mt-6 sm:mt-8 hidden sm:flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
@@ -133,15 +147,19 @@ export default async function BlogListPage({ searchParams }: PageProps) {
           <ul className="flex items-center gap-2 max-w-full overflow-x-auto no-scrollbar px-1" aria-label="Page list">
             {pageNumbers.map((p, idx) =>
               p === "..." ? (
-                <li key={`ellipsis-${idx}`} aria-hidden="true" className="px-2 text-black/60 dark:text-white/60 select-none">
+                <li key={`ellipsis-${idx}`} aria-hidden="true" className="px-2 text-black dark:text-white opacity-60 select-none">
                   …
                 </li>
               ) : (
                 <li key={p} className="shrink-0">
                   {p === page ? (
-                    <span aria-current="page" className={pagePillActive}>{p}</span>
+                    <span aria-current="page" className={pagePillActive}>
+                      {p}
+                    </span>
                   ) : (
-                    <Link href={makePageHref(p)} className={pagePill}>{p}</Link>
+                    <Link href={makePageHref(p)} className={pagePill}>
+                      {p}
+                    </Link>
                   )}
                 </li>
               )
@@ -149,7 +167,11 @@ export default async function BlogListPage({ searchParams }: PageProps) {
           </ul>
 
           <div className="flex items-center gap-2">
-            <Link href={makePageHref(Math.min(totalPages, page + 1))} aria-disabled={page === totalPages} className={`${baseBtn} ${page === totalPages ? disabledBtn : ""}`}>
+            <Link
+              href={makePageHref(Math.min(totalPages, page + 1))}
+              aria-disabled={page === totalPages}
+              className={`${baseBtn} ${page === totalPages ? disabledBtn : ""}`}
+            >
               Next
             </Link>
             <Link href={makePageHref(totalPages)} aria-disabled={page === totalPages} className={`${baseBtn} ${page === totalPages ? disabledBtn : ""}`}>
@@ -159,26 +181,28 @@ export default async function BlogListPage({ searchParams }: PageProps) {
         </nav>
       )}
 
-      {/* Mobile Pagination: compact numbers + sticky Prev/Next */}
       {totalPages > 1 && (
         <>
-          {/* Compact number strip (mobile) */}
           <div className="sm:hidden mt-5">
             <div className="flex items-center justify-center">
               <div className="flex items-center gap-2 max-w-full overflow-x-auto no-scrollbar px-1">
-                {Array.from(new Set([1, page - 2, page - 1, page, page + 1, page + 2, totalPages]
-                  .filter(n => n >= 1 && n <= totalPages))).map(n =>
+                {Array.from(
+                  new Set([1, page - 2, page - 1, page, page + 1, page + 2, totalPages].filter((n) => n >= 1 && n <= totalPages))
+                ).map((n) =>
                   n === page ? (
-                    <span key={`m-${n}`} aria-current="page" className={pagePillActive}>{n}</span>
+                    <span key={`m-${n}`} aria-current="page" className={pagePillActive}>
+                      {n}
+                    </span>
                   ) : (
-                    <Link key={`m-${n}`} href={makePageHref(n)} className={pagePill}>{n}</Link>
+                    <Link key={`m-${n}`} href={makePageHref(n)} className={pagePill}>
+                      {n}
+                    </Link>
                   )
                 )}
               </div>
             </div>
           </div>
 
-          {/* Sticky bottom bar (mobile) */}
           <div className="sm:hidden fixed inset-x-0 bottom-0 z-30 bg-white/95 dark:bg-black/90 backdrop-blur border-t border-black/10 dark:border-white/10">
             <div className="mx-auto max-w-screen-xl px-4 py-2">
               <div className="flex gap-3">
@@ -197,7 +221,7 @@ export default async function BlogListPage({ searchParams }: PageProps) {
                   Next →
                 </Link>
               </div>
-              <div className="mt-2 text-center text-xs text-black/70 dark:text-white/70">
+              <div className="mt-2 text-center text-xs text-black dark:text-white opacity-70">
                 Page {page} of {totalPages}
               </div>
             </div>

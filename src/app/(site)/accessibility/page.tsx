@@ -1,10 +1,10 @@
-// FILE: src/app/(site)/accessibility/page.tsx
-// Accessibility Statement — black/white theme, responsive, SEO+JSON-LD, with Breadcrumb.
-// Uses your Breadcrumb component: import Breadcrumb from "@/components/Common/Breadcrumb";
-
+// src/app/(site)/accessibility/page.tsx
 import type { Metadata } from "next";
 import Breadcrumb from "@/components/Common/Breadcrumb";
 import React from "react";
+
+// ✅ Keep one canonical domain everywhere
+const SITE_URL = "https://www.xiphiasimmigration.com";
 
 // ───────────────── SEO METADATA ─────────────────
 export const metadata: Metadata = {
@@ -13,14 +13,33 @@ export const metadata: Metadata = {
     "Our commitment to digital accessibility, conformance targets, measures we take, and how to report issues or request an accessible format.",
   alternates: { canonical: "/accessibility" },
   robots: { index: true, follow: true },
+
+  // ✅ Include OG image here so this page doesn't lose the global image
   openGraph: {
     title: "Accessibility Statement · XIPHIAS Immigration Private Limited",
     description:
       "Commitment to accessible experiences, WCAG conformance, known limitations, and feedback channels.",
-    url: "/accessibility",
-    type: "article",
+    url: `${SITE_URL}/accessibility`,
+    siteName: "XIPHIAS Immigration",
+    type: "website",
+    images: [
+      {
+        url: "/xiphias-immigration.png",
+        width: 1200,
+        height: 630,
+        alt: "XIPHIAS Immigration",
+      },
+    ],
   },
-  twitter: { card: "summary" },
+
+  // ✅ Keep consistent with your global Twitter setup
+  twitter: {
+    card: "summary_large_image",
+    title: "Accessibility Statement · XIPHIAS Immigration Private Limited",
+    description:
+      "Commitment to accessible experiences, WCAG conformance, known limitations, and feedback channels.",
+    images: ["/xiphias-immigration.png"],
+  },
 };
 
 // ──────────────── SMALL UI HELPERS (black/white only) ────────────────
@@ -58,9 +77,9 @@ export default function AccessibilityPage() {
     city: "Bengaluru",
     state: "Karnataka",
     country: "India",
-    site: "https://xiphiasimmigration.com",
-    email: "support@immigration.in",
-    altEmail: "accessibility@xiphiasimmigration.com",
+    site: SITE_URL, // ✅ canonical
+    email: "immigration@xiphias.in",
+    altEmail: "immigration@xiphias.in",
   } as const;
 
   const toc = [
@@ -75,21 +94,38 @@ export default function AccessibilityPage() {
     { id: "updates", label: "Updates" },
   ];
 
+  // ✅ Page JSON-LD (safe + consistent)
   const jsonLdWebPage = {
     "@context": "https://schema.org",
     "@type": "WebPage",
+    "@id": `${company.site}/accessibility#webpage`,
     name: "Accessibility Statement",
     url: `${company.site}/accessibility`,
     dateModified: "2025-10-09",
-    isPartOf: { "@type": "WebSite", name: company.name, url: company.site },
+    isPartOf: {
+      "@type": "WebSite",
+      "@id": `${company.site}/#website`,
+      name: "XIPHIAS Immigration",
+      url: company.site,
+    },
   };
 
   const jsonLdBreadcrumbs = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: `${company.site}/` },
-      { "@type": "ListItem", position: 2, name: "Accessibility", item: `${company.site}/accessibility` },
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: `${company.site}/`,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Accessibility",
+        item: `${company.site}/accessibility`,
+      },
     ],
   };
 
@@ -113,7 +149,9 @@ export default function AccessibilityPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10 md:py-14">
           <div className="flex items-start justify-between gap-6">
             <div className="max-w-3xl">
-              <h1 className="text-2xl md:text-4xl font-semibold tracking-tight">Accessibility Statement</h1>
+              <h1 className="text-2xl md:text-4xl font-semibold tracking-tight">
+                Accessibility Statement
+              </h1>
               <p className="mt-2 text-sm/6 opacity-80">Effective: {effectiveDate}</p>
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
                 <Card>
@@ -125,8 +163,15 @@ export default function AccessibilityPage() {
                 </Card>
                 <Card>
                   <p className="text-sm">
-                    Related: Privacy (<a className="underline" href="/privacy-policy">/privacy-policy</a>) ·
-                    Terms (<a className="underline" href="/terms">/terms</a>)
+                    Related: Privacy (
+                    <a className="underline" href="/privacy-policy">
+                      /privacy-policy
+                    </a>
+                    ) · Terms (
+                    <a className="underline" href="/terms">
+                      /terms
+                    </a>
+                    )
                   </p>
                 </Card>
               </div>
@@ -135,7 +180,9 @@ export default function AccessibilityPage() {
             {/* Right rail (desktop TOC) */}
             <aside className="hidden lg:block w-64 shrink-0">
               <nav aria-label="On this page" className="sticky top-28">
-                <p className="text-xs uppercase tracking-wide opacity-70 mb-2">On this page</p>
+                <p className="text-xs uppercase tracking-wide opacity-70 mb-2">
+                  On this page
+                </p>
                 <ul className="space-y-1">
                   {toc.map((n) => (
                     <li key={n.id}>
@@ -161,8 +208,8 @@ export default function AccessibilityPage() {
             <Section id="commitment" title="1. Our commitment">
               <p>
                 {company.name} is committed to providing a website that is accessible to the widest
-                possible audience, regardless of technology or ability. We strive to continuously improve
-                the user experience for everyone and apply relevant accessibility standards.
+                possible audience, regardless of technology or ability. We strive to continuously
+                improve the user experience for everyone and apply relevant accessibility standards.
               </p>
             </Section>
 
@@ -190,8 +237,9 @@ export default function AccessibilityPage() {
               </p>
               <Card>
                 <p className="text-sm">
-                  Helpful info to include in a report: page URL, steps to reproduce, expected vs. actual
-                  behavior, browser/version, OS, and assistive tech (e.g., NVDA, TalkBack, VoiceOver).
+                  Helpful info to include in a report: page URL, steps to reproduce, expected vs.
+                  actual behavior, browser/version, OS, and assistive tech (e.g., NVDA, TalkBack,
+                  VoiceOver).
                 </p>
               </Card>
             </Section>
@@ -236,8 +284,8 @@ export default function AccessibilityPage() {
             <Section id="enforcement" title="8. Enforcement">
               <p>
                 We take accessibility seriously. If you believe you have been unable to access content
-                or functionality due to a barrier on our site, please contact us using the details above.
-                We will review and endeavor to remediate where reasonable.
+                or functionality due to a barrier on our site, please contact us using the details
+                above. We will review and endeavor to remediate where reasonable.
               </p>
             </Section>
 

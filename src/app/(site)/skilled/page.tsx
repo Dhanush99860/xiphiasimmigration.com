@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og.jpg",
+        url: "/xiphias-immigration.png",
         width: 1200,
         height: 630,
         alt: "Skilled Migration & Work Permits – Countries & Options – XIPHIAS Immigration",
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     title: "Skilled Migration & Work Permits – Countries & Options",
     description:
       "Explore skilled migration routes by country: points-tested PR, employer sponsorships, and talent visas. Compare timelines, eligibility and costs.",
-    images: ["/og.jpg"],
+    images: ["/xiphias-immigration.png"],
   },
 };
 

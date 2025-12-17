@@ -11,6 +11,10 @@ import Aoscompo from "@/utils/aos";
 import MDXProviders from "@/components/MDX/MDXProviders";
 import ChatWidget from "@/components/ChatWidget";
 
+// ✅ GA4 components
+import GoogleAnalytics from "@/components/Analytics/GoogleAnalytics";
+import GA4RouteChange from "@/components/Analytics/GA4RouteChange";
+
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
@@ -33,13 +37,19 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://www.xiphiasimmigration.com"),
   applicationName: "XIPHIAS Immigration",
   generator: "Next.js",
+
+  // ✅ Correct manifest link (Next serves src/app/manifest.ts as /manifest.webmanifest)
+  manifest: "/manifest.webmanifest",
+
   title: {
     default: "XIPHIAS Immigration – Residency, Citizenship & Global Mobility",
     template: "%s | XIPHIAS Immigration",
   },
   description:
     "Trusted advisors for Residency by Investment, Citizenship by Investment, Skilled Immigration, and Corporate Mobility across 25+ countries.",
+
   referrer: "strict-origin-when-cross-origin",
+
   robots: {
     index: true,
     follow: true,
@@ -51,11 +61,16 @@ export const metadata: Metadata = {
       "max-video-preview": -1,
     },
   },
+
   formatDetection: { telephone: false, email: false, address: false },
+
+  // ✅ IMPORTANT:
+  // Do NOT set canonical: "/" globally in layout.
+  // Each page should set its own canonical (or omit and let Google decide).
   alternates: {
-    canonical: "/",
     languages: { en: "/", "en-IN": "/" },
   },
+
   openGraph: {
     title: "XIPHIAS Immigration",
     description:
@@ -66,44 +81,48 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og.jpg",
+        url: "/xiphias-immigration.png",
         width: 1200,
         height: 630,
         alt: "XIPHIAS Immigration – Residency & Citizenship by Investment",
       },
     ],
   },
+
   twitter: {
     card: "summary_large_image",
     title: "XIPHIAS Immigration",
     description:
       "Residency & Citizenship solutions for HNWIs and enterprises.",
-    images: ["/og.jpg"],
+    images: ["/xiphias-immigration.png"],
     creator: "@xiphiasimmig",
   },
+
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "48x48", type: "image/x-icon" },
-      { url: "/icons/icon-32.png", sizes: "32x32", type: "image/png" },
-      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
-      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+      // ✅ Correct sizes + types
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
+      { url: "/android-chrome-512x512.png", sizes: "512x512", type: "image/png" },
     ],
     apple: [
       {
-        url: "/icons/apple-touch-icon.png",
+        url: "/apple-touch-icon.png",
         sizes: "180x180",
         type: "image/png",
       },
     ],
     other: [
-      { url: "/site.webmanifest", rel: "manifest" },
+      // ✅ mask-icon must be an SVG and must exist in /public, otherwise remove it.
       {
-        url: "/icons/safari-pinned-tab.svg",
+        url: "/xiphias-immigration.svg",
         rel: "mask-icon",
         color: "#0f3a84",
       },
     ],
   },
+
   appleWebApp: {
     title: "XIPHIAS Immigration",
     statusBarStyle: "default",
@@ -165,8 +184,7 @@ const websiteJsonLd = {
   name: "XIPHIAS Immigration",
   potentialAction: {
     "@type": "SearchAction",
-    target:
-      "https://www.xiphiasimmigration.com/search?q={search_term_string}",
+    target: "https://www.xiphiasimmigration.com/search?q={search_term_string}",
     "query-input": "required name=search_term_string",
   },
 };
@@ -176,6 +194,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const GA_ID = process.env.NEXT_PUBLIC_GA4_ID;
+
   return (
     <html
       lang="en"
@@ -193,10 +213,8 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <Aoscompo>
             <MDXProviders>
-              {/* Global header on every page (sticky) */}
               <Header />
 
-              {/* Main content area */}
               <main id="main" className="min-h-screen">
                 {children}
               </main>
@@ -208,7 +226,15 @@ export default function RootLayout({
           </Aoscompo>
         </ThemeProvider>
 
-        {/* JSON-LD (inline scripts in body are fine) */}
+        {/* ✅ GA4 */}
+        {GA_ID ? (
+          <>
+            <GoogleAnalytics gaId={GA_ID} />
+            <GA4RouteChange gaId={GA_ID} />
+          </>
+        ) : null}
+
+        {/* JSON-LD */}
         <script
           id="org-jsonld"
           type="application/ld+json"

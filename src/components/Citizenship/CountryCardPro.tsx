@@ -17,28 +17,67 @@ type Props = {
   className?: string;
 };
 
+const SITE_URL = "https://www.xiphiasimmigration.com";
+const SERVICE_TYPE = "Citizenship by Investment";
+
 /* ---------------- utils ---------------- */
-function ensureAbsolute(src?: string) {
-  if (!src) return undefined;
-  return src.startsWith("/") ? src : `/${src.replace(/^\.?\/*/, "")}`;
+
+function slugify(s: string) {
+  return (s || "")
+    .toLowerCase()
+    .replace(/https?:\/\//g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
-function fmtCurrency(amount?: number, cur = "USD") {
+
+function stableIds(href: string, title: string) {
+  const base = `ccp-${slugify(href || title || "card")}`;
+  return { hId: `${base}-h`, dId: `${base}-d` };
+}
+
+function ensureAbsoluteImage(src?: string) {
+  if (!src) return undefined;
+  if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("/")) return src;
+  return `/${src.replace(/^\.?\/*/, "")}`;
+}
+
+function toInternalPath(url: string) {
+  try {
+    if (url.startsWith("http://") || url.startsWith("https://")) {
+      const u = new URL(url);
+      return u.pathname || "/";
+    }
+  } catch {
+    // ignore
+  }
+  return url.startsWith("/") ? url : `/${url}`;
+}
+
+function ensureAbsoluteUrl(href: string) {
+  if (href.startsWith("http://") || href.startsWith("https://")) return href;
+  return `${SITE_URL}${href.startsWith("/") ? href : `/${href}`}`;
+}
+
+// locale pinned to avoid SSR/CSR differences
+function fmtCurrency(amount?: number, cur = "USD", locale = "en-IN") {
   if (typeof amount !== "number") return "Varies";
   try {
-    return new Intl.NumberFormat(undefined, {
+    return new Intl.NumberFormat(locale, {
       style: "currency",
       currency: cur.toUpperCase(),
       maximumFractionDigits: 0,
     }).format(amount);
   } catch {
-    return `${amount.toLocaleString()} ${cur.toUpperCase()}`;
+    return `${amount.toLocaleString(locale)} ${cur.toUpperCase()}`;
   }
 }
+
 function plural(n: number, s: string) {
   return `${n} ${s}${n === 1 ? "" : "s"}`;
 }
 
 /* ---------------- component ---------------- */
+
 export default function CountryCardPro({
   href,
   title,
@@ -53,18 +92,19 @@ export default function CountryCardPro({
   tags = [],
   className = "",
 }: Props) {
-  const price = fmtCurrency(minInvestment, currency);
+  const hrefInternal = toInternalPath(href);           // ✅ for <Link>
+  const absoluteHref = ensureAbsoluteUrl(hrefInternal); // ✅ for schema
+
+  const price = fmtCurrency(minInvestment, currency, "en-IN");
   const time =
-    typeof timelineMonths === "number"
-      ? plural(timelineMonths, "mo")
-      : "Varies";
-  const normalized = ensureAbsolute(heroImage);
-  const hId = React.useId();
-  const dId = React.useId();
+    typeof timelineMonths === "number" ? plural(timelineMonths, "mo") : "Varies";
+
+  const normalizedImg = ensureAbsoluteImage(heroImage);
+  const { hId, dId } = stableIds(hrefInternal, title);
 
   return (
     <Link
-      href={href}
+      href={hrefInternal}
       aria-labelledby={hId}
       aria-describedby={summary ? dId : undefined}
       className={[
@@ -76,12 +116,37 @@ export default function CountryCardPro({
         className,
       ].join(" ")}
     >
-      {/* Microdata lives on <article> to keep TS happy while the whole card stays clickable */}
-      <article itemScope itemType="https://schema.org/Product">
-        <meta itemProp="url" content={href} />
-        {country ? <meta itemProp="brand" content={country} /> : null}
+      {/* ✅ Microdata is Service (NOT Product) */}
+      <article itemScope itemType="https://schema.org/Service">
+        {/* Hidden schema values - no UI impact */}
+        <link itemProp="url" href={absoluteHref} />
         <meta itemProp="name" content={title} />
+        <meta itemProp="serviceType" content={SERVICE_TYPE} />
         {summary ? <meta itemProp="description" content={summary} /> : null}
+
+        {/* areaServed as Country object */}
+        {country ? (
+          <div
+            itemProp="areaServed"
+            itemScope
+            itemType="https://schema.org/Country"
+            className="hidden"
+          >
+            <meta itemProp="name" content={country} />
+          </div>
+        ) : null}
+
+        <div
+          itemProp="provider"
+          itemScope
+          itemType="https://schema.org/Organization"
+          className="hidden"
+        >
+          <meta itemProp="name" content="XIPHIAS Immigration" />
+          <link itemProp="url" href={SITE_URL} />
+        </div>
+
+        {/* Optional pricing only when minInvestment exists */}
         {typeof minInvestment === "number" ? (
           <div
             itemProp="offers"
@@ -97,17 +162,17 @@ export default function CountryCardPro({
 
         {/* ---------- Hero ---------- */}
         <div className="relative aspect-[16/9] overflow-hidden">
-          {normalized ? (
+          {normalizedImg ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={normalized}
+              src={normalizedImg}
               alt={`${title}${country ? ` — ${country}` : ""}`}
               decoding="async"
               loading="lazy"
               sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
               onError={(e) => {
-                e.currentTarget.src = "/og.jpg";
+                e.currentTarget.src = "/xiphias-immigration.png";
               }}
             />
           ) : (
@@ -125,10 +190,7 @@ export default function CountryCardPro({
               className="pointer-events-none absolute left-3 top-3 inline-flex items-center gap-1 rounded-md bg-white/85 px-2 py-1 text-[11px] font-medium text-neutral-900 ring-1 ring-neutral-200 backdrop-blur
                          dark:bg-neutral-900/70 dark:text-neutral-100 dark:ring-neutral-700"
             >
-              <span
-                className="h-1.5 w-1.5 rounded-full bg-blue-600"
-                aria-hidden
-              />
+              <span className="h-1.5 w-1.5 rounded-full bg-blue-600" aria-hidden />
               {country}
             </span>
           ) : null}
@@ -142,6 +204,7 @@ export default function CountryCardPro({
           >
             {title}
           </h3>
+
           {summary ? (
             <p
               id={dId}
@@ -202,10 +265,7 @@ export default function CountryCardPro({
                              bg-white text-neutral-900 ring-1 ring-neutral-200
                              dark:bg-neutral-900 dark:text-neutral-100 dark:ring-neutral-700"
                 >
-                  <span
-                    className="h-1.5 w-1.5 rounded-full bg-blue-600"
-                    aria-hidden
-                  />
+                  <span className="h-1.5 w-1.5 rounded-full bg-blue-600" aria-hidden />
                   {t}
                 </span>
               ))}
