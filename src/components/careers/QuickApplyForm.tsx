@@ -123,7 +123,7 @@ export default function QuickApplyForm({ defaultRole }: { defaultRole?: string }
         >
           {submitting ? "Submitting…" : "Submit"}
         </button>
-        <p className="text-xs">We usually respond within 1–2 weeks.</p>
+        <p className="text-xs">Having trouble submitting? Please send your resume to hr@xiphias.in</p>
       </div>
 
       <p className="mt-1 text-[11px] opacity-80">
