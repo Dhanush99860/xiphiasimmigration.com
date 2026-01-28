@@ -21,10 +21,10 @@ export type GlobalSearchProps = {
 };
 
 const popularSuggestions: RichUIItem[] = [
-  { title: "Canada Startup Visa", type: "Program", url: "/residency/canada/startupvisa" },
-  { title: "Antigua & Barbuda CBI", type: "Program", url: "/citizenship/antigua-barbuda/program" },
-  { title: "Australia Global Talent", type: "Program", url: "/skilled/australia/global-talent" },
-  { title: "Singapore EP (Company Setup)", type: "Program", url: "/corporate/singapore/ep" },
+  { title: "Canada Startup Visa", type: "Program", url: "/residency/canada/canada-start-up-visa" },
+  { title: "Antigua & Barbuda CBI", type: "Program", url: "/citizenship/antigua-barbuda" },
+  { title: "Australia Global Talent", type: "Program", url: "/skilled/australia/global-talent-visa-858" },
+  { title: "Grenada Real Estate", type: "Program", url: "/citizenship/grenada/real-estate" },
 ];
 
 export default function GlobalSearch({
@@ -217,12 +217,7 @@ export default function GlobalSearch({
     src ? (
       <div className="relative h-10 w-10 flex-none overflow-hidden rounded-md border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={src}
-          alt=""
-          className="h-full w-full object-cover"
-          loading="lazy"
-        />
+        <img src={src} alt="" className="h-full w-full object-cover" loading="lazy" />
       </div>
     ) : null;
 
@@ -293,7 +288,10 @@ export default function GlobalSearch({
         className={[
           "pointer-events-auto w-full max-w-[520px] rounded-full border px-5 py-2 text-sm text-white mx-5",
           "border-white/15 bg-white/10 backdrop-blur-md",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40",
+          // ✅ override global :focus-visible ring + ring-offset
+          "focus:outline-none focus-visible:outline-none",
+          "focus:!ring-0 focus:!ring-offset-0",
+          "focus-visible:!ring-0 focus-visible:!ring-offset-0",
           "flex items-center justify-start gap-2 transition",
           className,
         ].join(" ")}
@@ -337,13 +335,12 @@ export default function GlobalSearch({
                     Site search
                   </h2>
 
-                  {/* Input with visible focus on container (no blue UA outline) */}
+                  {/* Input (no focus highlight styles on container) */}
                   <div className="relative">
                     <div
                       className={[
                         "flex items-center rounded-xl shadow-xl px-3 sm:px-4 py-2 border",
                         "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700",
-                        "focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-300/60",
                         "transition",
                       ].join(" ")}
                     >
@@ -356,28 +353,26 @@ export default function GlobalSearch({
                         placeholder="Search by country, visa type, service, article…"
                         className={[
                           "flex-1 bg-transparent px-2 sm:px-3 text-[15px] text-gray-900 dark:text-gray-100 placeholder-gray-400",
-                          "outline-none ring-0 focus:outline-none focus:ring-0",
+                          // ✅ override global :focus-visible ring + ring-offset on inputs too
+                          "outline-none ring-0",
+                          "focus:outline-none focus-visible:outline-none",
+                          "focus:!ring-0 focus:!ring-offset-0",
+                          "focus-visible:!ring-0 focus-visible:!ring-offset-0",
                         ].join(" ")}
                         role="combobox"
                         aria-expanded={true}
                         aria-autocomplete="list"
-                        aria-controls={listboxId}
+                        aria-controls="gs-listbox"
                         aria-activedescendant={activeOptionId}
                         autoComplete="off"
                         spellCheck={false}
                       />
-                      {loading && <span className="ml-2 h-1.5 w-1.5 rounded-full bg-gray-400 animate-pulse" aria-hidden />}
+                      {loading && (
+                        <span className="ml-2 h-1.5 w-1.5 rounded-full bg-gray-400 animate-pulse" aria-hidden />
+                      )}
                     </div>
 
-                    {highlighted && highlighted.toLowerCase() !== query.toLowerCase() && (
-                      <span
-                        className="absolute left-10 sm:left-11 top-2.5 text-[15px] text-gray-400 pointer-events-none select-none"
-                        aria-hidden
-                      >
-                        {highlighted}
-                      </span>
-                    )}
-
+                    {/* (Removed overlapping autocomplete ghost text) */}
                     <p aria-live="polite" className="sr-only">
                       {query.trim() === ""
                         ? "Type to search"
@@ -426,7 +421,9 @@ export default function GlobalSearch({
                     )}
 
                     {items.length > 0 ? (
-                      items.map((it, i) => <ResultRow key={`${it.url}-${i}`} item={it} i={i} active={i === activeIndex} />)
+                      items.map((it, i) => (
+                        <ResultRow key={`${it.url}-${i}`} item={it} i={i} active={i === activeIndex} />
+                      ))
                     ) : hasQuery && !loading ? (
                       <div className="py-6 text-center text-[13px] text-gray-500 dark:text-gray-400">
                         No results found. Try different keywords.

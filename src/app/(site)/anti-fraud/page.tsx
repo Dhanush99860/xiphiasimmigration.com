@@ -170,7 +170,7 @@ export default function AntiFraudPage() {
                       Terms of Use
                     </Link>{" "}
                     ·{" "}
-                    <Link href="/disclaimer" className="underline">
+                    <Link href="/contact" className="underline">
                       Disclaimer
                     </Link>
                   </p>

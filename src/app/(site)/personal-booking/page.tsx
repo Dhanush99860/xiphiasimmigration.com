@@ -12,7 +12,7 @@ export const revalidate = 86400; // 1 day
 export const metadata: Metadata = {
   title: "Book a Private Consultation",
   description:
-    "Book a personal consultation with XIPHIAS Immigration. With over 17 years of expertise and a 92% success rate in Golden Visa, PR, and Investment Migration programs, we empower investors, entrepreneurs, and families worldwide.",
+    "Book a personal consultation with XIPHIAS Immigration. With 17+ years of expertise, we guide investors, entrepreneurs, and families globally",
   keywords: [
     "XIPHIAS Immigration",
     "Golden Visa Consultation",

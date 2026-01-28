@@ -1,9 +1,10 @@
-// src/components/gallery/Lightbox.tsx
+// src/components/Gallery/Lightbox.tsx
 "use client";
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import type { GalleryItem } from "@/lib/gallery";
+import { formatDateUS } from "@/lib/format";
 
 function shimmer() {
   return (
@@ -45,15 +46,19 @@ export default function Lightbox({
       if (e.key === "ArrowLeft") goPrev();
       if (e.key === "ArrowRight") goNext();
     };
+
     document.addEventListener("keydown", onKey);
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+
     overlayRef.current?.focus();
+
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = prevOverflow;
     };
-  }, [idx]); // eslint-disable-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idx]);
 
   const it = items[idx];
   if (!it) return null;
@@ -85,19 +90,16 @@ export default function Lightbox({
         <figcaption className="mt-3 flex flex-wrap items-center justify-between gap-3 text-white/90">
           <div className="min-w-0">
             {it.caption && <p className="truncate text-sm font-medium">{it.caption}</p>}
+
             {(it.date || it.category) && (
               <p className="text-xs text-white/70">
-                {it.date &&
-                  new Date(it.date).toLocaleDateString(undefined, {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
+                {it.date ? formatDateUS(it.date) : null}
                 {it.date ? " • " : ""}
                 {String(it.category).charAt(0).toUpperCase() + String(it.category).slice(1)}
               </p>
             )}
           </div>
+
           <div className="ml-auto flex items-center gap-2">
             <button
               onClick={goPrev}

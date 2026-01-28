@@ -1,4 +1,4 @@
-// src/app/gallery/page.tsx
+// src/app/(site)/gallery/page.tsx
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import GalleryGrid from "@/components/Gallery/GalleryGrid";
@@ -7,41 +7,62 @@ import Breadcrumb from "@/components/Common/Breadcrumb";
 
 export const revalidate = 600; // cache at the edge for 10 mins
 
-function getOriginFromHeaders(h: Headers): string {
+type HeadersLike = { get(name: string): string | null };
+
+function getOriginFromHeaders(h: HeadersLike): string {
   const host = h.get("x-forwarded-host") || h.get("host") || "localhost:3000";
   const proto = h.get("x-forwarded-proto") || "https";
   return `${proto}://${host}`;
 }
 
+function getSiteOrigin(h: HeadersLike): string {
+  // Prefer env for stable, correct canonical URLs in production
+  const envSite =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.SITE_URL ||
+    process.env.VERCEL_PROJECT_PRODUCTION_URL;
+
+  if (envSite) {
+    // normalize
+    const site = envSite.startsWith("http") ? envSite : `https://${envSite}`;
+    return site.replace(/\/$/, "");
+  }
+
+  // fallback (dev / local / unknown host)
+  return getOriginFromHeaders(h).replace(/\/$/, "");
+}
+
 // ---- Dynamic metadata (OG/Twitter), built from images ----
 export async function generateMetadata(): Promise<Metadata> {
   const items = await getGallery();
-  const h = headers();
-  const origin = getOriginFromHeaders(h as unknown as Headers);
+
+  const h = await headers();
+  const origin = getSiteOrigin(h);
 
   const ogImages = items.slice(0, 6).map((it) => {
     const url = it.src.startsWith("http") ? it.src : `${origin}${it.src}`;
     return { url, width: it.w || 1200, height: it.h || 630, alt: it.alt || "Gallery image" };
   });
 
+  const title = "Gallery | XIPHIAS Immigration";
+  const description =
+    "Event highlights, team moments, office culture and CSR activities. Fast, mobile-first gallery.";
+
   return {
-    title: "Gallery | XIPHIAS Immigration",
-    description:
-      "Event highlights, team moments, office culture and CSR activities. Fast, mobile‑first gallery.",
-    alternates: { canonical: "/gallery" },
+    title,
+    description,
+    alternates: { canonical: `${origin}/gallery` }, // ✅ absolute
     openGraph: {
       type: "website",
       url: `${origin}/gallery`,
-      title: "Gallery | XIPHIAS Immigration",
-      description:
-        "Event highlights, team moments, office culture and CSR activities.",
+      title,
+      description: "Event highlights, team moments, office culture and CSR activities.",
       images: ogImages,
     },
     twitter: {
       card: "summary_large_image",
-      title: "Gallery | XIPHIAS Immigration",
-      description:
-        "Event highlights, team moments, office culture and CSR activities.",
+      title,
+      description: "Event highlights, team moments, office culture and CSR activities.",
       images: ogImages.length ? [ogImages[0].url] : undefined,
     },
     robots: { index: true, follow: true },
@@ -50,10 +71,11 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function GalleryPage() {
   const items = await getGallery();
-  const h = headers();
-  const origin = getOriginFromHeaders(h as unknown as Headers);
 
-  // JSON‑LD (CollectionPage + ImageGallery + Breadcrumbs)
+  const h = await headers();
+  const origin = getSiteOrigin(h);
+
+  // JSON-LD (CollectionPage + ImageGallery + Breadcrumbs)
   const imagesForLD = items.slice(0, 12).map((it) => ({
     "@type": "ImageObject",
     contentUrl: it.src.startsWith("http") ? it.src : `${origin}${it.src}`,
@@ -68,8 +90,7 @@ export default async function GalleryPage() {
     "@type": "CollectionPage",
     name: "Gallery",
     url: `${origin}/gallery`,
-    description:
-      "Photos from events, team, office and CSR at XIPHIAS Immigration.",
+    description: "Photos from events, team, office and CSR at XIPHIAS Immigration.",
     hasPart: {
       "@type": "ImageGallery",
       name: "Gallery Images",
@@ -88,9 +109,8 @@ export default async function GalleryPage() {
 
   return (
     <section className="mx-auto max-w-screen-2xl px-4 pb-16 pt-6 md:px-6 md:pt-8">
-        
-        {/* Breadcrumb */}
-        <Breadcrumb />
+      {/* Breadcrumb */}
+      <Breadcrumb />
 
       {/* Header matches your Hero/slider styling */}
       <div
@@ -115,14 +135,14 @@ export default async function GalleryPage() {
             Gallery
           </span>
           <p className="text-[12px] text-slate-700 dark:text-slate-200">
-            Events • Team • Office • CSR — mobile‑first & fast
+            Events • Team • Office • CSR — mobile-first & fast
           </p>
         </div>
       </div>
 
       <GalleryGrid items={items} />
 
-      {/* JSON‑LD for SEO */}
+      {/* JSON-LD for SEO */}
       <script
         type="application/ld+json"
         // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD needs raw string
@@ -130,6 +150,7 @@ export default async function GalleryPage() {
       />
       <script
         type="application/ld+json"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD needs raw string
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLD) }}
       />
     </section>

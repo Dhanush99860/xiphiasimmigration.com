@@ -59,11 +59,13 @@ export function Prose({ className = "", ...props }: Props) {
         "prose-h2:border-black/20 dark:prose-h2:border-white/25",
         "prose-h3:border-black/15 dark:prose-h3:border-white/20",
 
-        /* LINKS (monochrome; underline on hover/focus) --------------------- */
-        "prose-a:text-inherit visited:prose-a:text-inherit",
+        /* LINKS (highlight) ------------------------------------------------ */
+        "prose-a:text-blue-600 dark:prose-a:text-blue-400",
         "prose-a:font-medium",
-        "prose-a:no-underline hover:prose-a:underline focus:prose-a:underline",
+        "prose-a:underline",
         "prose-a:underline-offset-4",
+        "hover:prose-a:text-blue-700 dark:hover:prose-a:text-blue-300",
+        "visited:prose-a:text-blue-700 dark:visited:prose-a:text-blue-500",
 
         /* EMPHASIS ---------------------------------------------------------- */
         "prose-strong:font-semibold prose-strong:text-inherit",

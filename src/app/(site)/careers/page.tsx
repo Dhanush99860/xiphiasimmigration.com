@@ -1,5 +1,6 @@
 // app/careers/page.tsx
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import Hero from "@/components/careers/Hero";
 import { getAllJobs } from "@/lib/jobs";
 import JobList from "@/components/careers/JobList";
@@ -79,11 +80,31 @@ export default function Page() {
           </p>
 
           <div className="mt-4">
-            <JobFilters depts={depts} />
+            {/*
+              `JobFilters` uses `useSearchParams()`.
+              Wrap it in Suspense so static prerendering doesn't error.
+            */}
+            <Suspense
+              fallback={
+                <div className="h-14 rounded-xl bg-black/5 dark:bg-white/10 ring-1 ring-black/10 dark:ring-white/10 animate-pulse" />
+              }
+            >
+              <JobFilters depts={depts} />
+            </Suspense>
           </div>
 
           <div className="mt-6">
-            <JobList jobs={jobs} />
+            {/*
+              `JobList` uses `useSearchParams()`.
+              Wrap it in Suspense so static prerendering doesn't error.
+            */}
+            <Suspense
+              fallback={
+                <div className="h-56 rounded-2xl bg-black/5 dark:bg-white/10 ring-1 ring-black/10 dark:ring-white/10 animate-pulse" />
+              }
+            >
+              <JobList jobs={jobs} />
+            </Suspense>
           </div>
         </section>
 

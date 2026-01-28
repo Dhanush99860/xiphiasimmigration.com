@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import type { CSSProperties } from "react";
 
 /** Align with your content fields */
 type Item = {
@@ -30,18 +31,26 @@ type Item = {
 const pick = <T,>(...vals: (T | undefined)[]) =>
   vals.find((v) => v !== undefined && v !== null && v !== "") as T | undefined;
 
-const DATE_FMT = new Intl.DateTimeFormat("en-IN", {
-  day: "2-digit",
-  month: "short",
-  year: "numeric",
-  timeZone: "UTC",
-});
+/**
+ * ✅ Hydration-safe date formatter:
+ * - No Intl (Node vs Browser can output different separators)
+ * - Always UTC
+ * - Always produces the same string on server + client
+ */
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"] as const;
 
 const formatDate = (input?: string) => {
   if (!input) return "";
   const t = Date.parse(input);
-  if (Number.isNaN(t)) return input;
-  return DATE_FMT.format(new Date(t));
+  if (!Number.isFinite(t)) return input;
+
+  const d = new Date(t);
+  const dd = String(d.getUTCDate()).padStart(2, "0");
+  const mon = MONTHS[d.getUTCMonth()];
+  const yyyy = d.getUTCFullYear();
+
+  // Matches your screenshot style: "20 Jan 2026"
+  return `${dd} ${mon} ${yyyy}`;
 };
 
 /** Fix common bad URLs (spaces, //cdn, missing scheme, Drive/Dropbox) */
@@ -89,7 +98,7 @@ function Img({
   decoding?: "sync" | "async" | "auto";
   importance?: "high" | "low" | "auto";
   sizes?: string;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
 }) {
   const [error, setError] = useState(false);
   const safe = sanitizeImageUrl(src);
@@ -141,7 +150,6 @@ export default function InsightsPreviewClient({
   }, [items]);
 
   const first = sorted[0];
-  const rest = sorted.slice(1, 6);
 
   // Prefer hero/heroPoster for images to match your other components
   const hero = {
@@ -171,41 +179,41 @@ export default function InsightsPreviewClient({
       aria-labelledby="insights-top6-title"
       className="relative container mx-auto px-4 md:px-6 lg:px-8 py-10 md:py-12"
     >
-{/* Header (card-style, keeps your structure & CTA) */}
-<div className="mb-6 md:mb-8">
-  <div className="relative overflow-hidden rounded-2xl border border-[var(--c-border)] bg-[var(--c-card)] p-4 sm:p-5 md:p-6 shadow-sm ring-1 ring-black/[0.03] dark:ring-white/10">
-    {/* soft background accents (clipped inside) */}
-    <div aria-hidden className="pointer-events-none absolute inset-0">
-      <div className="absolute -top-20 -left-24 h-56 w-56 rounded-full bg-blue-300/20 blur-3xl dark:bg-blue-700/10" />
-      <div className="absolute -bottom-24 -right-20 h-64 w-64 rounded-full bg-indigo-300/20 blur-3xl dark:bg-indigo-700/10" />
-      <div className="absolute inset-0 opacity-40 dark:opacity-20 [mask-image:radial-gradient(70%_70%_at_10%_10%,black,transparent_75%)]">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.06)_1px,transparent_1px)] bg-[size:22px_22px]" />
-      </div>
-    </div>
+      {/* Header (card-style, keeps your structure & CTA) */}
+      <div className="mb-6 md:mb-8">
+        <div className="relative overflow-hidden rounded-2xl border border-[var(--c-border)] bg-[var(--c-card)] p-4 sm:p-5 md:p-6 shadow-sm ring-1 ring-black/[0.03] dark:ring-white/10">
+          {/* soft background accents (clipped inside) */}
+          <div aria-hidden className="pointer-events-none absolute inset-0">
+            <div className="absolute -top-20 -left-24 h-56 w-56 rounded-full bg-blue-300/20 blur-3xl dark:bg-blue-700/10" />
+            <div className="absolute -bottom-24 -right-20 h-64 w-64 rounded-full bg-indigo-300/20 blur-3xl dark:bg-indigo-700/10" />
+            <div className="absolute inset-0 opacity-40 dark:opacity-20 [mask-image:radial-gradient(70%_70%_at_10%_10%,black,transparent_75%)]">
+              <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.06)_1px,transparent_1px)] bg-[size:22px_22px]" />
+            </div>
+          </div>
 
-    {/* content: responsive flex with title + CTA */}
-    <div className="relative flex flex-wrap items-center justify-between gap-3">
-      <h2
-        id="insights-top6-title"
-        className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-zinc-950 dark:text-white break-words"
-      >
-        {title}
-      </h2>
+          {/* content: responsive flex with title + CTA */}
+          <div className="relative flex flex-wrap items-center justify-between gap-3">
+            <h2
+              id="insights-top6-title"
+              className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-zinc-950 dark:text-white break-words"
+            >
+              {title}
+            </h2>
 
-      <div className="shrink-0">
-        <Link
-          href={viewAllHref}
-          className="inline-flex items-center gap-2 rounded-full border border-slate-300/70 dark:border-slate-600/60 bg-white/70 dark:bg-slate-800/70 px-3.5 py-2 text-sm font-medium text-slate-900 dark:text-slate-50 shadow-sm hover:bg-white/90 dark:hover:bg-slate-800/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-300 transition"
-        >
-          View all
-          <svg aria-hidden viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
-        </Link>
+            <div className="shrink-0">
+              <Link
+                href={viewAllHref}
+                className="inline-flex items-center gap-2 rounded-full border border-slate-300/70 dark:border-slate-600/60 bg-white/70 dark:bg-slate-800/70 px-3.5 py-2 text-sm font-medium text-slate-900 dark:text-slate-50 shadow-sm hover:bg-white/90 dark:hover:bg-slate-800/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-300 transition"
+              >
+                View all
+                <svg aria-hidden viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
 
       {/* Layout: hero + list with small thumbs */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

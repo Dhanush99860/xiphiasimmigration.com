@@ -26,7 +26,7 @@ export const extraLinkGroups: ExtraLinkGroup[] = [
   {
     title: "Downloads",
     links: [
-      { label: "Master Guide PDF", href: "/images/citizenship/antigua/xiphias-immigration.pdf", badge: "PDF" },
+      { label: "Master Guide PDF", href: "/images/residency/xiphias-corporate-mobility.pdf", badge: "PDF" },
     ],
   },
 ];

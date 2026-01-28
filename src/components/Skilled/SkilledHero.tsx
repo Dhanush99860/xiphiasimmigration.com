@@ -30,7 +30,7 @@ export default function SkilledHero({
   subtitle = "Points-tested PR, employer sponsorships, and priority talent visas across top destinations.",
   primaryHref = "/contact",
   primaryText = "Book a Free Consultation",
-  secondaryHref = "/images/citizenship/antigua/xiphias-immigration.pdf",
+  secondaryHref = "/images/residency/xiphias-corporate-mobility.pdf",
   secondaryText = "Download Guide",
 
   // NEW: only rendered if provided

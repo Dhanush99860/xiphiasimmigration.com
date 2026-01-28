@@ -19,7 +19,7 @@ const STORAGE_KEY = "stickyInquiryDock:hiddenUntil";
 
 export default function StickyInquiryDock({
   bookingUrl = "/personal-booking",
-  brochureUrl = "/brochures/citizenship/guide.pdf",
+  brochureUrl = "/images/residency/xiphias-corporate-mobility.pdf",
   text = "Questions about eligibility or timelines?",
   className = "",
   hideForDays = 7,

@@ -1,5 +1,6 @@
 // src/app/(site)/insights/page.tsx
 import Link from "next/link";
+import { Suspense } from "react";
 // Dynamically import the insights list and filters bar to reduce initial bundle size and improve performance.
 import nextDynamic from "next/dynamic";
 const InsightsList = nextDynamic(() => import("@/components/Insights/InsightsList"));
@@ -11,12 +12,12 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Insights – Articles, News, Media & Blog Updates | XIPHIAS Immigration",
   description:
-    "Explore our latest insights: articles, news, media, and blog updates covering residency, citizenship and investment migration programs.",
+    "Explore our latest insights: articles, news, media, and blog updates covering residency, citizenship and investment migration programs",
   alternates: { canonical: "/insights" },
   openGraph: {
     title: "Insights – Articles, News, Media & Blog Updates",
     description:
-      "Explore our latest insights: articles, news, media, and blog updates covering residency, citizenship and investment migration programs.",
+      "Explore our latest insights: articles, news, media, and blog updates covering residency, citizenship and investment migration programs",
     url: "https://www.xiphiasimmigration.com/insights",
     siteName: "XIPHIAS Immigration",
     locale: "en_US",
@@ -155,28 +156,48 @@ export default async function InsightsPage({ searchParams }: PageProps) {
               </span>
             </summary>
             <div className="px-4 pb-4 pt-2 border-t border-black/10 dark:border-white/10">
-              <FiltersBar
-                initialQuery={q}
-                initialKind={kind}
-                initialCountry={country}
-                initialProgram={program}
-                initialTag={tag}
-                facets={facets}
-              />
+              {/*
+                `FiltersBar` uses `useSearchParams()`.
+                Wrap it in Suspense so prerendering doesn't error.
+              */}
+              <Suspense
+                fallback={
+                  <div className="h-14 rounded-xl bg-black/5 dark:bg-white/10 ring-1 ring-black/10 dark:ring-white/10 animate-pulse" />
+                }
+              >
+                <FiltersBar
+                  initialQuery={q}
+                  initialKind={kind}
+                  initialCountry={country}
+                  initialProgram={program}
+                  initialTag={tag}
+                  facets={facets}
+                />
+              </Suspense>
             </div>
           </details>
         </div>
 
         {/* Desktop filters */}
         <div className="hidden sm:block sm:w-full sm:max-w-xl">
-          <FiltersBar
-            initialQuery={q}
-            initialKind={kind}
-            initialCountry={country}
-            initialProgram={program}
-            initialTag={tag}
-            facets={facets}
-          />
+          {/*
+            `FiltersBar` uses `useSearchParams()`.
+            Wrap it in Suspense so prerendering doesn't error.
+          */}
+          <Suspense
+            fallback={
+              <div className="h-14 rounded-xl bg-black/5 dark:bg-white/10 ring-1 ring-black/10 dark:ring-white/10 animate-pulse" />
+            }
+          >
+            <FiltersBar
+              initialQuery={q}
+              initialKind={kind}
+              initialCountry={country}
+              initialProgram={program}
+              initialTag={tag}
+              facets={facets}
+            />
+          </Suspense>
         </div>
       </header>
 

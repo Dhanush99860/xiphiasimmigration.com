@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo } from "react";
 import { useSearchParams } from "next/navigation";
+import { formatDateUSShort } from "@/lib/format";
 
 export type Job = {
   id: string;
@@ -18,9 +19,7 @@ export type Job = {
 
 function fmtDate(iso?: string) {
   if (!iso) return "";
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return "";
-  return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  return formatDateUSShort(iso); // ✅ deterministic US date, UTC
 }
 
 /** normalize string: lowercase, strip diacritics & punctuation */
@@ -161,9 +160,9 @@ export default function JobList({ jobs }: { jobs: Job[] }) {
               {job.employmentType ? ` • ${job.employmentType}` : ""}
               {job.postedAt ? ` • ${fmtDate(job.postedAt)}` : ""}
             </p>
-            {job.summary && (
-              <p className="mt-2 line-clamp-2 text-sm">{job.summary}</p>
-            )}
+
+            {job.summary && <p className="mt-2 line-clamp-2 text-sm">{job.summary}</p>}
+
             <div className="mt-4 flex items-center gap-3">
               <Link
                 href={`/careers/${job.slug}`}
@@ -173,10 +172,7 @@ export default function JobList({ jobs }: { jobs: Job[] }) {
               >
                 View & Apply
               </Link>
-              <a
-                href="/careers#apply"
-                className="text-sm font-semibold underline decoration-2 underline-offset-2"
-              >
+              <a href="/careers#apply" className="text-sm font-semibold underline decoration-2 underline-offset-2">
                 Quick apply
               </a>
             </div>

@@ -1,5 +1,6 @@
 // ✅ src/app/(site)/[vertical]/[country]/page.tsx
 // Country index: lists programs in a country for the given vertical
+
 import { getAllContentCached } from "@/lib/content";
 import type { Vertical, ProgramDoc } from "@/lib/content/types";
 import type { Metadata } from "next";
@@ -7,6 +8,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import fs from "node:fs/promises";
 import path from "node:path";
+
+import { JsonLd, breadcrumbLd } from "@/lib/seo"; // ✅ add
 
 export const runtime = "nodejs";
 
@@ -57,12 +60,15 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { vertical, country } = params;
   if (!VERTICALS.includes(vertical) || !country) return { title: "Not found" };
+
   const capVertical = vertical.charAt(0).toUpperCase() + vertical.slice(1);
   const capCountry = country.charAt(0).toUpperCase() + country.slice(1);
+
   const title = `${capCountry} – ${capVertical} Programs`;
   const description = `Discover ${vertical} programs available in ${capCountry}. Compare your options and find the right path.`;
   const canonicalPath = `/${vertical}/${country}`;
   const canonicalUrl = `https://www.xiphiasimmigration.com${canonicalPath}`;
+
   return {
     title,
     description,
@@ -108,8 +114,18 @@ export default function CountryPage({
       (d as ProgramDoc).country === country
   );
 
+  // ✅ Breadcrumb JSON-LD (absolute URLs + valid @id/item format)
+  const breadcrumbJsonLd = breadcrumbLd([
+    { name: "Home", url: "/" },
+    { name: vertical.charAt(0).toUpperCase() + vertical.slice(1), url: `/${vertical}` },
+    { name: country.charAt(0).toUpperCase() + country.slice(1), url: `/${vertical}/${country}` },
+  ]);
+
   return (
     <main className="mx-auto max-w-6xl space-y-6 p-6">
+      {/* ✅ JSON-LD */}
+      <JsonLd data={breadcrumbJsonLd} />
+
       <h1 className="text-3xl font-semibold capitalize">
         {country} – {vertical}
       </h1>

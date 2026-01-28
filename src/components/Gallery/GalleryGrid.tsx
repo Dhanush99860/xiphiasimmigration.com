@@ -1,10 +1,11 @@
-// src/components/gallery/GalleryGrid.tsx
+// src/components/Gallery/GalleryGrid.tsx
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import type { GalleryItem } from "@/lib/gallery";
+import { formatDateUS } from "@/lib/format";
 
 const Lightbox = dynamic(() => import("./Lightbox"), { ssr: false });
 
@@ -98,6 +99,7 @@ export default function GalleryGrid({ items }: { items: GalleryItem[] }) {
                   />
                 </div>
               </button>
+
               {(it.caption || it.date || it.category) && (
                 <figcaption className="flex items-center justify-between gap-2 px-3 py-2">
                   <div className="min-w-0">
@@ -106,16 +108,15 @@ export default function GalleryGrid({ items }: { items: GalleryItem[] }) {
                         {it.caption}
                       </p>
                     )}
+
+                    {/* ✅ Deterministic date format: US style, UTC */}
                     {it.date && (
                       <time className="block text-[11px] text-slate-500 dark:text-slate-400">
-                        {new Date(it.date).toLocaleDateString(undefined, {
-                          month: "short",
-                          day: "numeric",
-                          year: "numeric",
-                        })}
+                        {formatDateUS(it.date)}
                       </time>
                     )}
                   </div>
+
                   <span className="inline-flex items-center rounded-full bg-white/80 px-2 py-[3px] text-[10px] ring-1 ring-blue-200 dark:bg-white/5 dark:ring-blue-800/60">
                     <span className="mr-1 inline-block h-1.5 w-1.5 rounded-full bg-blue-600" />
                     <span className="font-medium text-blue-800 dark:text-blue-200">
@@ -141,7 +142,7 @@ export default function GalleryGrid({ items }: { items: GalleryItem[] }) {
         </div>
       )}
 
-      {/* Lightbox (lazy‑loaded via dynamic import) */}
+      {/* Lightbox (lazy-loaded via dynamic import) */}
       {lightbox && (
         <Lightbox
           items={lightbox.list}

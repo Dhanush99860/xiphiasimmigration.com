@@ -28,7 +28,7 @@ type Props = {
 export default function HeroPremium({
   title = "Book Your RBI / CBI Strategy Call",
   subtitle = "Your objectives, comfort, and clarity are at the core of all we do at XIPHIAS. You receive ethical, transparent, and fully compliant immigration support that is customized to meet your specific needs, with IMC Fellow-certified specialists advising you at every step. We facilitate a more seamless and assured journey by",
-  primaryHref = "/personal-booking",
+  primaryHref = "/booking",
   primaryText = "Book Paid Consultation",
   secondaryHref = "/images/residency/xiphias-corporate-mobility.pdf",
   secondaryText = "Investment Programs Guide (PDF)",

@@ -19,12 +19,12 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: "Corporate Setup & Employment Visas — Countries & Options",
   description:
-    "Explore corporate routes by country: free zone & mainland company formation, investor/entrepreneur options, employment/work permits, and residence sponsorship. Compare timelines, eligibility, and fees.",
+    "Explore corporate setup and employment visa options by country, including free zone & mainland company formation, investor visas, and work permits",
   alternates: { canonical: "/corporate" },
   openGraph: {
     title: "Corporate Setup & Employment Visas — Countries & Options",
     description:
-      "Explore corporate routes by country: free zone & mainland company formation, investor/entrepreneur options, employment/work permits, and residence sponsorship. Compare timelines, eligibility, and fees.",
+      "Explore corporate setup and employment visa options by country, including free zone & mainland company formation, investor visas, and work permits",
     url: "https://www.xiphiasimmigration.com/corporate",
     siteName: "XIPHIAS Immigration",
     locale: "en_US",

@@ -1,11 +1,30 @@
 // src/lib/seo.tsx
-
 import React from "react";
 
 // Safer JSON stringify for embedding inside <script> tags.
 // Escapes "<" to avoid any chance of closing the script tag via string content.
 function safeJsonStringify(data: unknown) {
   return JSON.stringify(data).replace(/</g, "\\u003c");
+}
+
+// Prefer env-based site URL for stable canonical/schema URLs
+function getSiteBase(): string {
+  const env =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.SITE_URL ||
+    "https://www.xiphiasimmigration.com";
+
+  const base = env.startsWith("http") ? env : `https://${env}`;
+  return base.replace(/\/$/, "");
+}
+
+function toAbsoluteUrl(url: string): string {
+  if (!url) return url;
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+
+  const base = getSiteBase();
+  if (url.startsWith("/")) return `${base}${url}`;
+  return `${base}/${url}`;
 }
 
 // Inline JSON-LD helper
@@ -28,7 +47,7 @@ export function JsonLd({
   );
 }
 
-// Breadcrumb JSON-LD
+// Breadcrumb JSON-LD (always output absolute URLs + @id object)
 export function breadcrumbLd(items: { name: string; url: string }[]) {
   const clean = (items ?? []).filter((it) => it?.name && it?.url);
 
@@ -39,10 +58,11 @@ export function breadcrumbLd(items: { name: string; url: string }[]) {
       "@type": "ListItem",
       position: i + 1,
       name: it.name,
-      item: it.url,
+      item: { "@id": toAbsoluteUrl(it.url) }, // ✅ this fixes the warning
     })),
   };
 }
+
 
 // FAQ JSON-LD
 export function faqLd(faqs: { q: string; a: string }[] | undefined) {

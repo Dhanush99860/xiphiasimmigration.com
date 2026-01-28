@@ -1,4 +1,4 @@
-// src/components/FAQWithForm/index.tsx
+// src/components/Common/FAQSection/index.tsx
 "use client";
 
 import * as React from "react";
@@ -58,6 +58,8 @@ export default function FAQWithForm({
   className = "",
   formSlot,
 }: FAQWithFormProps) {
+  const uid = React.useId(); // ✅ unique per component instance
+
   const initialOpen =
     Number.isFinite(defaultOpen) && defaultOpen! >= 0 && defaultOpen! < faqs.length
       ? defaultOpen!
@@ -72,7 +74,7 @@ export default function FAQWithForm({
   return (
     <section
       className={["container mx-auto px-4 lg:max-w-screen-2xl", className].join(" ")}
-      aria-labelledby="faq-heading"
+      aria-labelledby={`faq-heading-${uid}`}
     >
       <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,.9fr)]">
         {/* ------------------ Left: FAQs ------------------ */}
@@ -83,7 +85,10 @@ export default function FAQWithForm({
               <span className="inline-flex h-1.5 w-1.5 rounded-full bg-blue-600" />
               <span className="font-semibold">FAQs</span>
             </div>
-            <h2 id="faq-heading" className="mt-2 text-xl md:text-2xl font-semibold tracking-tight">
+            <h2
+              id={`faq-heading-${uid}`}
+              className="mt-2 text-xl md:text-2xl font-semibold tracking-tight"
+            >
               {title} <span className="text-blue-700 dark:text-blue-300">{highlight}</span>
             </h2>
             {subtitle && (
@@ -95,8 +100,8 @@ export default function FAQWithForm({
           <ul className="mt-4 space-y-2">
             {faqs.map((item, idx) => {
               const isOpen = openIdx === idx;
-              const qId = `faq-q-${idx}`;
-              const aId = `faq-a-${idx}`;
+              const qId = `faq-q-${uid}-${idx}`;
+              const aId = `faq-a-${uid}-${idx}`;
 
               return (
                 <li key={idx}>
@@ -114,7 +119,7 @@ export default function FAQWithForm({
                       <span className="min-w-0 truncate">{item.question}</span>
                       <ChevronDown
                         className={[
-                          "h-5 w-5 shrink-0", // no transition classes (no animations)
+                          "h-5 w-5 shrink-0",
                           isOpen
                             ? "rotate-180 text-blue-700 dark:text-blue-300"
                             : "text-black/50 dark:text-white/60",
@@ -142,9 +147,7 @@ export default function FAQWithForm({
 
         {/* ------------------ Right: Form ------------------ */}
         <aside className="min-w-0 md:pl-2 lg:pl-3">
-          <div className="pb-5">
-            {formSlot ?? <ContactForm />}
-          </div>
+          <div className="pb-5">{formSlot ?? <ContactForm />}</div>
         </aside>
       </div>
     </section>

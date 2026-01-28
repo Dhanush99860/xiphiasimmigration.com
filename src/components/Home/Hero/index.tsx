@@ -1,10 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import CardSlider from "./slider";
 
 // Lazy-load ContactForm on the client only
 const ContactForm = dynamic(() => import("@/components/ContactForm/index"), {
@@ -13,17 +11,11 @@ const ContactForm = dynamic(() => import("@/components/ContactForm/index"), {
 });
 
 export default function Hero() {
-  const [showForm, setShowForm] = useState(false);
-
   return (
-    /* IMPORTANT:
-       - isolate -> creates its own stacking context (so -z values don't slip behind the page)
-       - bg-transparent overrides your global "section { bg-white }"
-    */
     <section
       id="main-banner"
       aria-labelledby="home-hero-title"
-      className="relative isolate z-0 overflow-hidden bg-transparent mt-[-1px]"
+      className="relative isolate z-0 overflow-hidden bg-transparent mt-[-1px] min-h-[100svh] flex items-stretch"
     >
       {/* Full-bleed background image + tint (sits behind content only) */}
       <div className="pointer-events-none absolute -inset-0 -z-10">
@@ -39,9 +31,9 @@ export default function Hero() {
         <div className="absolute inset-0 bg-blue-700/85 md:bg-blue-700/80" />
       </div>
 
-      <div className="container mx-auto px-4 lg:max-w-screen-2xl">
+      <div className="container mx-auto w-full px-4 lg:max-w-screen-2xl flex items-center">
         {/* ===================== TOP GRID ===================== */}
-        <div className="grid grid-cols-12 items-start gap-y-10 gap-x-6 lg:gap-x-12 pt-16 md:pt-20 lg:pt-24">
+        <div className="grid w-full grid-cols-12 items-center gap-y-10 gap-x-6 lg:gap-x-12 py-16 md:py-20 lg:py-24">
           {/* LEFT: Text + CTAs */}
           <div className="col-span-12 lg:col-span-7 xl:col-span-6">
             {/* Eyebrow */}
@@ -92,7 +84,7 @@ export default function Hero() {
             {/* Store badges */}
             <div className="mt-10 flex items-center justify-center gap-8 lg:justify-start">
               <Link
-                href="https://play.google.com/store/apps/details?id=com.xiphiasimmigration"
+                href="/contact"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Get the app on Google Play"
@@ -110,7 +102,7 @@ export default function Hero() {
               </Link>
 
               <Link
-                href="https://apps.apple.com/app/idXXXXXXXX" /* TODO: real link */
+                href="/contact" /* TODO: real link */
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Download on the App Store"
@@ -128,30 +120,10 @@ export default function Hero() {
               </Link>
             </div>
 
-            {/* MOBILE: Show/Hide Contact Form */}
+            {/* MOBILE: Contact Form ALWAYS OPEN (no button) */}
             <div className="mt-8 lg:hidden">
-              <button
-                type="button"
-                onClick={() => setShowForm((s) => !s)}
-                aria-expanded={showForm}
-                aria-controls="mobile-consultation-form"
-                className="w-full rounded-xl bg-white/10 px-5 py-3 text-sm font-semibold text-white ring-1 ring-white/20 backdrop-blur transition hover:bg-white/15"
-              >
-                {showForm ? "Hide consultation form" : "Book a FREE consultation"}
-              </button>
-
-              <div
-                id="mobile-consultation-form"
-                className={[
-                  "grid overflow-hidden transition-all duration-300 ease-out",
-                  showForm ? "mt-4 grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
-                ].join(" ")}
-              >
-                <div className="overflow-hidden">
-                  <div className="rounded-2xl bg-white/10 p-4 backdrop-blur ring-1 ring-white/20">
-                    <ContactForm />
-                  </div>
-                </div>
+              <div className="rounded-2xl bg-white/10 p-4 backdrop-blur ring-1 ring-white/20 shadow-[0_8px_30px_rgba(0,0,0,0.20)]">
+                <ContactForm />
               </div>
             </div>
           </div>
@@ -164,11 +136,6 @@ export default function Hero() {
               </div>
             </div>
           </aside>
-        </div>
-
-        {/* ===================== SLIDER ===================== */}
-        <div className="py-10">
-          <CardSlider />
         </div>
       </div>
 

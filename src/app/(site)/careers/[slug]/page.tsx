@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { getJobBySlug, jobsStaticParams, jobJsonLd, getAllJobs } from "@/lib/jobs";
+import { formatDateUS, formatDateUSShort } from "@/lib/format";
 import JobDetailSections from "@/components/careers/JobDetailSections";
 import QuickApplyForm from "@/components/careers/QuickApplyForm";
 import Breadcrumb from "@/components/Common/Breadcrumb";
@@ -14,13 +15,15 @@ export async function generateStaticParams() {
 
 const SITE = "https://www.xiphiasimmigration.com";
 
+type Params = { slug: string };
+type PageProps = { params: Params | Promise<Params> };
+
 // ----- Helpers -----
 function fmtDate(iso?: string) {
   if (!iso) return "";
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return "";
-  return d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+  return formatDateUS(iso);
 }
+
 function fmtSalary(job: any) {
   const cur = job?.salaryCurrency || "INR";
   const min = job?.salaryMin;
@@ -32,10 +35,11 @@ function fmtSalary(job: any) {
   return `Up to ${cur} ${nf.format(max)}/yr`;
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const job = getJobBySlug(params.slug);
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await Promise.resolve(params);
+  const job = getJobBySlug(slug);
   const title = job ? `${job.title} | Careers at XIPHIAS Immigration` : "Job | XIPHIAS Immigration";
-  const url = `${SITE}/careers/${params.slug}`;
+  const url = `${SITE}/careers/${slug}`;
   const description = job ? `${job.title} — ${job.location}. Apply now.` : "Open role at XIPHIAS Immigration.";
   return {
     title,
@@ -52,8 +56,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default function Page({ params }: { params: { slug: string } }) {
-  const job = getJobBySlug(params.slug);
+export default async function Page({ params }: PageProps) {
+  const { slug } = await Promise.resolve(params);
+  const job = getJobBySlug(slug);
   if (!job) {
     return (
       <main className="mx-auto max-w-4xl p-6">
@@ -66,7 +71,7 @@ export default function Page({ params }: { params: { slug: string } }) {
   const salary = fmtSalary(job);
 
   // simple “more roles” (same dept first, then others) – server-rendered, no client JS
-  const all = getAllJobs().filter((j) => j.slug !== params.slug);
+  const all = getAllJobs().filter((j) => j.slug !== slug);
   const sameDept = all.filter((j) => j.dept && job.dept && j.dept === job.dept);
   const more = (sameDept.length ? sameDept : all).slice(0, 3);
 
@@ -250,7 +255,7 @@ export default function Page({ params }: { params: { slug: string } }) {
                       <p className="text-xs text-slate-600 dark:text-slate-300">
                         {j.dept || "—"} •{" "}
                         {j.postedAt
-                          ? new Date(j.postedAt).toLocaleDateString(undefined, { month: "short", day: "numeric" })
+                          ? formatDateUSShort(j.postedAt)
                           : "New"}
                       </p>
                       <h3 className="mt-1 text-base font-semibold text-slate-900 dark:text-white">

@@ -504,7 +504,7 @@ export default function Footer() {
                   {/* Store badges (open in new tab) */}
                   <div className="flex items-center gap-2 mt-2">
                     <a
-                      href="https://apps.apple.com/app/id0000000000?pt=000000&ct=footer_app_badge&mt=8"
+                      href="/contact"
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label="Download on the App Store"
@@ -522,7 +522,7 @@ export default function Footer() {
                     </a>
 
                     <a
-                      href="https://play.google.com/store/apps/details?id=com.xiphias.app&referrer=utm_source%3Dwebsite%26utm_medium%3Dfooter%26utm_campaign%3Dapp_badge"
+                      href="/contact"
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label="Get it on Google Play"

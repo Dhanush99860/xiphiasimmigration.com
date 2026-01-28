@@ -1,4 +1,5 @@
-// Elegant, accessible FAQ accordion...
+// src/components/Residency/FAQAccordion.tsx
+// Elegant, accessible FAQ accordion (UI only). JSON-LD should be injected at page level.
 "use client";
 
 import * as React from "react";
@@ -10,24 +11,19 @@ export default function FAQSection({ faqs }: { faqs?: FAQ[] }) {
   const [openIndex, setOpenIndex] = React.useState<number | null>(null);
 
   // Stable slugs for #hash deep links
-  const slugs = React.useMemo(
-    () => (faqs ?? []).map((f) => slugify(f.q)),
-    [faqs],
-  );
+  const slugs = React.useMemo(() => (faqs ?? []).map((f) => slugify(f.q)), [faqs]);
 
   // Open matching hash on load / change
   React.useEffect(() => {
     const applyHash = () => {
       const hash = decodeURIComponent(
-        (typeof window !== "undefined" ? window.location.hash : "").replace(
-          "#",
-          "",
-        ),
+        (typeof window !== "undefined" ? window.location.hash : "").replace("#", "")
       );
       if (!hash) return;
       const idx = slugs.indexOf(hash);
       if (idx >= 0) setOpenIndex(idx);
     };
+
     applyHash();
     window.addEventListener("hashchange", applyHash);
     return () => window.removeEventListener("hashchange", applyHash);
@@ -47,24 +43,20 @@ export default function FAQSection({ faqs }: { faqs?: FAQ[] }) {
         return next;
       });
     },
-    [slugs],
+    [slugs]
   );
 
   // Now it’s safe to bail out
   if (!faqs?.length) return null;
 
   return (
-    <section
-      id="faq"
-      role="region"
-      aria-label="Frequently asked questions"
-      className="mt-5"
-    >
+    <section id="faq" role="region" aria-label="Frequently asked questions" className="mt-5">
       <div className="overflow-visible rounded-2xl bg-gradient-to-br from-slate-50 to-white dark:from-neutral-900/60 dark:to-neutral-900/20 ring-1 ring-slate-200/70 dark:ring-neutral-800/70 shadow-sm divide-y divide-slate-200/70 dark:divide-neutral-800/70">
         {faqs.map((f, i) => {
           const isOpen = openIndex === i;
           const panelId = `faq-panel-${i}-${slugs[i]}`;
           const buttonId = `faq-button-${i}-${slugs[i]}`;
+
           return (
             <div key={panelId} className="px-4 sm:px-5">
               <h3 className="m-0">
@@ -85,15 +77,14 @@ export default function FAQSection({ faqs }: { faqs?: FAQ[] }) {
                   />
                 </button>
               </h3>
+
               <div
                 id={panelId}
                 role="region"
                 aria-labelledby={buttonId}
                 className={[
                   "grid transition-all duration-300 ease-out motion-reduce:transition-none",
-                  isOpen
-                    ? "grid-rows-[1fr] opacity-100"
-                    : "grid-rows-[0fr] opacity-0",
+                  isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
                 ].join(" ")}
               >
                 <div className="overflow-hidden">
@@ -106,11 +97,6 @@ export default function FAQSection({ faqs }: { faqs?: FAQ[] }) {
           );
         })}
       </div>
-
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildFaqLd(faqs)) }}
-      />
     </section>
   );
 }
@@ -141,19 +127,4 @@ function Chevron({ className = "" }: { className?: string }) {
       <path d="m6 9 6 6 6-6" />
     </svg>
   );
-}
-
-function buildFaqLd(faqs: FAQ[]) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((f) => ({
-      "@type": "Question",
-      name: f.q,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: f.a,
-      },
-    })),
-  };
 }

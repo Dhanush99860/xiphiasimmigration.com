@@ -85,7 +85,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   const title = `Resource Guide | ${SITE_NAME}`;
   const description =
-    "Explore all Residency by Investment, Citizenship by Investment, Corporate formation, and Skilled migration programs in one place. Search, filter, compare, download brochures, and check eligibility.";
+    "Explore Residency, Citizenship, Corporate, and Skilled Migration programs. Search, compare, download brochures, and check eligibility in one place";
 
   return {
     title,

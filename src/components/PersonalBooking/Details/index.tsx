@@ -7,6 +7,7 @@ import TestimonialCarouselPro from "@/components/Common/TestimonialCarouselPro";
 import AdvisorConsultationCard from "@/components/Citizenship/AdvisorConsultationCard";
 import ProblemSolutionCompare from "@/components/PersonalBooking/ProblemSolution";
 import { Awards } from "@/components/awards";
+import { formatDateUS } from "@/lib/format";
 
 import {
   User,
@@ -58,7 +59,7 @@ function ArticleCard({ a }: { a: ArticleMeta }) {
           </p>
         ) : null}
         <div className="mt-2 text-xs text-gray-500">
-          {a.date ? new Date(a.date).toLocaleDateString() : null}
+          {a.date ? formatDateUS(a.date) : null}
         </div>
       </div>
     </a>

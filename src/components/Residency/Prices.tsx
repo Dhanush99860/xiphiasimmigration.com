@@ -43,19 +43,22 @@ export default function Prices({
   if (!hasItems && !hasProof) return null;
 
   /* ---------- helpers ---------- */
-  const fmt = (amt?: number, cur?: string) => {
-    if (typeof amt !== "number" || Number.isNaN(amt)) return "—";
-    const c = (cur || defaultCurrency || "USD").toUpperCase();
-    try {
-      return new Intl.NumberFormat(undefined, {
-        style: "currency",
-        currency: c,
-        maximumFractionDigits: 0,
-      }).format(amt);
-    } catch {
-      return `${amt.toLocaleString()} ${c}`;
-    }
-  };
+const LOCALE = "en-US";
+
+const fmt = (amt?: number, cur?: string) => {
+  if (typeof amt !== "number" || Number.isNaN(amt)) return "—";
+  const c = (cur || defaultCurrency || "USD").toUpperCase();
+  try {
+    return new Intl.NumberFormat(LOCALE, {
+      style: "currency",
+      currency: c,
+      maximumFractionDigits: 0,
+    }).format(amt);
+  } catch {
+    return `${amt.toLocaleString(LOCALE)} ${c}`;
+  }
+};
+
 
   const sumByCurrency = <T extends { amount?: number; currency?: string }>(
     list: T[],

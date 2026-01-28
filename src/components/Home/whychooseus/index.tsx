@@ -1,6 +1,9 @@
+"use client";
+
 // FILE: src/components/Home/whychooseus/index.tsx
 import Link from "next/link";
 import { BOOKING_ROUTE } from "@/components/PersonalBooking/booking-flow";
+import CardSlider from "../Hero/slider";
 
 import {
   ArrowRight,
@@ -57,9 +60,15 @@ export default function WhyChooseUs() {
     <section
       id="why-choose-us"
       aria-labelledby="why-choose-heading"
-      className="py-16 sm:py-20 md:py-24"
+      className="py-10 sm:py-16 md:py-20"
     >
       <div className="container mx-auto lg:max-w-screen-2xl px-4 sm:px-6 lg:px-8 overflow-x-clip">
+
+        {/* ======= MOVED SLIDER HERE ======= */}
+        <div className="mb-10">
+          <CardSlider />
+        </div>
+
         {/* ======= HEADER ======= */}
         <div className="max-w-3xl">
           <span className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-medium text-zinc-700 ring-1 ring-zinc-200 dark:bg-white/5 dark:text-zinc-200 dark:ring-white/10">
@@ -142,6 +151,8 @@ export default function WhyChooseUs() {
             Learn more about us
           </Link>
         </div>
+
+        
       </div>
     </section>
   );

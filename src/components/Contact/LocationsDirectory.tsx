@@ -306,12 +306,12 @@ export default function LocationsDirectory({
     // MALAYSIA
     {
       id: "my-kl",
-      city: "Kuala Lumpur",
+      city: "",
       company:
-        "XIPHIAS Immigration Pvt. Ltd. (C/O INNOVE TECHNOLOGIES SDN. BHD)",
+        "XIPHIAS Immigration Pvt. Ltd.",
       regionKey: "malaysia",
       address: [
-        "Suite 33-01, 33rd Floor, Menara Keck Seng, 203 Jalan Bukit Bintang, Kuala Lumpur",
+        "",
       ],
       email: "malaysia@xiphiasimmigration.com",
     },

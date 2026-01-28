@@ -226,7 +226,7 @@ export default function MegaPanel({ rootLabel, columns, open, onClose }: MegaPan
 
                         {country.submenu && country.submenu.length > 0 && (
                           <ul className="mt-2.5 space-y-1.5">
-                            {country.submenu.slice(0, 12).map((p) => (
+                            {country.submenu.slice(0, 3).map((p) => (
                               <li key={p.label}>
                                 <Link
                                   href={p.href}
@@ -242,7 +242,7 @@ export default function MegaPanel({ rootLabel, columns, open, onClose }: MegaPan
                                 </Link>
                               </li>
                             ))}
-                            {country.submenu.length > 12 && (
+                            {country.submenu.length > 3 && (
                               <li>
                                 <Link
                                   href={country.href}

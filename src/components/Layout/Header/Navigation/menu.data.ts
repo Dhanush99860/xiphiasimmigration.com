@@ -84,6 +84,18 @@ const residencyCountries: HeaderItem[] = [
     ],
   },
   {
+    label: 'Hong Kong',
+    href: '/residency/hong-kong',
+    // @ts-ignore
+    meta: { code: 'GR' },
+    submenu: [
+      { label: 'HK Business Investment', href: '/residency/hong-kong/hk-business-investment' },
+      { label: 'HK Fund Investment', href: '/residency/hong-kong/hk-fund-investment' },
+      { label: 'HK Property Investment', href: '/residency/hong-kong/hk-property-investment' },
+      { label: 'HK Securities Investment', href: '/residency/hong-kong/hk-securities-investment' },
+    ],
+  },
+  {
     label: 'Hungary',
     href: '/residency/hungary',
     // @ts-ignore
@@ -106,6 +118,17 @@ const residencyCountries: HeaderItem[] = [
     ],
   },
   {
+    label: 'Malaysia',
+    href: '/residency/malaysia',
+    // @ts-ignore
+    meta: { code: 'MY' },
+    submenu: [
+      { label: 'Malaysia Mm2h Property', href: '/residency/malaysia/malaysia-mm2h-property' },
+      { label: 'Malaysia Mm2h Silver', href: '/residency/malaysia/malaysia-mm2h-silver' },
+      { label: 'Malaysia Mm2h Gold', href: '/residency/malaysia/malaysia-mm2h-gold' },
+    ],
+  },
+  {
     label: 'Malta',
     href: '/residency/malta',
     // @ts-ignore
@@ -117,6 +140,18 @@ const residencyCountries: HeaderItem[] = [
     ],
   },
   {
+    label: 'Mauritius',
+    href: '/residency/mauritius',
+    // @ts-ignore
+    meta: { code: 'MU' },
+    submenu: [
+      { label: 'Mauritius Business Investment', href: '/residency/mauritius/mauritius-business-investment' },
+      { label: 'Mauritius Strategic Fund Investment', href: '/residency/mauritius/mauritius-strategic-fund-investment' },
+      { label: 'Mauritius Real Estate Investment', href: '/residency/mauritius/mauritius-real-estate-investment' },
+      { label: 'Mauritius Retirement Transfer', href: '/residency/mauritius/mauritius-retirement-transfer' },
+    ],
+  },
+  {
     label: 'Monaco',
     href: '/residency/monaco',
     // @ts-ignore
@@ -124,6 +159,17 @@ const residencyCountries: HeaderItem[] = [
     submenu: [
       { label: 'Bank Deposit', href: '/residency/monaco/monaco-residency-bank-deposit' },
       { label: 'Property Investment', href: '/residency/monaco/monaco-residency-property-investment' },
+    ],
+  },
+  {
+    label: 'Panama',
+    href: '/residency/panama',
+    // @ts-ignore
+    meta: { code: 'PA' },
+    submenu: [
+      { label: 'Panama RBI via Real Estate', href: '/residency/panama/panama-residency-real-estate' },
+      { label: 'Panama Residency Bank Deposit', href: '/residency/panama/panama-residency-bank-deposit' },
+      { label: 'Panama RBI Stock Market', href: '/residency/panama/panama-residency-stock-market' },
     ],
   },
   {
@@ -165,6 +211,16 @@ const residencyCountries: HeaderItem[] = [
     submenu: [
       { label: 'Real Estate', href: '/residency/uae/uae-real-estate' },
       { label: 'Specialized Talent', href: '/residency/uae/uae-specialized-talent' },
+    ],
+  },
+  {
+    label: 'Uruguay',
+    href: '/residency/uruguay',
+    // @ts-ignore
+    meta: { code: 'UY' },
+    submenu: [
+      { label: 'Uruguay Business Investment', href: '/residency/uruguay/uruguay-business-investment' },
+      { label: 'Uruguay Real Estate Residency', href: '/residency/uruguay/uruguay-real-estate-residency' },
     ],
   },
   {

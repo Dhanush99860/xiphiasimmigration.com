@@ -1,4 +1,5 @@
 // src/app/layout.tsx
+import { Suspense } from "react";
 import type { Metadata, Viewport } from "next";
 import { Lato, Inter, Sora } from "next/font/google";
 import "./globals.css";
@@ -141,18 +142,27 @@ export const viewport: Viewport = {
   ],
 };
 
+// Safer JSON stringify for embedding inside <script> tags.
+// Escapes "<" to avoid any chance of closing the script tag via string content.
+function safeJsonStringify(data: unknown) {
+  return JSON.stringify(data).replace(/</g, "\u003c");
+}
+
 // Global JSON-LD (site-wide)
+const SITE = "https://www.xiphiasimmigration.com";
+
 const orgJsonLd = {
   "@context": "https://schema.org",
-  "@type": ["Organization", "LegalService"],
+  "@type": ["Organization", "ProfessionalService"],
+  "@id": `${SITE}/#organization`,
   name: "XIPHIAS Immigration",
-  url: "https://www.xiphiasimmigration.com",
-  logo: "https://www.xiphiasimmigration.com/images/logo/xiphias-immigration.png",
+  url: SITE,
+  logo: `${SITE}/images/logo/xiphias-immigration.png`,
+  image: `${SITE}/xiphias-immigration.png`,
   sameAs: [
-    "https://www.linkedin.com/company/xiphias",
+    "https://www.linkedin.com/company/xiphias-immigration/",
     "https://www.facebook.com/xiphias",
     "https://www.instagram.com/xiphias",
-    "https://www.youtube.com/",
     "https://twitter.com/xiphiasimmig",
   ],
   areaServed: "Worldwide",
@@ -168,23 +178,25 @@ const orgJsonLd = {
   contactPoint: [
     {
       "@type": "ContactPoint",
-      telephone: "+91 90194 00500",
+      telephone: "+919019400500",
       contactType: "customer service",
       areaServed: "IN",
       availableLanguage: ["en", "hi"],
     },
   ],
-  serviceType: ["Residency", "Citizenship", "Skilled", "Corporate"],
+  knowsAbout: ["Residency by Investment", "Citizenship by Investment", "Skilled Immigration", "Corporate Mobility"],
 };
 
 const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  url: "https://www.xiphiasimmigration.com",
+  "@id": `${SITE}/#website`,
+  url: SITE,
   name: "XIPHIAS Immigration",
+  publisher: { "@id": `${SITE}/#organization` },
   potentialAction: {
     "@type": "SearchAction",
-    target: "https://www.xiphiasimmigration.com/search?q={search_term_string}",
+    target: `${SITE}/search?q={search_term_string}`,
     "query-input": "required name=search_term_string",
   },
 };
@@ -230,7 +242,14 @@ export default function RootLayout({
         {GA_ID ? (
           <>
             <GoogleAnalytics gaId={GA_ID} />
-            <GA4RouteChange gaId={GA_ID} />
+            {/*
+              `GA4RouteChange` uses `useSearchParams()`.
+              Next.js requires `useSearchParams()` to be inside a Suspense boundary
+              to avoid a full CSR bailout during prerendering.
+            */}
+            <Suspense fallback={null}>
+              <GA4RouteChange gaId={GA_ID} />
+            </Suspense>
           </>
         ) : null}
 
@@ -238,12 +257,12 @@ export default function RootLayout({
         <script
           id="org-jsonld"
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: safeJsonStringify(orgJsonLd) }}
         />
         <script
           id="website-jsonld"
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: safeJsonStringify(websiteJsonLd) }}
         />
       </body>
     </html>

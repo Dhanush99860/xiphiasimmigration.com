@@ -1,6 +1,7 @@
 // ✅ src/app/(site)/[vertical]/[country]/[program]/page.tsx
 // Program page: renders MDX content
-import { compileMDX } from "next-mdx-remote/rsc"; // ← fixed: named import
+
+import { compileMDX } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
@@ -8,7 +9,7 @@ import { getAllContentCached } from "@/lib/content";
 import { getRelated } from "@/lib/content/related";
 import type { Vertical, ProgramDoc } from "@/lib/content/types";
 import type { Metadata } from "next";
-import { JsonLd } from "@/lib/seo";
+import { JsonLd, breadcrumbLd } from "@/lib/seo"; // ✅ use helper
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -67,9 +68,11 @@ export async function generateMetadata({
   params: { vertical: Vertical; country: string; program: string };
 }): Promise<Metadata> {
   const { vertical, country, program } = params;
+
   if (!VERTICALS3.includes(vertical)) {
     return { title: "Program not found" };
   }
+
   const doc = getAllContentCached().find(
     (d): d is ProgramDoc =>
       d.kind === "program" &&
@@ -77,14 +80,16 @@ export async function generateMetadata({
       d.country === country &&
       d.program === program
   );
+
   if (!doc) {
     return { title: "Program not found" };
   }
+
   const title = doc.title;
   const description = doc.summary || `Discover the ${doc.title} program in ${doc.country}.`;
   const keywords = doc.tags?.join(", ");
-  const canonicalPath = doc.url;
-  const canonicalUrl = `https://www.xiphiasimmigration.com${canonicalPath}`;
+  const canonicalUrl = `https://www.xiphiasimmigration.com${doc.url}`;
+
   return {
     title,
     description,
@@ -131,6 +136,7 @@ export default async function ProgramPage({
       d.country === country &&
       d.program === program
   );
+
   if (!doc) return notFound();
 
   const { content } = await compileMDX({
@@ -145,20 +151,17 @@ export default async function ProgramPage({
 
   const related = getRelated(doc, 6);
 
-  const breadcrumbLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "/" },
-      { "@type": "ListItem", position: 2, name: doc.vertical, item: `/${doc.vertical}` },
-      { "@type": "ListItem", position: 3, name: doc.country, item: `/${doc.vertical}/${doc.country}` },
-      { "@type": "ListItem", position: 4, name: doc.title, item: doc.url },
-    ],
-  } as const;
+  // ✅ Breadcrumb JSON-LD using helper (absolute URLs + valid @id format)
+  const breadcrumbJsonLd = breadcrumbLd([
+    { name: "Home", url: "/" },
+    { name: doc.vertical.charAt(0).toUpperCase() + doc.vertical.slice(1), url: `/${doc.vertical}` },
+    { name: doc.country.charAt(0).toUpperCase() + doc.country.slice(1), url: `/${doc.vertical}/${doc.country}` },
+    { name: doc.title, url: doc.url },
+  ]);
 
   return (
     <main className="mx-auto max-w-6xl p-6 grid lg:grid-cols-[2fr_1fr] gap-8">
-      <JsonLd data={breadcrumbLd} />
+      <JsonLd data={breadcrumbJsonLd} />
 
       <article className="space-y-6">
         <header className="space-y-3">

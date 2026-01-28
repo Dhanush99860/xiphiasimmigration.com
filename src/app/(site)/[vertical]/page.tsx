@@ -1,10 +1,13 @@
 // ✅ src/app/(site)/[vertical]/page.tsx
 // Vertical index: lists countries for a given vertical
+
 import { getAllContentCached } from "@/lib/content";
 import type { Metadata } from "next";
 import type { Vertical, ProgramDoc } from "@/lib/content/types";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+
+import { JsonLd, breadcrumbLd } from "@/lib/seo"; // ✅ add
 
 export const runtime = "nodejs"; // ensure Node.js runtime on Vercel (fs OK)
 
@@ -25,6 +28,7 @@ export async function generateMetadata({
   if (!VERTICALS.includes(vertical)) {
     return { title: "Not found" };
   }
+
   const capVertical = vertical.charAt(0).toUpperCase() + vertical.slice(1);
   const title = `${capVertical} Programs by Country`;
   const description = `Browse ${vertical} programs, grouped by country.`;
@@ -88,8 +92,19 @@ export default function VerticalPage({
     a[0].localeCompare(b[0])
   );
 
+  const capVertical = vertical.charAt(0).toUpperCase() + vertical.slice(1);
+
+  // ✅ Breadcrumb JSON-LD (absolute URLs + valid schema format)
+  const breadcrumbJsonLd = breadcrumbLd([
+    { name: "Home", url: "/" },
+    { name: capVertical, url: `/${vertical}` },
+  ]);
+
   return (
     <main className="mx-auto max-w-6xl space-y-6 p-6">
+      {/* ✅ JSON-LD */}
+      <JsonLd data={breadcrumbJsonLd} />
+
       <h1 className="text-3xl font-semibold capitalize">{vertical}</h1>
 
       {countries.length === 0 ? (

@@ -26,6 +26,24 @@ type Props = {
   ariaLabel?: string;
 };
 
+/* ========================= Helpers ========================== */
+
+function getSite(): string {
+  const env =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.SITE_URL ||
+    "https://www.xiphiasimmigration.com";
+
+  const base = env.startsWith("http") ? env : `https://${env}`;
+  return base.replace(/\/$/, "");
+}
+
+function toAbsUrl(site: string, u?: string) {
+  if (!u) return undefined;
+  if (u.startsWith("http://") || u.startsWith("https://")) return u;
+  return `${site}${u.startsWith("/") ? u : `/${u}`}`;
+}
+
 /* ========================= Component ========================== */
 
 export default function TestimonialCarousel({
@@ -84,17 +102,29 @@ export default function TestimonialCarousel({
   // Current item
   const t = safeItems[index];
 
-  // JSON-LD for SEO (ItemList of Review)
+  const SITE = getSite();
+  const ORG_ID = `${SITE}/#organization`;
+
+  // JSON-LD for SEO (ItemList of Review) — FIXED
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
+    name: "Client Testimonials",
+    description: "Client feedback about services provided by XIPHIAS Immigration.",
     itemListElement: safeItems.map((it, i) => ({
       "@type": "ListItem",
       position: i + 1,
       item: {
         "@type": "Review",
         reviewBody: it.quote,
-        ...(it.url ? { url: it.url } : {}),
+        ...(toAbsUrl(SITE, it.url) ? { url: toAbsUrl(SITE, it.url) } : {}),
+        // ✅ Required by Google for Review clarity
+        itemReviewed: {
+          "@type": "Organization",
+          "@id": ORG_ID,
+          name: "XIPHIAS Immigration",
+          url: SITE,
+        },
         author: {
           "@type": "Person",
           name: it.author,
@@ -181,10 +211,7 @@ export default function TestimonialCarousel({
         {length > 1 && (
           <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             {/* Dots */}
-            <nav
-              className="flex flex-wrap gap-1.5"
-              aria-label="Select testimonial"
-            >
+            <nav className="flex flex-wrap gap-1.5" aria-label="Select testimonial">
               {safeItems.map((_, idx) => (
                 <button
                   key={idx}
@@ -206,11 +233,7 @@ export default function TestimonialCarousel({
             {/* Prev / Next */}
             <div className="flex items-center gap-2">
               <CarouselButton onClick={prev} ariaLabel="Previous testimonial" />
-              <CarouselButton
-                onClick={next}
-                ariaLabel="Next testimonial"
-                direction="next"
-              />
+              <CarouselButton onClick={next} ariaLabel="Next testimonial" direction="next" />
               <span className="ml-1 text-xs text-zinc-500 dark:text-zinc-400 tabular-nums">
                 {index + 1}/{length}
               </span>
@@ -267,8 +290,7 @@ function Avatar({ name, url }: { name: string; url?: string }) {
     .join("")
     .toUpperCase();
 
-  const altText =
-    name && name.trim().length > 0 ? `${name}'s photo` : "Client photo";
+  const altText = name && name.trim().length > 0 ? `${name}'s photo` : "Client photo";
 
   return url ? (
     // eslint-disable-next-line @next/next/no-img-element
@@ -307,12 +329,7 @@ function CarouselButton({
         "transition",
       ].join(" ")}
     >
-      <svg
-        viewBox="0 0 24 24"
-        className="h-4 w-4"
-        fill="currentColor"
-        aria-hidden="true"
-      >
+      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true">
         {isNext ? (
           <path d="M5 12.75h11.19l-3.72 3.72a.75.75 0 1 0 1.06 1.06l5.25-5.25a.75.75 0 0 0 0-1.06L13.53 5.97a.75.75 0 1 0-1.06 1.06l3.72 3.72H5a.75.75 0 0 0 0 1.5z" />
         ) : (

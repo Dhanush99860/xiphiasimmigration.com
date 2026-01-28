@@ -30,7 +30,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: "Best Immigration Consultants in India - XIPHIAS Immigration",
   description:
-    "XIPHIAS Immigration is India’s leading immigration consultancy offering Citizenship & Residency by Investment, Business, and Skilled Migration solutions worldwide.",
+    "Xiphias Immigration offers expert residency, citizenship, corporate, and skilled migration services worldwide with 17+ years of experience",
   alternates: { canonical: "/" },
   openGraph: {
     title: "Best Immigration Consultants in India – XIPHIAS Immigration",

@@ -226,7 +226,7 @@ export default function ProblemSolutionCompare({ className = "" }: { className?:
           {/* CTA */}
           <div className="mt-10">
             <Link
-              href="/personal-booking"
+              href="/booking"
               className="inline-flex items-center gap-2 rounded-2xl bg-primary px-5 py-3 text-white font-semibold shadow hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/80"
             >
               Book your paid strategy call
