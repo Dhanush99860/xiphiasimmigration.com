@@ -67,6 +67,8 @@ const nextConfig = {
       { source: "/apply-online.html", destination: "/eligibility", permanent: true },
       { source: "/index.html", destination: "/", permanent: true },
       { source: "/disclaimer", destination: "/terms", permanent: true },
+      { source: "/media.html", destination: "/about", permanent: true },
+      { source: "/why-xiphias.html", destination: "/about", permanent: true },
 
       // Citizenship legacy
       {
@@ -113,6 +115,8 @@ const nextConfig = {
       { source: "/portugal-golden-visa-investment-immigration.html", destination: "/residency/portugal", permanent: true },
       { source: "/spain-golden-visa-investment-immigration.html", destination: "/residency", permanent: true },
       { source: "/spain-investor-visa.html", destination: "/residency", permanent: true },
+      { source: "/canada-immigration-visa.html", destination: "/", permanent: true },
+      { source: "/usa-business-investor-visa.html", destination: "/residency/usa", permanent: true },
 
       // Canada legacy (both with/without .html + php)
       { source: "/investment-immigration-visa-canada.html", destination: "/skilled/canada", permanent: true },
@@ -135,6 +139,8 @@ const nextConfig = {
       { source: "/uk-startup-investor-innovator-visa.html", destination: "/skilled/united-kingdom", permanent: true },
       { source: "/australia-business-investment-visa.html", destination: "/skilled/australia", permanent: true },
       { source: "/Australia-Global-Talent-Visa.html", destination: "/skilled/australia/global-talent-visa-858", permanent: true },
+      { source: "/canada-skilled-immigration.html", destination: "/skilled/canada", permanent: true },
+      { source: "/skilled-migration-visa-consultant.html", destination: "/skilled", permanent: true },
 
       // Corporate legacy
       { source: "/usa-corporate-immigration-services.html", destination: "/corporate", permanent: true },
@@ -144,6 +150,7 @@ const nextConfig = {
       { source: "/dubai-business-investor-visa.html", destination: "/corporate", permanent: true },
       { source: "/immigration-visa-consultants-in-dubai.html", destination: "/contact", permanent: true },
       { source: "/canada-corporate-immigration-services.html", destination: "/corporate", permanent: true },
+      { source: "/corporate-immigration-visa-services.html", destination: "/corporate", permanent: true },
 
       // General business-investment legacy
       { source: "/business-investment-immigration-visa.html", destination: "/residency", permanent: true },
