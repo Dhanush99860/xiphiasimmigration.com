@@ -90,7 +90,7 @@ export default function AdvisorConsultationCard({
   durationLabel = "90 mins (in-depth)",
   demandHint = "High demand this week",
 
-  bookingHref = "/booking?book=paid",
+  bookingHref = "/booking?plan=paid",
   onBookAction,
   brochureUrl,
 
@@ -217,9 +217,9 @@ export default function AdvisorConsultationCard({
               }
             }}
             className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm ring-1 ring-blue-700/20 transition hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
-            aria-label="Book consultation"
+            aria-label="Book paid consultation"
           >
-            Book consultation
+            Book paid consultation
             <ArrowRight />
           </Link>
 

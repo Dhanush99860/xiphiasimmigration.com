@@ -222,7 +222,6 @@ export default function InsightsPreviewClient({
           <Link
             href={hero.url}
             className="group block overflow-hidden rounded-2xl border border-slate-200/70 dark:border-slate-700/60 shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary/60"
-            aria-label={`Read: ${hero.title}`}
           >
             <div className="relative aspect-[16/9] w-full bg-slate-100 dark:bg-slate-800">
               <Img
@@ -296,7 +295,6 @@ export default function InsightsPreviewClient({
                   <Link
                     href={it.url}
                     className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary/60 rounded-md"
-                    aria-label={`Read: ${title}`}
                   >
                     <div className="flex items-center gap-3">
                       <div className="relative h-16 w-16">

@@ -3,12 +3,10 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
 import { Search, X, ArrowRight, Clock, Tag } from "lucide-react";
 import type { UIItem as BaseUIItem } from "@/utils/search";
 import { searchItems, preloadIndex, debounce } from "@/utils/search";
 
-/** Extend the base shape locally to silence any stale editor caches */
 type RichUIItem = BaseUIItem & {
   image?: string;
   dateLabel?: string;
@@ -21,15 +19,31 @@ export type GlobalSearchProps = {
 };
 
 const popularSuggestions: RichUIItem[] = [
-  { title: "Canada Startup Visa", type: "Program", url: "/residency/canada/canada-start-up-visa" },
-  { title: "Antigua & Barbuda CBI", type: "Program", url: "/citizenship/antigua-barbuda" },
-  { title: "Australia Global Talent", type: "Program", url: "/skilled/australia/global-talent-visa-858" },
-  { title: "Grenada Real Estate", type: "Program", url: "/citizenship/grenada/real-estate" },
+  {
+    title: "Canada Startup Visa",
+    type: "Program",
+    url: "/residency/canada/canada-start-up-visa",
+  },
+  {
+    title: "Antigua & Barbuda CBI",
+    type: "Program",
+    url: "/citizenship/antigua-barbuda",
+  },
+  {
+    title: "Australia Global Talent",
+    type: "Program",
+    url: "/skilled/australia/global-talent-visa-858",
+  },
+  {
+    title: "Grenada Real Estate",
+    type: "Program",
+    url: "/citizenship/grenada/real-estate",
+  },
 ];
 
 export default function GlobalSearch({
   className = "",
-  placeholder = "Search…",
+  placeholder = "Search...",
 }: GlobalSearchProps) {
   const router = useRouter();
 
@@ -51,7 +65,7 @@ export default function GlobalSearch({
   const hasQuery = query.trim().length > 0;
   const items = useMemo<RichUIItem[]>(
     () => (hasQuery ? results : popularSuggestions),
-    [hasQuery, results]
+    [hasQuery, results],
   );
 
   const activeOptionId = items.length ? `gs-opt-${activeIndex}` : undefined;
@@ -64,18 +78,18 @@ export default function GlobalSearch({
     return (
       <>
         {text.slice(0, i)}
-        <mark className="bg-transparent font-semibold">{text.slice(i, i + q.length)}</mark>
+        <mark className="bg-transparent font-semibold">
+          {text.slice(i, i + q.length)}
+        </mark>
         {text.slice(i + q.length)}
       </>
     );
   }, []);
 
-  // warm the static index on open
   useEffect(() => {
     if (open) preloadIndex();
   }, [open]);
 
-  // debounced query
   useEffect(() => {
     const run = debounce(async () => {
       const q = query.trim();
@@ -92,7 +106,9 @@ export default function GlobalSearch({
       setLoading(false);
       if (found?.length) {
         const match = found[0].title;
-        setHighlighted(match.toLowerCase().startsWith(q.toLowerCase()) ? match : "");
+        setHighlighted(
+          match.toLowerCase().startsWith(q.toLowerCase()) ? match : "",
+        );
       } else {
         setHighlighted("");
       }
@@ -101,12 +117,10 @@ export default function GlobalSearch({
     run();
   }, [query]);
 
-  // autofocus when open
   useEffect(() => {
     if (open) inputRef.current?.focus();
   }, [open]);
 
-  // global keys
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (!open) return;
@@ -132,7 +146,9 @@ export default function GlobalSearch({
         e.preventDefault();
         const it = items[activeIndex];
         if (it) {
-          setRecent((prev) => [it.title, ...prev.filter((x) => x !== it.title)].slice(0, 5));
+          setRecent((prev) =>
+            [it.title, ...prev.filter((x) => x !== it.title)].slice(0, 5),
+          );
           setOpen(false);
           router.push(it.url);
         } else if (highlighted) {
@@ -147,7 +163,6 @@ export default function GlobalSearch({
     return () => window.removeEventListener("keydown", onKey);
   }, [open, items, activeIndex, highlighted, router]);
 
-  // focus trap
   useEffect(() => {
     if (!open) {
       triggerRef.current?.focus();
@@ -157,9 +172,13 @@ export default function GlobalSearch({
       if (e.key !== "Tab") return;
       const nodes = Array.from(
         overlayRef.current?.querySelectorAll<HTMLElement>(
-          'a[href], button, input, textarea, select, [tabindex]:not([tabindex="-1"])'
-        ) || []
-      ).filter((el) => !el.hasAttribute("disabled") && el.getAttribute("aria-hidden") !== "true");
+          'a[href], button, input, textarea, select, [tabindex]:not([tabindex="-1"])',
+        ) || [],
+      ).filter(
+        (el) =>
+          !el.hasAttribute("disabled") &&
+          el.getAttribute("aria-hidden") !== "true",
+      );
       if (!nodes.length) return;
       const first = nodes[0];
       const last = nodes[nodes.length - 1];
@@ -176,7 +195,6 @@ export default function GlobalSearch({
     return () => window.removeEventListener("keydown", trap);
   }, [open]);
 
-  // close on outside click
   useEffect(() => {
     function onDoc(e: MouseEvent) {
       if (overlayRef.current && !overlayRef.current.contains(e.target as Node)) {
@@ -187,7 +205,6 @@ export default function GlobalSearch({
     return () => document.removeEventListener("mousedown", onDoc);
   }, [open]);
 
-  // lock scroll
   useEffect(() => {
     if (!open) return;
     const y = window.scrollY;
@@ -206,7 +223,6 @@ export default function GlobalSearch({
     };
   }, [open]);
 
-  // small UI bits
   const TypeBadge = ({ t }: { t: string }) => (
     <span className="inline-flex items-center rounded-full border px-1.5 py-[1px] text-[10.5px] font-medium text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700">
       {t}
@@ -221,7 +237,15 @@ export default function GlobalSearch({
       </div>
     ) : null;
 
-  function ResultRow({ item, i, active }: { item: RichUIItem; i: number; active: boolean }) {
+  function ResultRow({
+    item,
+    i,
+    active,
+  }: {
+    item: RichUIItem;
+    i: number;
+    active: boolean;
+  }) {
     return (
       <div
         role="option"
@@ -246,7 +270,10 @@ export default function GlobalSearch({
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
               <TypeBadge t={item.type} />
-              <span className="truncate text-[14px] text-gray-900 dark:text-gray-100" title={item.title}>
+              <span
+                className="truncate text-[14px] text-gray-900 dark:text-gray-100"
+                title={item.title}
+              >
                 {hasQuery ? highlight(item.title, query) : item.title}
               </span>
             </div>
@@ -267,20 +294,24 @@ export default function GlobalSearch({
             )}
 
             {active && item.snippet && (
-              <p className="mt-0.5 line-clamp-1 text-[12.5px] text-gray-600 dark:text-gray-400">{item.snippet}</p>
+              <p className="mt-0.5 line-clamp-1 text-[12.5px] text-gray-600 dark:text-gray-400">
+                {item.snippet}
+              </p>
             )}
           </div>
         </button>
 
-        <ArrowRight className={active ? "text-blue-600 shrink-0" : "text-gray-400 shrink-0"} size={18} aria-hidden />
+        <ArrowRight
+          className={active ? "text-blue-600 shrink-0" : "text-gray-400 shrink-0"}
+          size={18}
+          aria-hidden
+        />
       </div>
     );
   }
 
-  // render
   return (
     <>
-      {/* Trigger pill (safe anywhere) */}
       <button
         ref={triggerRef}
         onClick={() => setOpen(true)}
@@ -288,7 +319,6 @@ export default function GlobalSearch({
         className={[
           "pointer-events-auto w-full max-w-[520px] rounded-full border px-5 py-2 text-sm text-white mx-5",
           "border-white/15 bg-white/10 backdrop-blur-md",
-          // ✅ override global :focus-visible ring + ring-offset
           "focus:outline-none focus-visible:outline-none",
           "focus:!ring-0 focus:!ring-offset-0",
           "focus-visible:!ring-0 focus-visible:!ring-offset-0",
@@ -296,149 +326,140 @@ export default function GlobalSearch({
           className,
         ].join(" ")}
       >
-        <Search size={18} className="text-white/80" />
-        <span className="text-white/80">{placeholder}</span>
+        <Search size={18} className="text-white/95" />
+        <span className="text-white/95">{placeholder}</span>
       </button>
 
-      {/* Overlay in a portal so it always sits on top */}
       {mounted &&
         createPortal(
-          <AnimatePresence>
-            {open && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="fixed inset-0 z-[2147483646] bg-white/90 dark:bg-black/80 backdrop-blur-xl flex justify-center"
+          open ? (
+            <div className="fixed inset-0 z-[2147483646] bg-white/90 dark:bg-black/80 backdrop-blur-xl flex justify-center">
+              <button
+                onClick={() => setOpen(false)}
+                className="absolute top-6 right-6 text-gray-900 dark:text-white hover:opacity-80 transition w-10 h-10 flex items-center justify-center"
+                aria-label="Close search"
               >
-                <button
-                  onClick={() => setOpen(false)}
-                  className="absolute top-6 right-6 text-gray-900 dark:text-white hover:opacity-80 transition w-10 h-10 flex items-center justify-center"
-                  aria-label="Close search"
-                >
-                  <X size={28} />
-                </button>
+                <X size={28} />
+              </button>
 
-                <motion.div
-                  ref={overlayRef}
-                  role="dialog"
-                  aria-modal="true"
-                  aria-labelledby="search-title"
-                  initial={{ y: -36, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: -36, opacity: 0 }}
-                  transition={{ duration: 0.22 }}
-                  className="w-full max-w-3xl mt-20 px-3 sm:px-4"
-                >
-                  <h2 id="search-title" className="sr-only">
-                    Site search
-                  </h2>
+              <div
+                ref={overlayRef}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="search-title"
+                className="w-full max-w-3xl mt-20 px-3 sm:px-4"
+              >
+                <h2 id="search-title" className="sr-only">
+                  Site search
+                </h2>
 
-                  {/* Input (no focus highlight styles on container) */}
-                  <div className="relative">
-                    <div
-                      className={[
-                        "flex items-center rounded-xl shadow-xl px-3 sm:px-4 py-2 border",
-                        "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700",
-                        "transition",
-                      ].join(" ")}
-                    >
-                      <Search className="text-gray-500 dark:text-gray-400" size={20} />
-                      <input
-                        ref={inputRef}
-                        type="text"
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        placeholder="Search by country, visa type, service, article…"
-                        className={[
-                          "flex-1 bg-transparent px-2 sm:px-3 text-[15px] text-gray-900 dark:text-gray-100 placeholder-gray-400",
-                          // ✅ override global :focus-visible ring + ring-offset on inputs too
-                          "outline-none ring-0",
-                          "focus:outline-none focus-visible:outline-none",
-                          "focus:!ring-0 focus:!ring-offset-0",
-                          "focus-visible:!ring-0 focus-visible:!ring-offset-0",
-                        ].join(" ")}
-                        role="combobox"
-                        aria-expanded={true}
-                        aria-autocomplete="list"
-                        aria-controls="gs-listbox"
-                        aria-activedescendant={activeOptionId}
-                        autoComplete="off"
-                        spellCheck={false}
-                      />
-                      {loading && (
-                        <span className="ml-2 h-1.5 w-1.5 rounded-full bg-gray-400 animate-pulse" aria-hidden />
-                      )}
-                    </div>
-
-                    {/* (Removed overlapping autocomplete ghost text) */}
-                    <p aria-live="polite" className="sr-only">
-                      {query.trim() === ""
-                        ? "Type to search"
-                        : loading
-                          ? "Searching"
-                          : items.length === 0
-                            ? "No results"
-                            : `${items.length} results`}
-                    </p>
-                  </div>
-
-                  {/* Results list */}
+                <div className="relative">
                   <div
-                    className="mt-3 bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 max-h-[62vh] overflow-y-auto"
-                    role="listbox"
-                    id={listboxId}
+                    className={[
+                      "flex items-center rounded-xl shadow-xl px-3 sm:px-4 py-2 border",
+                      "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700",
+                      "transition",
+                    ].join(" ")}
                   >
-                    <div className="text-[11px] text-gray-400 dark:text-gray-500 m-1.5 px-2 text-center">
-                      ↑/↓ navigate • Enter open • Tab autocomplete • Esc close
-                    </div>
-
-                    {!hasQuery && (
-                      <>
-                        {recent.length > 0 && (
-                          <>
-                            <div className="px-4 py-1.5 text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 border-y dark:border-gray-800">
-                              Recent
-                            </div>
-                            {recent.map((r, i) => (
-                              <button
-                                key={`r-${i}`}
-                                type="button"
-                                onClick={() => setQuery(r)}
-                                className="w-full text-left flex items-center gap-2.5 px-4 py-2 border-b dark:border-gray-800 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-800"
-                              >
-                                <Clock size={14} className="text-gray-400" />
-                                <span className="truncate text-[14px]">{r}</span>
-                              </button>
-                            ))}
-                          </>
-                        )}
-                        <div className="px-4 py-1.5 text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 border-y dark:border-gray-800">
-                          Popular
-                        </div>
-                      </>
+                    <Search className="text-gray-500 dark:text-gray-400" size={20} />
+                    <input
+                      ref={inputRef}
+                      type="text"
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                      placeholder="Search by country, visa type, service, article..."
+                      className={[
+                        "flex-1 bg-transparent px-2 sm:px-3 text-[15px] text-gray-900 dark:text-gray-100 placeholder-gray-400",
+                        "outline-none ring-0",
+                        "focus:outline-none focus-visible:outline-none",
+                        "focus:!ring-0 focus:!ring-offset-0",
+                        "focus-visible:!ring-0 focus-visible:!ring-offset-0",
+                      ].join(" ")}
+                      role="combobox"
+                      aria-expanded={true}
+                      aria-autocomplete="list"
+                      aria-controls="gs-listbox"
+                      aria-activedescendant={activeOptionId}
+                      autoComplete="off"
+                      spellCheck={false}
+                    />
+                    {loading && (
+                      <span
+                        className="ml-2 h-1.5 w-1.5 rounded-full bg-gray-400 animate-pulse"
+                        aria-hidden
+                      />
                     )}
+                  </div>
 
-                    {items.length > 0 ? (
-                      items.map((it, i) => (
-                        <ResultRow key={`${it.url}-${i}`} item={it} i={i} active={i === activeIndex} />
-                      ))
-                    ) : hasQuery && !loading ? (
-                      <div className="py-6 text-center text-[13px] text-gray-500 dark:text-gray-400">
-                        No results found. Try different keywords.
+                  <p aria-live="polite" className="sr-only">
+                    {query.trim() === ""
+                      ? "Type to search"
+                      : loading
+                        ? "Searching"
+                        : items.length === 0
+                          ? "No results"
+                          : `${items.length} results`}
+                  </p>
+                </div>
+
+                <div
+                  className="mt-3 bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 max-h-[62vh] overflow-y-auto"
+                  role="listbox"
+                  id={listboxId}
+                >
+                  <div className="text-[11px] text-gray-400 dark:text-gray-500 m-1.5 px-2 text-center">
+                    Up/Down navigate | Enter open | Tab autocomplete | Esc close
+                  </div>
+
+                  {!hasQuery && (
+                    <>
+                      {recent.length > 0 && (
+                        <>
+                          <div className="px-4 py-1.5 text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 border-y dark:border-gray-800">
+                            Recent
+                          </div>
+                          {recent.map((r, i) => (
+                            <button
+                              key={`r-${i}`}
+                              type="button"
+                              onClick={() => setQuery(r)}
+                              className="w-full text-left flex items-center gap-2.5 px-4 py-2 border-b dark:border-gray-800 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-800"
+                            >
+                              <Clock size={14} className="text-gray-400" />
+                              <span className="truncate text-[14px]">{r}</span>
+                            </button>
+                          ))}
+                        </>
+                      )}
+                      <div className="px-4 py-1.5 text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 border-y dark:border-gray-800">
+                        Popular
                       </div>
-                    ) : null}
-                  </div>
+                    </>
+                  )}
 
-                  <div className="mt-2 text-[11px] text-center text-gray-400 md:hidden">
-                    Enter opens • Esc closes
-                  </div>
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>,
-          document.body
+                  {items.length > 0 ? (
+                    items.map((it, i) => (
+                      <ResultRow
+                        key={`${it.url}-${i}`}
+                        item={it}
+                        i={i}
+                        active={i === activeIndex}
+                      />
+                    ))
+                  ) : hasQuery && !loading ? (
+                    <div className="py-6 text-center text-[13px] text-gray-500 dark:text-gray-400">
+                      No results found. Try different keywords.
+                    </div>
+                  ) : null}
+                </div>
+
+                <div className="mt-2 text-[11px] text-center text-gray-400 md:hidden">
+                  Enter opens | Esc closes
+                </div>
+              </div>
+            </div>
+          ) : null,
+          document.body,
         )}
     </>
   );

@@ -8,13 +8,17 @@ import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
 import { ThemeProvider } from "next-themes";
 import ScrollToTop from "@/components/ScrollToTop";
-import Aoscompo from "@/utils/aos";
 import MDXProviders from "@/components/MDX/MDXProviders";
 import ChatWidget from "@/components/ChatWidget";
+// Import dynamic to load client‑only components
+// The GlobalBrochureGate component is a client component. We import it
+// directly here — Next.js will treat it as a client boundary.
+import GlobalBrochureGate from "@/components/GlobalBrochureGate/GlobalBrochureGate";
 
 // ✅ GA4 components
 import GoogleAnalytics from "@/components/Analytics/GoogleAnalytics";
 import GA4RouteChange from "@/components/Analytics/GA4RouteChange";
+
 
 const inter = Inter({
   subsets: ["latin"],
@@ -223,7 +227,6 @@ export default function RootLayout({
         </a>
 
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          <Aoscompo>
             <MDXProviders>
               <Header />
 
@@ -235,7 +238,8 @@ export default function RootLayout({
             <Footer />
             <ScrollToTop />
             <ChatWidget />
-          </Aoscompo>
+            {/* Inject the global lead gate to intercept brochure downloads site‑wide */}
+            <GlobalBrochureGate />
         </ThemeProvider>
 
         {/* ✅ GA4 */}

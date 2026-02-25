@@ -222,11 +222,11 @@ function FeatureList({
           />
         </Link>
         <div className="flex-1 p-4">
-          <h4 className="text-base font-semibold leading-tight">
+          <h3 className="text-base font-semibold leading-tight">
             <Link href={href2} className="hover:underline focus:outline-none focus:ring-2 focus:ring-[var(--c-secondary)] rounded">
               {ctry}
             </Link>
-          </h4>
+          </h3>
           <p className="mt-1 text-sm leading-6 line-clamp-2">
             {truncateWords(sum || `${noun} pathways in ${ctry}.`, 22)}
           </p>
@@ -269,7 +269,7 @@ function FeatureList({
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex items-center justify-between gap-2">
-              <h5 className="text-sm font-semibold truncate">{ctry}</h5>
+              <h3 className="text-sm font-semibold truncate">{ctry}</h3>
               <span className="text-base opacity-0 group-hover:opacity-100 transition">→</span>
             </div>
             <p className="mt-0.5 text-xs leading-5 line-clamp-2">

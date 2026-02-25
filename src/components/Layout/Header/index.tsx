@@ -43,6 +43,8 @@ export default function Header() {
     const rect = navAnchorRef.current?.getBoundingClientRect();
     const topPx = Math.round((rect?.bottom ?? 74) + 10); // 10px desired gap
     document.documentElement.style.setProperty('--nav-mega-top', `${topPx}px`);
+    const headerHeight = Math.round(headerRef.current?.getBoundingClientRect().height ?? 72);
+    document.documentElement.style.setProperty('--header-h', `${headerHeight}px`);
   };
   const setMegaTop = () => {
     if (rAFRef.current) cancelAnimationFrame(rAFRef.current);
@@ -289,7 +291,7 @@ export default function Header() {
               <div className="absolute inset-x-0 flex justify-center lg:hidden px-12 pointer-events-none">
                 <GlobalSearch
                   className="pointer-events-auto max-w-[520px]"
-                  placeholder="Search…"
+                  placeholder="Search..."
                 />
               </div>
 

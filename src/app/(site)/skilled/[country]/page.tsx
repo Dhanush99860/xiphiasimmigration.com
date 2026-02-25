@@ -171,7 +171,7 @@ export default async function CountryPage(props: {
     variant?: "primary" | "ghost";
     download?: boolean;
   }[] = [
-    { href: "/personal-booking", label: "Book Consultation", variant: "primary" },
+    { href: "/personal-booking", label: "Book Free Consultation", variant: "primary" },
     {
       href: brochure,
       label: "Download Brochure",

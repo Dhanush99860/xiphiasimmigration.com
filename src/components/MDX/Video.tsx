@@ -48,6 +48,7 @@ export default function Video({
   const style: React.CSSProperties = {
     aspectRatio: aspectToCSS[aspect] || "16 / 9",
   };
+  const [embedLoaded, setEmbedLoaded] = React.useState(false);
 
   // If neither url nor src is provided, render nothing (avoids crashes)
   if (!url && !src) return null;
@@ -95,21 +96,70 @@ export default function Video({
 
   // Embed branch (YouTube/Vimeo/etc.)
   const embedUrl = url!;
+  const ytMatch = embedUrl.match(
+    /^https?:\/\/(?:www\.)?youtube(?:-nocookie)?\.com\/embed\/([A-Za-z0-9_-]{6,})/i,
+  );
+  const ytId = ytMatch?.[1] ?? null;
+  const posterImage = ytId ? `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg` : "";
+
+  const autoplayUrl = (() => {
+    try {
+      const u = new URL(embedUrl);
+      u.searchParams.set("autoplay", "1");
+      u.searchParams.set("rel", "0");
+      u.searchParams.set("modestbranding", "1");
+      return u.toString();
+    } catch {
+      return embedUrl;
+    }
+  })();
+
   return (
     <figure className={["my-6", className].filter(Boolean).join(" ")}>
       <div
         className="relative w-full overflow-hidden rounded-xl border border-black/10 dark:border-white/10 bg-black"
         style={style}
       >
-        <iframe
-          className="absolute inset-0 h-full w-full"
-          src={embedUrl}
-          title={title || "Embedded video"}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerPolicy="strict-origin-when-cross-origin"
-          allowFullScreen
-          loading="lazy"
-        />
+        {embedLoaded || !ytId ? (
+          <iframe
+            className="absolute inset-0 h-full w-full"
+            src={ytId ? autoplayUrl : embedUrl}
+            title={title || "Embedded video"}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowFullScreen
+            loading="lazy"
+          />
+        ) : (
+          <button
+            type="button"
+            onClick={() => setEmbedLoaded(true)}
+            className="group absolute inset-0 flex h-full w-full items-center justify-center"
+            aria-label={title ? `Play video: ${title}` : "Play video"}
+            title={title ? `Play video: ${title}` : "Play video"}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={posterImage}
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover"
+              loading="lazy"
+              decoding="async"
+            />
+            <span className="absolute inset-0 bg-black/40 transition group-hover:bg-black/30" />
+            <span className="relative inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-black">
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                className="h-4 w-4"
+                fill="currentColor"
+              >
+                <path d="M8 5v14l11-7z" />
+              </svg>
+              Play video
+            </span>
+          </button>
+        )}
       </div>
       {title && (
         <figcaption className="mt-2 text-sm text-black/80 dark:text-white/80">

@@ -149,7 +149,7 @@ export default async function InsightDetailView({
                   <IconPen className="h-4 w-4 text-black/40 dark:text-white/50" />
                 }
                 label={
-                  <span className="text-[11px] uppercase tracking-wide text-black/50 dark:text-white/60">
+                  <span className="text-[11px] uppercase tracking-wide text-black/70 dark:text-white/80">
                     Written by
                   </span>
                 }
@@ -174,7 +174,7 @@ export default async function InsightDetailView({
                   <IconCalendar className="h-4 w-4 text-black/40 dark:text-white/50" />
                 }
                 label={
-                  <span className="text-[11px] uppercase tracking-wide text-black/50 dark:text-white/60">
+                  <span className="text-[11px] uppercase tracking-wide text-black/70 dark:text-white/80">
                     Last updated
                   </span>
                 }
@@ -199,7 +199,7 @@ export default async function InsightDetailView({
                   <IconClock className="h-4 w-4 text-black/40 dark:text-white/50" />
                 }
                 label={
-                  <span className="text-[11px] uppercase tracking-wide text-black/50 dark:text-white/60">
+                  <span className="text-[11px] uppercase tracking-wide text-black/70 dark:text-white/80">
                     Read time
                   </span>
                 }
@@ -214,7 +214,7 @@ export default async function InsightDetailView({
             {/* Share: inline on mobile; pinned right on lg */}
             <div className="ms-auto flex items-center gap-2 sm:gap-3">
               {/* compact label: icon on xs, text from sm+ */}
-              <span className="flex items-center gap-1.5 text-[11px] uppercase tracking-wide text-black/50 dark:text-white/60">
+              <span className="flex items-center gap-1.5 text-[11px] uppercase tracking-wide text-black/70 dark:text-white/80">
                 <svg className="h-4 w-4 sm:hidden" viewBox="0 0 24 24" aria-hidden="true">
                   <path
                     d="M14 6a3 3 0 1 0-2.4 2.94v6.12A3 3 0 1 0 13 17V8.94A3 3 0 0 0 14 6Z"
@@ -253,7 +253,7 @@ export default async function InsightDetailView({
             {/* Centralized typography system */}
             <Prose
               id="article-content"
-              className="prose-headings:scroll-mt-28 md:prose-lg max-w-none"
+              className="prose-headings:scroll-mt-28 md:prose-lg max-w-[72ch]"
             >
               {record.content}
             </Prose>
@@ -346,7 +346,7 @@ function MetaBit({
         {icon}
       </span>
       <div className="leading-tight min-w-0">
-        <div className="text-xs uppercase tracking-wide text-black/60 dark:text-white/60">
+        <div className="text-xs uppercase tracking-wide text-black/70 dark:text-white/80">
           {label}
         </div>
         <div className="text-sm font-semibold text-black dark:text-white truncate">

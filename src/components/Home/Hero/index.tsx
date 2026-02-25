@@ -5,9 +5,15 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 
 // Lazy-load ContactForm on the client only
+function ContactFormSkeleton() {
+  return (
+    <div className="min-h-[420px] w-full animate-pulse rounded-xl bg-white/10 ring-1 ring-white/20" />
+  );
+}
+
 const ContactForm = dynamic(() => import("@/components/ContactForm/index"), {
   ssr: false,
-  loading: () => null,
+  loading: () => <ContactFormSkeleton />,
 });
 
 export default function Hero() {
@@ -48,7 +54,7 @@ export default function Hero() {
                 className="h-9 w-9"
               />
               <p className="mb-0 text-[15px] text-white/90">
-                Residency & Citizenship <span className="text-secondary">Made Easy</span>
+                Residency & Citizenship <span className="font-semibold text-white">Made Easy</span>
               </p>
             </div>
 
@@ -58,15 +64,14 @@ export default function Hero() {
               className="mx-auto max-w-[18ch] text-center font-semibold leading-tight text-white lg:text-left"
               style={{ fontSize: "clamp(2rem, 6vw, 4.75rem)" }}
             >
-              Secure Your <span className="text-secondary">Future</span> with Global{" "}
-              <span className="text-secondary">Investment Visas</span>!
+              Secure Your <span className="font-bold text-white">Future</span> with Global{" "}
+              <span className="font-bold text-white">Investment Visas</span>!
             </h1>
 
             {/* CTAs */}
             <div className="mt-6 flex flex-wrap items-center justify-center gap-4 md:gap-6 lg:justify-start">
               <Link
                 href="/eligibility"
-                aria-label="Check your visa eligibility"
                 className="inline-flex items-center justify-center rounded-lg border border-secondary bg-secondary px-5 py-2.5 text-base font-medium text-black transition hover:bg-transparent hover:text-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
               >
                 Check your Eligibility
@@ -74,7 +79,6 @@ export default function Hero() {
 
               <Link
                 href="/images/residency/xiphias-corporate-mobility.pdf"
-                aria-label="Download immigration guide (PDF)"
                 className="inline-flex items-center justify-center rounded-lg border border-secondary bg-transparent px-5 py-2.5 text-base font-medium text-white transition hover:bg-secondary hover:text-black focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
               >
                 Download Guide

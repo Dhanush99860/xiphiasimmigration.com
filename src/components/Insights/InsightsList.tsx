@@ -58,6 +58,7 @@ export default function InsightsList({
 
   return (
     <section aria-label="Insights">
+      <h2 className="sr-only">Insights results</h2>
       {showToolbar && (
         <Toolbar
           countText={liveMsg}
@@ -92,7 +93,7 @@ export default function InsightsList({
         <div className="mt-6 flex items-center justify-center">
           <button
             onClick={() => setPage((p) => p + 1)}
-            className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium ring-1 ring-neutral-300 dark:ring-neutral-700 bg-white hover:bg-neutral-50 dark:bg-neutral-900 dark:hover:bg-neutral-800"
+            className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-black dark:text-white ring-1 ring-neutral-400 dark:ring-neutral-500 bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700"
             aria-label="Load more insights"
           >
             <ArrowDown className="h-4 w-4" /> Load more

@@ -167,7 +167,7 @@ async function loadRawDocs(): Promise<RawDoc[]> {
     const kindDir = relFromContent.split(path.sep)[0];
     if (!assertKind(kindDir)) continue;
 
-    const slug = path.basename(filePath, ".mdx");
+    const slug = path.basename(filePath).replace(/(?:\.mdx)+$/i, "");
     out.push({
       kind: kindDir as InsightKind,
       slug,

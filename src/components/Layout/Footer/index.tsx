@@ -1,4 +1,4 @@
-// ============================
+﻿// ============================
 // FILE: src/components/Layout/Footer/index.tsx
 // Final compact footer — App QR kept, ONE newsletter, multi-office support
 // Tailwind-only, accessible, NO <section> tags
@@ -22,6 +22,7 @@ const EXPLORE = [
 const RESOURCES = Object.freeze([
   { label: "Eligibility Checker", href: "/eligibility" },
   { label: "Guides & Resources", href: "/guide" },
+  { label: "Events", href: "/event" },
   { label: "Awards & Recognition", href: "/awards" },
 ]);
 
@@ -248,7 +249,7 @@ export default function Footer() {
         "@id": "https://www.xiphiasimmigration.com#org",
         name: "XIPHIAS Immigration",
         url: "https://www.xiphiasimmigration.com",
-        logo: "https://www.xiphias.com/images/logo.png",
+        logo: "https://www.xiphiasimmigration.com/images/logo/xiphias-immigration.png",
         sameAs: SOCIALS.map(s => s.href),
         contactPoint: [
           { "@type": "ContactPoint", contactType: "sales", email: "immigration@xiphias.in" },
@@ -260,7 +261,10 @@ export default function Footer() {
         "@type": "WebSite",
         name: "XIPHIAS Immigration",
         url: "https://www.xiphiasimmigration.com",
-        potentialAction: { "@type": "SubscribeAction", target: "https://www.xiphias.com/newsletter" },
+        potentialAction: {
+          "@type": "SubscribeAction",
+          target: "https://www.xiphiasimmigration.com/api/newsletter/subscribe",
+        },
       },
     ],
   } as const;
@@ -288,7 +292,7 @@ export default function Footer() {
                   className="inline-flex items-center justify-center px-3.5 py-2.5 rounded-md text-sm font-medium bg-white/15 hover:bg-white/25 border border-white/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
                 >
                   <Icon icon="mdi:calendar-clock" className="h-5 w-5 mr-2" />
-                  Book Consultation
+                  Book free Consultation
                 </Link>
               </div>
 
@@ -484,6 +488,8 @@ export default function Footer() {
                   <img
                     src="/images/footer/qrcode.webp"
                     alt="QR code: open app landing"
+                    width={96}
+                    height={96}
                     className="h-12 w-12 object-contain"
                     loading="lazy"
                     decoding="async"
@@ -515,7 +521,9 @@ export default function Footer() {
                       <img
                         src="/images/footer/appstore.svg"
                         alt="Download on the App Store"
-                        className="h-8 w-auto"
+                        width={24}
+                        height={24}
+                        className="h-8 w-8"
                         loading="lazy"
                         decoding="async"
                       />
@@ -533,7 +541,9 @@ export default function Footer() {
                       <img
                         src="/images/footer/playstore.65459def.svg"
                         alt="Get it on Google Play"
-                        className="h-8 w-auto"
+                        width={28}
+                        height={32}
+                        className="h-8 w-7"
                         loading="lazy"
                         decoding="async"
                       />
@@ -676,7 +686,7 @@ export default function Footer() {
                   >
                     <img
                       src={src}
-                      alt="xiphias immigreation Press and news"
+                      alt="XIPHIAS Immigration press and news"
                       loading="lazy"
                       decoding="async"
                       className="object-contain h-full w-full opacity-90 contrast-125"
@@ -696,7 +706,6 @@ export default function Footer() {
                     <Link
                       key={label}
                       href={href}
-                      aria-label={label}
                       target={external ? "_blank" : undefined}
                       rel={external ? "noopener noreferrer" : undefined}
                       className={[
@@ -708,8 +717,9 @@ export default function Footer() {
                       ].join(" ")}
                       title={label}
                     >
-                      <Icon className="w-5 h-5" icon={icon} />
+                      <Icon className="w-5 h-5" icon={icon} aria-hidden="true" />
                       <span className="hidden md:inline">{cta}</span>
+                      <span className="sr-only">{`${cta} ${label}`}</span>
                       <span
                         className="pointer-events-none absolute -bottom-7 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-black/70 px-2 py-1 text-[11px] text-white opacity-0 group-hover:opacity-100 transition"
                         role="tooltip"
@@ -739,3 +749,4 @@ export default function Footer() {
     </footer>
   );
 }
+

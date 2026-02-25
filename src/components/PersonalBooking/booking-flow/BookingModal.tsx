@@ -8,6 +8,7 @@ import CalendarStep from "./steps/CalendarStep";
 import DetailsStep from "./steps/DetailsStep";
 import ReviewStep from "./steps/ReviewStep";
 import ConfirmationStep from "./steps/ConfirmationStep";
+import { addDays, formatISODate } from "./utils/time";
 
 /* -------------------------------------------------------------------------- */
 /* Types & constants                                                          */
@@ -44,12 +45,17 @@ export default function BookingModal({
 }: Props) {
   const [step, setStep] = useState<Step>("plan");
   const [loading, setLoading] = useState(false);
+  const [confirmation, setConfirmation] = useState<{
+    reference?: string;
+    joinUrl?: string;
+    icsUrl?: string;
+  } | null>(null);
 
   const [data, setData] = useState<BookingInput>({
     plan: initialPlan || "free",
     ...(initialPlan === "paid" ? paidDefaults : freeDefaults),
     timezone: defaultTimezone,
-    dateISO: "",
+    dateISO: formatISODate(addDays(new Date(), 1)),
     timeISO: "",
     fullName: "",
     email: "",
@@ -125,7 +131,12 @@ export default function BookingModal({
   async function handleSubmit() {
     setLoading(true);
     try {
-      await bookAndMaybePay(data);
+      const result = await bookAndMaybePay(data);
+      setConfirmation({
+        reference: result.reference,
+        joinUrl: result.joinUrl,
+        icsUrl: result.icsUrl,
+      });
       go("done");
     } catch {
       alert("Something went wrong. Please try again.");
@@ -279,7 +290,9 @@ export default function BookingModal({
             {step === "done" && (
               <ConfirmationStep
                 onCloseAction={onCloseAction}
-                draftId={undefined}
+                draftId={confirmation?.reference}
+                joinUrl={confirmation?.joinUrl}
+                icsUrl={confirmation?.icsUrl}
               />
             )}
           </div>

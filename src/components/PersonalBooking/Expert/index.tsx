@@ -11,10 +11,19 @@ import {
   ShieldCheck,
   Sparkles,
   Award,
+  ExternalLink,
 } from "lucide-react";
 
 type Highlight = { icon: React.ReactNode; text: React.ReactNode };
 type Fact = { label: string; value: string };
+type CredentialLogo = {
+  name: string;
+  href: string;
+  logoSrc: string;
+  logoAlt: string;
+  width: number;
+  height: number;
+};
 
 /* ------------------------------ Content ------------------------------ */
 
@@ -57,6 +66,25 @@ const FACTS: Fact[] = [
   { label: "Credentials", value: "FIMC (IMC Fellow), Cert IM" },
   { label: "Focus", value: "Advisory for elite global clients" },
   { label: "Programs", value: "Specialisation in investment & corporate mobility" },
+];
+
+const CREDENTIAL_LOGOS: CredentialLogo[] = [
+  {
+    name: "IMC Fellow Directory",
+    href: "https://investmentmigration.org/fellow-members-directory/",
+    logoSrc: "/images/personal/credentials/imc-fellow-logo.svg",
+    logoAlt: "IMC Fellow members directory logo",
+    width: 500,
+    height: 200,
+  },
+  {
+    name: "IMI Professionals",
+    href: "https://www.imidaily.com/imi-professionals/",
+    logoSrc: "/images/personal/credentials/imi-professionals-logo.png",
+    logoAlt: "IMI Professionals logo",
+    width: 344,
+    height: 163,
+  },
 ];
 
 /* ----------------------------- Component ----------------------------- */
@@ -150,7 +178,7 @@ export default function Expert() {
               </div>
 
               {/* Facts row */}
-              <div className="flex flex-wrap items-center justify-center gap-3 pt-1 text-xs text-slate-600 dark:text-slate-400 md:justify-start">
+              {/* <div className="flex flex-wrap items-center justify-center gap-3 pt-1 text-xs text-slate-600 dark:text-slate-400 md:justify-start">
                 {FACTS.map((f: Fact) => (
                   <span
                     key={`${f.label}-${f.value}`}
@@ -160,6 +188,40 @@ export default function Expert() {
                     <span className="font-medium">{f.label}:</span> {f.value}
                   </span>
                 ))}
+              </div> */}
+
+              {/* Credential logos */}
+              <div className="pt-1">
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                  Verified memberships
+                </p>
+                <div className="mt-3 flex flex-wrap items-center justify-center gap-3 md:justify-start">
+                  {CREDENTIAL_LOGOS.map((item: CredentialLogo) => (
+                    <a
+                      key={item.href}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white/80 px-3 py-2 shadow-sm transition hover:border-primary/40 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 dark:border-slate-700 dark:bg-slate-800/70"
+                      aria-label={`${item.name} (opens in a new tab)`}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={item.logoSrc}
+                        alt={item.logoAlt}
+                        width={item.width}
+                        height={item.height}
+                        className="h-8 w-auto object-contain"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <span className="text-xs font-medium text-slate-700 dark:text-slate-200">
+                        {item.name}
+                      </span>
+                      <ExternalLink className="h-3.5 w-3.5 text-slate-400 transition group-hover:text-primary" />
+                    </a>
+                  ))}
+                </div>
               </div>
 
               {/* CTAs */}

@@ -77,7 +77,8 @@ function guessTypeAndUrl(abs, repoRoot, fm) {
   );
   if (insightMatch) {
     const [, kind, leaf] = insightMatch;
-    const slug = (fm?.slug || leaf).toString();
+    // Keep URL generation aligned with runtime routing (filename slug).
+    const slug = leaf.toString().replace(/\.mdx$/i, "");
     /** @type {"article"|"news"|"media"|"blog"} */
     let type = kind === "articles" ? "article" : /** @type any */ (kind);
     const prettySegment = kind === "articles" ? "articles" : kind;

@@ -1,29 +1,26 @@
-// src/app/api/eligibility/submit/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { validateSubmission } from "@/utils/validate";
+import dotenv from "dotenv";
+dotenv.config({ path: ".env.local" });
+import nodemailer from "nodemailer";
+import { scoreAssessment } from "@/lib/eligibility/scoring";
 
 export const runtime = "nodejs";
-export const dynamic = "force-dynamic"; // never cache this route
-
-/* ------------------------------- config ------------------------------- */
+export const dynamic = "force-dynamic";
 
 const ALLOWED_TRACKS = new Set(["residency", "citizenship", "corporate", "skilled"]);
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_RE = /^[+]?[\d\s().-]{6,20}$/;
 
-const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
-const RATE_LIMIT_MAX = 8;            // max submissions / IP / minute
-const MAX_JSON_KB = 64;              // basic body-size guard
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX = 8;
+const MAX_JSON_KB = 64;
 
-// In-memory rate limit bucket (best effort; fine for MVP; single-node only)
 const rlBucket: Map<string, number[]> =
   (global as any).__eligibilityRL__ ?? new Map<string, number[]>();
 (global as any).__eligibilityRL__ = rlBucket;
 
-/* ------------------------------- helpers ------------------------------- */
-
 function getClientIP(req: NextRequest) {
-  // common proxies / platforms
   const hdr =
     req.headers.get("x-forwarded-for") ||
     req.headers.get("x-real-ip") ||
@@ -44,8 +41,16 @@ function sanitizeStr(v: unknown, max = 400) {
   return v.replace(/\s+/g, " ").trim().slice(0, max);
 }
 
+function escapeHtml(str: unknown): string {
+  if (str == null) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 function safeAnswers(input: unknown) {
-  // Shallow, size-limited copy of the answers map
   if (!input || typeof input !== "object") return {};
   const out: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(input as Record<string, unknown>)) {
@@ -75,8 +80,6 @@ function tooBig(req: NextRequest) {
   return Number(len) > MAX_JSON_KB * 1024;
 }
 
-/* -------------------------------- CORS -------------------------------- */
-
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 204,
@@ -88,8 +91,6 @@ export async function OPTIONS() {
     },
   });
 }
-
-/* -------------------------------- route -------------------------------- */
 
 export async function POST(req: NextRequest) {
   try {
@@ -112,19 +113,17 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
 
-    // Keep your existing validator as source of truth
     const { ok, error } = validateSubmission(body);
     if (!ok) {
       return NextResponse.json({ ok: false, error }, { status: 400 });
     }
 
-    // Extra server-side hardening (defense in depth)
     const name = sanitizeStr(body.name, 120);
     const email = sanitizeStr(body.email, 160).toLowerCase();
     const phone = normalizePhone(sanitizeStr(body.phone, 40));
     const track = String(body.track || "");
     const answers = safeAnswers(body.answers);
-    const honeypot = sanitizeStr(body.honeypot || body.website || ""); // optional hidden field
+    const honeypot = sanitizeStr(body.honeypot || body.website || "");
 
     if (!name || name.length < 2) {
       return NextResponse.json({ ok: false, error: "Please provide your full name." }, { status: 400 });
@@ -139,11 +138,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: false, error: "Invalid track." }, { status: 400 });
     }
     if (honeypot) {
-      // likely bot — pretend OK
       return NextResponse.json({ ok: true }, { status: 200, headers: { "Cache-Control": "no-store" } });
     }
 
-    // Minimal normalized payload (ready for DB/CRM later)
     const payload = {
       name,
       email,
@@ -158,12 +155,90 @@ export async function POST(req: NextRequest) {
       },
     };
 
-    // TODO:
-    // 1) Persist `payload` to DB/CRM
-    // 2) Send transactional email (thank-you + next steps)
-    // 3) Optionally trigger PDF generation and email link
+    try {
+      const result = scoreAssessment(track as any, answers as any);
+      const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: Number(process.env.SMTP_PORT),
+        secure: false,
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
+        },
+      });
 
-    // Structured log (redact email a bit)
+      const safeName = escapeHtml(name);
+      const safeEmail = escapeHtml(email);
+      const safePhone = escapeHtml(phone || "N/A");
+      const safeTrack = escapeHtml(track);
+      const safeTier = escapeHtml(result.tier);
+      const safeSummary = escapeHtml(result.summary);
+      const mailto = `mailto:${encodeURIComponent(email)}`;
+
+      const answersHtml = Object.entries(answers)
+        .map(
+          ([k, v]) =>
+            `<tr><td style="padding:6px;border-bottom:1px solid #eee;"><strong>${escapeHtml(
+              k
+            )}</strong></td><td style="padding:6px;border-bottom:1px solid #eee;">${escapeHtml(
+              String(v)
+            )}</td></tr>`
+        )
+        .join("");
+
+      const adminHtml = `
+        <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;max-width:640px;margin:auto;background:#fff;border:1px solid #eaeaea;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+          <div style="background:#004fa3;color:#fff;text-align:center;padding:20px;">
+            <h2 style="margin:0;font-size:20px;">New Eligibility Submission</h2>
+          </div>
+          <div style="padding:24px;color:#333;line-height:1.7;">
+            <p><strong>Name:</strong> ${safeName}</p>
+            <p><strong>Email:</strong> <a href="${mailto}" style="color:#004fa3;text-decoration:none;">${safeEmail}</a></p>
+            <p><strong>Phone:</strong> ${safePhone}</p>
+            <p><strong>Track:</strong> ${safeTrack}</p>
+            <p><strong>Tier:</strong> ${safeTier}</p>
+            <p><strong>Summary:</strong> ${safeSummary}</p>
+            <h3 style="margin-top:24px;margin-bottom:8px;font-size:18px;">Answers</h3>
+            <table style="width:100%;border-collapse:collapse;">
+              ${answersHtml}
+            </table>
+          </div>
+        </div>
+      `;
+
+      const userHtml = `
+        <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;max-width:640px;margin:auto;background:#fff;border:1px solid #eaeaea;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+          <div style="background:linear-gradient(90deg,#002961,#004fa3);color:#fff;text-align:center;padding:20px;">
+            <h2 style="margin:0;font-size:20px;">Your Eligibility Assessment</h2>
+          </div>
+          <div style="padding:24px;color:#333;line-height:1.7;">
+            <p>Hi <strong>${safeName}</strong>,</p>
+            <p>Thank you for completing the ${safeTrack} eligibility assessment with <strong>XIPHIAS Immigration</strong>.</p>
+            <p>Your result: <strong>${safeTier}</strong> - ${safeSummary}</p>
+            <p>Our advisors will review your details and contact you soon.</p>
+            <p>If you'd like to speak to an expert right away, please <a href="https://www.xiphiasimmigration.com/contact" style="color:#004fa3;text-decoration:none;">book a free consultation</a>.</p>
+          </div>
+        </div>
+      `;
+
+      const adminMail = {
+        from: `"XIPHIAS Eligibility" <${process.env.SMTP_USER}>`,
+        to: "immigration@xiphias.in",
+        subject: "New Eligibility Lead",
+        html: adminHtml,
+      };
+      const userMail = {
+        from: `"XIPHIAS Immigration" <${process.env.SMTP_USER}>`,
+        to: email,
+        subject: `Your ${track} eligibility results from XIPHIAS Immigration`,
+        html: userHtml,
+      };
+
+      await Promise.all([transporter.sendMail(adminMail), transporter.sendMail(userMail)]);
+    } catch (mailErr) {
+      console.error("[eligibility:submit] Email error:", mailErr);
+    }
+
     const redact = (e: string) => e.replace(/(.).+(@.+)/, (_m, a, b) => a + "***" + b);
     console.log("[eligibility:submit]", {
       ...payload,

@@ -59,7 +59,9 @@ export default async function InsightsPage({ searchParams }: PageProps) {
   const country = first(sp.country);
   const program = first(sp.program);
   const tag = first(sp.tag);
-  const page = Math.max(1, Number(first(sp.page) ?? "1"));
+  const pageParam = first(sp.page) ?? "1";
+  const parsedPage = Number.parseInt(pageParam, 10);
+  const page = Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
   const pageSize = 12;
 
   const [{ items, total }, facets] = await Promise.all([

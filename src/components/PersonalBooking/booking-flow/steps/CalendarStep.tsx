@@ -29,7 +29,9 @@ export default function CalendarStep({
   onBackAction,
   onNextAction,
 }: Props) {
-  const [date, setDate] = useState(dateISO ?? formatISODate(addDays(new Date(), 1)));
+  const [date, setDate] = useState(
+    dateISO && dateISO.trim() ? dateISO : formatISODate(addDays(new Date(), 1))
+  );
   const [time, setTime] = useState(timeISO ?? "");
   const [busy, setBusy] = useState<Record<string, Busy>>({});
   const [loading, setLoading] = useState<boolean>(false);
@@ -58,15 +60,20 @@ export default function CalendarStep({
         const map: Record<string, Busy> = {};
         res.slots.forEach((s) => (map[s.timeISO] = s.status as Busy));
         setBusy(map);
-        liveRef.current && (liveRef.current.textContent = "Availability updated");
+        if (liveRef.current) {
+          liveRef.current.textContent = "Availability updated";
+        }
       } catch {
         // safe fallback: leave all free (mock adapter also handles this)
         setBusy({});
-        liveRef.current &&
-          (liveRef.current.textContent =
-            "Unable to fetch availability. Showing default times.");
+        if (liveRef.current) {
+          liveRef.current.textContent =
+            "Unable to fetch availability. Showing default times.";
+        }
       } finally {
-        mounted && setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     })();
     return () => {

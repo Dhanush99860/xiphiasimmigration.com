@@ -14,12 +14,12 @@ type Props = {
 
 export default function ReadingProgress({
   targetId = "article-content",
-  heightClassName = "h-2.5",
-  zIndexClassName = "z-50",
-  showMilestones = true,
-  showPercentBadge = true,
-  showStripes = true,
-  showGlow = true,
+  heightClassName = "h-1.5",
+  zIndexClassName = "z-40",
+  showMilestones = false,
+  showPercentBadge = false,
+  showStripes = false,
+  showGlow = false,
 }: Props) {
   const [progress, setProgress] = useState(0);
   const rafRef = useRef<number | null>(null);
@@ -88,7 +88,7 @@ export default function ReadingProgress({
         zIndexClassName,
       ].join(" ")}
       style={{
-        top: `max(env(safe-area-inset-top, 0px), 0px)`,
+        top: `calc(var(--header-h, 72px) + env(safe-area-inset-top, 0px))`,
       }}
     >
       {/* Track */}

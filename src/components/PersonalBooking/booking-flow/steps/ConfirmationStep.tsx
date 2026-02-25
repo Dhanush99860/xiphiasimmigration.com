@@ -31,7 +31,9 @@ export default function ConfirmationStep({
 
   useEffect(() => {
     // SR announce success once mounted
-    liveRef.current && (liveRef.current.textContent = "Booking confirmed");
+    if (liveRef.current) {
+      liveRef.current.textContent = "Booking confirmed";
+    }
   }, []);
 
   function copy(text: string, kind: "ref" | "join") {

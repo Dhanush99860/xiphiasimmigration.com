@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
 import type { SubmenuItem } from '../menu.types';
 import { cx } from '../menu.utils';
 
@@ -12,9 +11,6 @@ interface MegaPanelProps {
   open: boolean;
   onClose: () => void;
 }
-
-const TWEEN = { type: 'tween', duration: 0.18 } as const;
-const SHOW_FLAGS = true;
 
 function flagEmojiFromCode(code?: string) {
   if (!code) return '🏳️';
@@ -34,7 +30,6 @@ export default function MegaPanel({ rootLabel, columns, open, onClose }: MegaPan
   const rafRef = React.useRef<number | null>(null);
 
   const [query, setQuery] = React.useState('');
-  const [reducedMotion, setReducedMotion] = React.useState(false);
   const [toolsH, setToolsH] = React.useState(64);
   const [panelTop, setPanelTop] = React.useState<number>(84); // px from viewport top
 
@@ -73,15 +68,6 @@ export default function MegaPanel({ rootLabel, columns, open, onClose }: MegaPan
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, [open, measureTop]);
-
-  // motion pref
-  React.useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const apply = () => setReducedMotion(mq.matches);
-    apply();
-    mq.addEventListener?.('change', apply);
-    return () => mq.removeEventListener?.('change', apply);
-  }, []);
 
   // Esc / outside
   React.useEffect(() => {
@@ -135,19 +121,15 @@ export default function MegaPanel({ rootLabel, columns, open, onClose }: MegaPan
   const PANEL_MAX_H = `calc(100vh - ${panelTop}px - 12px)`;
   const BODY_MAX_H  = `calc(100vh - ${panelTop}px - 12px - ${toolsH}px)`;
 
+  if (!open) return null;
+
   return (
-    <AnimatePresence>
-      {open && (
-        <motion.div
-          key="mega"
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0, transition: reducedMotion ? { duration: 0 } : TWEEN }}
-          exit={{ opacity: 0, y: -6, transition: reducedMotion ? { duration: 0 } : { duration: 0.14 } }}
-          role="menu"
-          aria-label={`${rootLabel} menu`}
-          className="fixed inset-x-0 z-[60]"
-          style={{ top: panelTop }}           // 👈 follows the nav row only
-        >
+    <div
+      role="menu"
+      aria-label={`${rootLabel} menu`}
+      className="fixed inset-x-0 z-[60]"
+      style={{ top: panelTop }} // follows the nav row only
+    >
           <div className="pointer-events-auto mx-auto w-full max-w-screen-2xl px-3 md:px-5">
             <div
               ref={panelRef}
@@ -273,8 +255,6 @@ export default function MegaPanel({ rootLabel, columns, open, onClose }: MegaPan
               <span className="sr-only">Press Escape to close the {rootLabel} menu.</span>
             </div>
           </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    </div>
   );
 }

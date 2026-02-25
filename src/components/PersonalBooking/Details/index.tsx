@@ -292,7 +292,7 @@ export default function Sections({ articles }: { articles: ArticleMeta[] }) {
 
       <section id="consultation" className="scroll-mt-28">
         <section className="scroll-mt-28 py-6 px-4">
-          <AdvisorConsultationCard bookingHref="/booking?book=paid" />
+          <AdvisorConsultationCard bookingHref="/booking?plan=paid" />
         </section>
       </section>
     </div>

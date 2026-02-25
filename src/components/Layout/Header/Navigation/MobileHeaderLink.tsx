@@ -3,7 +3,6 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
 import type { HeaderItem, SubmenuItem } from '../menu.types';
 
 /* -------------------------------------------------
@@ -36,43 +35,6 @@ function useReducedMotionStable() {
 /** Slugify a string for safe IDs */
 const slug = (s: string) =>
   s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-
-/* -------------------------------------------------
-   Accordion
--------------------------------------------------- */
-
-type AccordionProps = {
-  open: boolean;
-  id: string;           // panel id
-  labelId: string;      // id of the controlling label element
-  reduced: boolean;
-  children: React.ReactNode;
-};
-
-const Accordion = ({ open, id, labelId, reduced, children }: AccordionProps) => {
-  const variants = { collapsed: { height: 0, opacity: 0 }, open: { height: 'auto', opacity: 1 } } as const;
-
-  return (
-    <AnimatePresence initial={false}>
-      {open && (
-        <motion.div
-          key={id}
-          id={id}
-          role="region"
-          aria-labelledby={labelId}
-          className="overflow-hidden"
-          initial="collapsed"
-          animate="open"
-          exit="collapsed"
-          transition={reduced ? { duration: 0 } : { duration: 0.22, ease: 'easeOut' }}
-          variants={variants}
-        >
-          {children}
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-};
 
 /* -------------------------------------------------
    Recursive Node
@@ -168,8 +130,13 @@ const Node = ({ item, depth, path, closeMenuAction, reduced }: NodeProps) => {
       </div>
 
       {/* Nested children */}
-      {hasKids && (
-        <Accordion open={open} id={`${baseId}-panel`} labelId={`${baseId}-label`} reduced={reduced}>
+      {hasKids && open && (
+        <div
+          id={`${baseId}-panel`}
+          role="region"
+          aria-labelledby={`${baseId}-label`}
+          className="overflow-hidden"
+        >
           <ul className="pb-2">
             {item.submenu!.map((child, i) => (
               <Node
@@ -185,7 +152,7 @@ const Node = ({ item, depth, path, closeMenuAction, reduced }: NodeProps) => {
           <span aria-live="polite" className="sr-only">
             {item.label} {open ? 'expanded' : 'collapsed'}.
           </span>
-        </Accordion>
+        </div>
       )}
     </li>
   );

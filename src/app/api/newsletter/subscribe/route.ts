@@ -48,6 +48,20 @@ function getClientIp(req: NextRequest): string | undefined {
   return req.headers.get("x-real-ip") ?? undefined;
 }
 
+function normalizeSingleLine(value: unknown, max = 240): string {
+  if (typeof value !== "string") return "";
+  return value.replace(/[\r\n\t]+/g, " ").trim().slice(0, max);
+}
+
+function escapeHtml(value: unknown): string {
+  if (value == null) return "";
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 async function createTransport() {
   if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
     throw new Error("SMTP environment variables not configured");
@@ -107,6 +121,7 @@ https://www.xiphiasimmigration.com
 }
 
 function clientHtml(email: string): string {
+  const safeEmail = escapeHtml(email);
   // Basic, mobile-friendly HTML email
   return `
 <!doctype html>
@@ -136,7 +151,7 @@ function clientHtml(email: string): string {
                 <p>
                   Thank you for subscribing to the
                   <strong>XIPHIAS Immigration newsletter</strong> with
-                  <strong>${email}</strong>.
+                  <strong>${safeEmail}</strong>.
                 </p>
 
                 <p>You’ll receive curated updates on:</p>
@@ -218,6 +233,11 @@ function internalHtml(opts: {
   userAgent?: string | null;
 }): string {
   const { email, source, ip, userAgent } = opts;
+  const safeEmail = escapeHtml(email);
+  const safeSource = escapeHtml(source || "unknown");
+  const safeIp = escapeHtml(ip || "unknown");
+  const safeUserAgent = escapeHtml(userAgent || "unknown");
+  const sourceBadge = source ? `(source: ${safeSource})` : "";
 
   return `
 <!doctype html>
@@ -237,7 +257,7 @@ function internalHtml(opts: {
                 <strong style="font-size:15px;">New newsletter subscriber</strong>
                 <div style="font-size:12px;margin-top:4px;opacity:0.9;">
                   Captured via website
-                  ${source ? `(source: ${source})` : ""}
+                  ${sourceBadge}
                 </div>
               </td>
             </tr>
@@ -247,19 +267,19 @@ function internalHtml(opts: {
                 <table cellpadding="0" cellspacing="0" style="width:100%;font-size:13px;">
                   <tr>
                     <td style="padding:4px 0;width:120px;color:#6b7280;">Email</td>
-                    <td style="padding:4px 0;"><strong>${email}</strong></td>
+                    <td style="padding:4px 0;"><strong>${safeEmail}</strong></td>
                   </tr>
                   <tr>
                     <td style="padding:4px 0;color:#6b7280;">Source</td>
-                    <td style="padding:4px 0;">${source || "unknown"}</td>
+                    <td style="padding:4px 0;">${safeSource}</td>
                   </tr>
                   <tr>
                     <td style="padding:4px 0;color:#6b7280;">IP</td>
-                    <td style="padding:4px 0;">${ip || "unknown"}</td>
+                    <td style="padding:4px 0;">${safeIp}</td>
                   </tr>
                   <tr>
                     <td style="padding:4px 0;color:#6b7280;">User Agent</td>
-                    <td style="padding:4px 0;">${userAgent || "unknown"}</td>
+                    <td style="padding:4px 0;">${safeUserAgent}</td>
                   </tr>
                   <tr>
                     <td style="padding:4px 0;color:#6b7280;">Time</td>
@@ -293,9 +313,9 @@ function internalHtml(opts: {
 export async function POST(req: NextRequest) {
   try {
     const body = (await req.json()) as SubscribePayload;
-    const rawEmail = body?.email?.toString().trim();
+    const rawEmail = normalizeSingleLine(body?.email?.toString(), 160);
     const email = rawEmail?.toLowerCase();
-    const source = body?.source || "footer";
+    const source = normalizeSingleLine(body?.source || "footer", 80) || "footer";
 
     if (!email || !isValidEmail(email)) {
       return NextResponse.json(
@@ -318,8 +338,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const ip = getClientIp(req);
-    const userAgent = req.headers.get("user-agent");
+    const ipRaw = getClientIp(req);
+    const ip = ipRaw ? normalizeSingleLine(ipRaw, 120) : undefined;
+    const uaRaw = req.headers.get("user-agent");
+    const userAgent = uaRaw ? normalizeSingleLine(uaRaw, 500) : undefined;
 
     const transporter = await createTransport();
 

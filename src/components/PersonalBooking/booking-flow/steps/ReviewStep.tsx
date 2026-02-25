@@ -14,6 +14,10 @@ type Props = {
 export default function ReviewStep({ data, loading, onBackAction, onConfirmAction }: Props) {
   const priceDisplay = formatINR(data.priceCents);
   const appt = formatDateTime(data.dateISO, data.timeISO, data.timezone);
+  const consultationLabel =
+    data.plan === "free"
+      ? `Discovery Call (${data.durationMin}m)`
+      : `Strategy Consultation (${data.durationMin}m)`;
 
   return (
     <div className="grid gap-4">
@@ -28,7 +32,7 @@ export default function ReviewStep({ data, loading, onBackAction, onConfirmActio
               <div className="min-w-0">
                 <div className="text-xs uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Appointment</div>
                 <div className="mt-1 font-medium">
-                  {data.plan === "free" ? "Discovery Call (15m)" : "Strategy Consultation (60m)"}
+                  {consultationLabel}
                 </div>
                 <div className="text-sm text-zinc-700 dark:text-zinc-300">
                   {appt || "—"}

@@ -144,7 +144,6 @@ export default function HighlightsRail() {
       <Link
         href={href}
         prefetch={false}
-        aria-label={item?.title || "Highlight"}
         className="group flex w-[270px] sm:w-[310px] md:w-[340px] lg:w-[360px] xl:w-[380px]
                    items-center gap-3 border border-neutral-200 dark:border-neutral-800 rounded-xl
                    bg-white dark:bg-neutral-900 px-3 py-2 shadow-sm hover:shadow

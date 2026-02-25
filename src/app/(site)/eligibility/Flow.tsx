@@ -273,12 +273,24 @@ export default function Flow() {
   const submitLead = useCallback(async () => {
     const payload = { name, email, phone, track, answers };
     try {
-      await fetch("/api/eligibility/submit", {
+      const res = await fetch("/api/eligibility/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-    } catch {}
+      if (!res.ok) {
+        let message = "We couldn't submit your details. Please try again.";
+        try {
+          const data = (await res.json()) as { error?: string };
+          if (data?.error) message = data.error;
+        } catch {}
+        alert(message);
+        return;
+      }
+    } catch {
+      alert("We couldn't submit your details. Please check your connection and try again.");
+      return;
+    }
     clearAutosave();
     setStage("result");
     trackEvent("result_viewed", { track });

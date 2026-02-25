@@ -8,11 +8,11 @@ export default function LogoWhite() {
       <Image
         src="/images/logo/xiphias-immigration-white.png"
         alt="XIPHIAS Immigration"
-        width={170}
-        height={36}
+        width={48}
+        height={43}
         priority
         className="h-9 w-auto sm:h-10"
-        sizes="(max-width: 640px) 140px, 170px"
+        sizes="(max-width: 640px) 36px, 40px"
       />
     </Link>
   );

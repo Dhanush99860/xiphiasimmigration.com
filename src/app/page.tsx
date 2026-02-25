@@ -60,7 +60,7 @@ export default function Home() {
       <ResidencyPreview />
 
       <section className="scroll-mt-28 mx-auto lg:max-w-screen-2xl sm:px-6 lg:px-4">
-        <AdvisorConsultationCard bookingHref="/booking?book=paid" />
+        <AdvisorConsultationCard bookingHref="/booking?plan=paid" />
       </section>
 
       <CorporatePreview />

@@ -106,7 +106,6 @@ export default function InsightCard({
   return (
     <Link
       href={item.url}
-      aria-label={`Open ${ui.label.toLowerCase()} “${item.title}”`}
       className="block focus:outline-none"
     >
       <article
