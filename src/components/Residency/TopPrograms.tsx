@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import * as React from "react";
 import { Banknote, Timer } from "lucide-react";
+import { formatTimelineShort } from "@/lib/timeline";
 
 import type { ProgramMeta as ResidencyProgram } from "@/lib/residency-content";
 import type { ProgramMeta as CitizenshipProgram } from "@/lib/citizenship-content";
@@ -57,9 +58,8 @@ function money(amount: number, currency?: string) {
     return `${amount.toLocaleString()} ${c}`;
   }
 }
-function months(m?: number) {
-  if (typeof m !== "number" || Number.isNaN(m)) return "Timeline varies";
-  return `${m} mo${m === 1 ? "" : "s"}`;
+function months(m?: number, label?: string) {
+  return formatTimelineShort(m, label, "Timeline varies");
 }
 
 const slugify = (s: string) =>
@@ -107,7 +107,7 @@ export default function TopPrograms({ programs }: { programs: AnyProgram[] }) {
         typeof (p as any).minInvestment === "number"
           ? money((p as any).minInvestment, (p as any).currency)
           : null,
-        months((p as any).timelineMonths),
+        months((p as any).timelineMonths, (p as any).timelineLabel),
       ]
         .filter(Boolean)
         .join(" · "),
@@ -143,7 +143,10 @@ export default function TopPrograms({ programs }: { programs: AnyProgram[] }) {
                 (p as any).currency as string | undefined,
               )
             : "Varies";
-          const timeline = months((p as any).timelineMonths);
+          const timeline = months(
+            (p as any).timelineMonths,
+            (p as any).timelineLabel,
+          );
 
           // 👇 explicit typing here fixes TS7006
           const chips: string[] = Array.isArray((p as any).tags)

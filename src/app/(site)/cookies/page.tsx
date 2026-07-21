@@ -271,8 +271,8 @@ export default function CookiesPage() {
                 </a>
 
                 <p className="text-xs mt-2 opacity-80">
-                  If your site uses a cookie banner/CMP, wire it so that this hash triggers the
-                  preference modal: <code>#open-cookie-preferences</code>.
+                  This link opens the cookie preference modal via{" "}
+                  <code>#open-cookie-preferences</code>.
                 </p>
               </Card>
 

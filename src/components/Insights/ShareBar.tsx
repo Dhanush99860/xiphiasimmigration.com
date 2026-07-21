@@ -85,7 +85,7 @@ export default function ShareBar({
       },
       {
         name: "WhatsApp",
-        href: `https://api.whatsapp.com/send?text=${encodedTitle}%20${encodedUrl}`,
+        href: `https://wa.me/?text=${encodedTitle}%20${encodedUrl}`,
         color: "#25D366",
         icon: WhatsAppIcon,
       },

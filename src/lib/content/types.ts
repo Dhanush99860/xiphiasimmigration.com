@@ -23,7 +23,7 @@ export type ProgramDoc = {
   tagline?: string; // ✅ add this
 };
 
-export type HubKind = "blog" | "news" | "article";
+export type HubKind = "blog" | "news" | "article" | "media" | "job";
 export type HubDoc = {
   kind: "hub";
   type: HubKind;

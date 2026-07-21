@@ -8,6 +8,7 @@ import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import type { ReactNode } from "react";
 import { rehypeFixInvalidLinkChildren } from "@/lib/mdx-plugins";
+import { normalizeTimelineValue } from "@/lib/timeline";
 
 /* =========================
  * Types (corporate)
@@ -74,6 +75,8 @@ export type CountryMeta = {
   heroImage?: string;
   heroVideo?: string;
   heroPoster?: string;
+  timelineMonths?: number;
+  timelineLabel?: string;
   introPoints?: string[];
   tags?: string[];
   seo?: { title?: string; description?: string; keywords?: string[] };
@@ -101,6 +104,7 @@ export type ProgramMeta = {
   minInvestment?: number;
   currency?: CurrencyCode;
   timelineMonths?: number;
+  timelineLabel?: string;
 
   tags?: string[];
   benefits?: string[];
@@ -301,6 +305,7 @@ function dirStamp(rootDir: string): number {
  * =======================*/
 function normalizeCountry(metaIn: Partial<CountryMeta>, slug: string): CountryMeta {
   const meta: any = { ...metaIn };
+  const timeline = normalizeTimelineValue(meta.timelineMonths);
   const countrySlug = meta.countrySlug || slug;
   const country = meta.country || meta.title || toTitle(countrySlug);
   const title = meta.title || (typeof country === "string" ? country : toTitle(countrySlug));
@@ -319,6 +324,8 @@ function normalizeCountry(metaIn: Partial<CountryMeta>, slug: string): CountryMe
     title: String(title),
     country: String(country),
     countrySlug: String(countrySlug),
+    timelineMonths: timeline.months,
+    timelineLabel: timeline.label,
     category: "corporate",
   } as CountryMeta;
 }
@@ -340,7 +347,11 @@ function normalizeProgram(metaIn: Partial<ProgramMeta>, cSlug: string, pSlug: st
   meta.category = "corporate";
 
   if (meta.minInvestment !== undefined) meta.minInvestment = coerceNum(meta.minInvestment);
-  if (meta.timelineMonths !== undefined) meta.timelineMonths = coerceNum(meta.timelineMonths);
+  if (meta.timelineMonths !== undefined) {
+    const timeline = normalizeTimelineValue(meta.timelineMonths);
+    meta.timelineMonths = timeline.months;
+    meta.timelineLabel = timeline.label;
+  }
 
   if (Array.isArray(meta.prices)) {
     meta.prices = meta.prices.map((row: any) => ({ ...row, amount: coerceNum(row?.amount) }));

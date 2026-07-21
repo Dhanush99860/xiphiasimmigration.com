@@ -12,6 +12,7 @@ import {
   loadProgramPageSections,
 } from "@/lib/skilled-content";
 import { baseFromCategory, pickSectionKey } from "@/lib/section-helpers";
+import { formatTimelineLong } from "@/lib/timeline";
 
 import { Prose } from "@/components/ui/Prose";
 import { JsonLd, breadcrumbLd, faqLd } from "@/lib/seo";
@@ -153,6 +154,7 @@ type RelatedItem = {
   minInvestment?: number;
   currency?: string;
   timelineMonths?: number;
+  timelineLabel?: string;
   tags?: string[];
   heroImage?: string;
   score: number;
@@ -160,10 +162,12 @@ type RelatedItem = {
 
 function SkilledFacts({
   timelineMonths,
+  timelineLabel,
   passMark,
   jobOfferRequired,
 }: {
   timelineMonths?: number;
+  timelineLabel?: string;
   passMark?: number;
   jobOfferRequired?: boolean;
 }) {
@@ -183,7 +187,7 @@ function SkilledFacts({
       ? {
           key: "timeline",
           label: "Typical timeline",
-          value: `${timelineMonths} months`,
+          value: formatTimelineLong(timelineMonths, timelineLabel),
           Icon: Timer,
           accent: "from-sky-500/15 to-sky-500/5",
           hint: "Indicative end-to-end processing; varies by case.",
@@ -368,6 +372,7 @@ export default async function ProgramPage(
                 minInvestment: (candMeta as any).minInvestment as number | undefined,
                 currency: (candMeta as any).currency as string | undefined,
                 timelineMonths: (candMeta as any).timelineMonths as number | undefined,
+                timelineLabel: (candMeta as any).timelineLabel as string | undefined,
                 tags: ((candMeta as any).tags ?? []) as string[],
                 heroImage: (candMeta as any).heroImage as string | undefined,
                 score,
@@ -550,6 +555,7 @@ export default async function ProgramPage(
             <section id="quick-facts" className="scroll-mt-28">
               <SkilledFacts
                 timelineMonths={(meta as any).timelineMonths}
+                timelineLabel={(meta as any).timelineLabel}
                 passMark={passMark}
                 jobOfferRequired={jobOffer.required}
               />
@@ -753,7 +759,9 @@ export default async function ProgramPage(
                         <div className="text-sm opacity-70">{r.country}</div>
                         <div className="font-semibold group-hover:underline">{r.title}</div>
                         {typeof r.timelineMonths === "number" ? (
-                          <div className="text-xs mt-1 opacity-70">~{r.timelineMonths} months</div>
+                          <div className="text-xs mt-1 opacity-70">
+                            {formatTimelineLong(r.timelineMonths, r.timelineLabel)}
+                          </div>
                         ) : null}
                       </div>
                     </Link>

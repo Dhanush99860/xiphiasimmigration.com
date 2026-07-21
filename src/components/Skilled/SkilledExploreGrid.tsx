@@ -16,6 +16,7 @@ import {
   Check as CheckIcon,
 } from "lucide-react";
 import ContactForm from "@/components/ContactForm";
+import { formatTimelineShort } from "@/lib/timeline";
 
 /* ------------------------- helpers & formatters ------------------------- */
 
@@ -236,6 +237,7 @@ export default function ExploreGrid({
           minInvestment: best?.minInvestment, // reused as min salary / cost
           currency: best?.currency,
           timelineMonths: best?.timelineMonths,
+          timelineLabel: best?.timelineLabel,
         };
       }),
     [safeCountries, bestByCountry],
@@ -322,6 +324,7 @@ export default function ExploreGrid({
         minInvestment: p.minInvestment,
         currency: p.currency,
         timelineMonths: p.timelineMonths,
+        timelineLabel: p.timelineLabel,
         tags: (p as any).tags ?? [],
         heroImage: imgOrFallback(p),
       })),
@@ -440,7 +443,10 @@ export default function ExploreGrid({
                           : "No min"}
                       </div>
                       <div className="text-zinc-600 dark:text-zinc-300">
-                        {p.timelineMonths ? `${p.timelineMonths} mo` : "Varies"}
+                        {formatTimelineShort(
+                          p.timelineMonths,
+                          p.timelineLabel,
+                        )}
                       </div>
                     </div>
                   </div>
@@ -565,7 +571,10 @@ export default function ExploreGrid({
                               : "No min"}
                           </div>
                           <div className="text-zinc-600 dark:text-zinc-300">
-                            {p.timelineMonths ? `${p.timelineMonths} mo` : "Varies"}
+                            {formatTimelineShort(
+                              p.timelineMonths,
+                              p.timelineLabel,
+                            )}
                           </div>
                         </div>
                       </div>
@@ -599,7 +608,7 @@ export default function ExploreGrid({
             itemType="https://schema.org/ItemList"
           >
             {sortedCountries.map(
-              ({ c, minInvestment, currency, timelineMonths }, idx) => (
+              ({ c, minInvestment, currency, timelineMonths, timelineLabel }, idx) => (
                 <li
                   key={`${c.countrySlug}-${idx}`}
                   className="contents"
@@ -622,6 +631,7 @@ export default function ExploreGrid({
                       minInvestment={minInvestment}
                       currency={currency}
                       timelineMonths={timelineMonths}
+                      timelineLabel={timelineLabel}
                       tags={(c as any).tags ?? []}
                     />
                   </div>

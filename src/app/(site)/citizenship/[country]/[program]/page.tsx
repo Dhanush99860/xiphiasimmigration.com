@@ -17,6 +17,7 @@ const QuickFacts = nextDynamic(() => import("@/components/Residency/QuickFacts")
 const ProcessTimeline = nextDynamic(() => import("@/components/Residency/ProcessTimeline"));
 const FAQAccordion = nextDynamic(() => import("@/components/Residency/FAQAccordion"));
 import { JsonLd, breadcrumbLd, faqLd } from "@/lib/seo";
+import { formatTimelineShort } from "@/lib/timeline";
 const ContactForm = nextDynamic(() => import("@/components/ContactForm"));
 const ProgramQuickNav = nextDynamic(() => import("@/components/Residency/ProgramQuickNav"));
 const Breadcrumb = nextDynamic(() => import("@/components/Common/Breadcrumb"));
@@ -222,6 +223,7 @@ export default async function ProgramPage(props: {
       minInvestment?: number;
       currency?: string;
       timelineMonths?: number;
+      timelineLabel?: string;
       tags?: string[];
       heroImage?: string;
       score: number;
@@ -247,6 +249,7 @@ export default async function ProgramPage(props: {
                 minInvestment: candMeta.minInvestment,
                 currency: candMeta.currency,
                 timelineMonths: candMeta.timelineMonths,
+                timelineLabel: (candMeta as any).timelineLabel as string | undefined,
                 tags: (candMeta as any).tags ?? [],
                 heroImage: (candMeta as any).heroImage as string | undefined,
                 score,
@@ -450,6 +453,7 @@ export default async function ProgramPage(props: {
                 minInvestment={meta.minInvestment}
                 currency={meta.currency}
                 timelineMonths={meta.timelineMonths}
+                timelineLabel={(meta as any).timelineLabel}
                 tags={(meta as any).tags}
               />
             </section>
@@ -873,7 +877,10 @@ export default async function ProgramPage(props: {
                       typeof r.minInvestment === "number"
                         ? `${r.currency ?? ""} ${r.minInvestment.toLocaleString()}`
                         : "No minimum";
-                    const time = r.timelineMonths ? `${r.timelineMonths} mo` : "Varies";
+                    const time = formatTimelineShort(
+                      r.timelineMonths,
+                      r.timelineLabel,
+                    );
                     return (
                       <li key={r.url}>
                         <Link

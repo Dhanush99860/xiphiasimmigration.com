@@ -57,7 +57,7 @@ export async function generateStaticParams() {
   return out;
 }
 
-export const dynamicParams = false;
+export const dynamicParams = true;
 
 /**
  * Generate SEO metadata for MDX program pages.
@@ -65,9 +65,9 @@ export const dynamicParams = false;
 export async function generateMetadata({
   params,
 }: {
-  params: { vertical: Vertical; country: string; program: string };
+  params: Promise<{ vertical: Vertical; country: string; program: string }>;
 }): Promise<Metadata> {
-  const { vertical, country, program } = params;
+  const { vertical, country, program } = await params;
 
   if (!VERTICALS3.includes(vertical)) {
     return { title: "Program not found" };
@@ -123,9 +123,9 @@ export async function generateMetadata({
 export default async function ProgramPage({
   params,
 }: {
-  params: { vertical: Vertical; country: string; program: string };
+  params: Promise<{ vertical: Vertical; country: string; program: string }>;
 }) {
-  const { vertical, country, program } = params;
+  const { vertical, country, program } = await params;
 
   if (!VERTICALS3.includes(vertical) || !country || !program) return notFound();
 

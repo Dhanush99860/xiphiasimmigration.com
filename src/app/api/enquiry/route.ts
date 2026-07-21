@@ -1,8 +1,11 @@
 import dotenv from "dotenv";
 dotenv.config({ path: ".env.local" });
+import { crmSql, getLiveCrmPool, isLiveCrmConfigured } from "@/lib/crm/live-sql";
 
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import { getPlatformRepository } from "@/lib/platform/repository";
+import { captureVisitorEvent } from "@/lib/platform/visitor-analytics";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -24,6 +27,65 @@ function escapeHtml(str: string | undefined): string {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
 }
+// tbl_Enquiry.ENT_DATE is varchar(50), not a date column.
+// Existing rows look like: 11-Nov-2025 09:35 AM  -- match that exactly.
+function crmTimestamp(d = new Date()) {
+  const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const dd   = String(d.getDate()).padStart(2, "0");
+  const mmm  = months[d.getMonth()];
+  const yyyy = d.getFullYear();
+  let hours  = d.getHours();
+  const ampm = hours >= 12 ? "PM" : "AM";
+  hours = hours % 12 || 12;
+  const hh = String(hours).padStart(2, "0");
+  const mi = String(d.getMinutes()).padStart(2, "0");
+  return `${dd}-${mmm}-${yyyy} ${hh}:${mi} ${ampm}`;
+}
+
+// Writes the enquiry into the legacy CRM (tbl_Enquiry) via the existing
+// sp_Enquiry stored procedure. Never throws - a CRM problem must not lose a lead.
+async function saveEnquiryToCrm(input: {
+  name: string;
+  email: string;
+  phone: string;
+  message: string;
+  country: string;
+  page: string;
+}): Promise<{ ok: boolean; error?: string }> {
+  if (!isLiveCrmConfigured()) {
+    return { ok: false, error: "XIPHIAS_CRM_SQL_PASSWORD is not configured." };
+  }
+
+  try {
+    const pool = await getLiveCrmPool("india");
+
+    // ENQUIRY is the only free-text column, so fold the extra context into it.
+    const enquiryText = [
+      input.message || "(no message provided)",
+      input.country ? `Country: ${input.country}` : "",
+      input.page ? `Page: ${input.page}` : "",
+      "Source: website",
+    ]
+      .filter(Boolean)
+      .join(" | ");
+
+    await pool
+      .request()
+      // NAME and EMAIL are only varchar(50) in tbl_Enquiry - trim or the insert throws.
+      .input("NAME",     crmSql.VarChar(50),          input.name.slice(0, 50))
+      .input("EMAIL",    crmSql.VarChar(50),          input.email.slice(0, 50))
+      .input("PHONE",    crmSql.VarChar(crmSql.MAX),  input.phone || "")
+      .input("ENQUIRY",  crmSql.VarChar(crmSql.MAX),  enquiryText)
+      .input("ENT_DATE", crmSql.VarChar(50),          crmTimestamp())
+      .input("CODE",     crmSql.VarChar(50),          null)
+      .execute("sp_Enquiry");
+
+    return { ok: true };
+  } catch (err: any) {
+    console.error("CRM enquiry insert failed:", err);
+    return { ok: false, error: err?.message || "CRM insert failed" };
+  }
+}
 
 export async function POST(req: Request) {
   try {
@@ -33,6 +95,10 @@ export async function POST(req: Request) {
     const email = normalizeEmail(body?.email);
     const message = normalizeText(body?.message, 4000);
     const country = normalizeText(body?.country, 120);
+    const page = normalizeText(body?.page, 240);
+    const referrer = normalizeText(body?.referrer, 500);
+    const variant = normalizeText(body?.variant, 40);
+    const consent = body?.consent === "yes" || body?.consent === true;
 
     if (!name || name.length < 2) {
       return NextResponse.json(
@@ -62,7 +128,48 @@ export async function POST(req: Request) {
     const safePhone = escapeHtml(phone || "Not provided");
     const safeCountry = escapeHtml(country || "Not specified");
     const safeMessage = escapeHtml(message || "No message provided");
+    const safePage = escapeHtml(page || "Not provided");
+    const safeReferrer = escapeHtml(referrer || "Not provided");
     const mailto = `mailto:${encodeURIComponent(email)}`;
+    const lead = getPlatformRepository().createLead({
+      source: "website",
+      status: "new",
+      name,
+      email,
+      phone,
+      country,
+      message,
+      page,
+      referrer,
+      consent,
+      tags: [variant || "contact", "contact-form"],
+    });
+    getPlatformRepository().createConversation({
+      leadId: lead.id,
+      channel: "portal",
+      direction: "inbound",
+      from: name,
+      to: "XIPHIAS",
+      body: message || `Consultation/enquiry form submitted from ${page || "website"}.`,
+    });
+    
+
+    await captureVisitorEvent(
+      {
+        type: "lead_capture",
+        visitorId: normalizeText(body?.visitorId, 100) || lead.id,
+        sessionId: normalizeText(body?.sessionId, 100) || undefined,
+        path: page || req.headers.get("referer") || "/",
+        referrer,
+        name,
+        email,
+        phone,
+        label: variant || "contact-form",
+        query: message,
+        interests: [country, variant].filter(Boolean),
+      },
+      req.headers,
+    );
 
     const userHtml = `
       <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;max-width:640px;margin:auto;background:#fff;border:1px solid #eaeaea;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
@@ -94,8 +201,8 @@ export async function POST(req: Request) {
 
           <div style="text-align:center;font-size:13px;color:#666;">
             <p style="margin:4px 0;"><strong>XIPHIAS Immigration Pvt. Ltd</strong></p>
-            <p style="margin:4px 0;">Aurbis Prime, 11, Kaveri Regent Coronet, 80 Feet Road, 3rd Block,<br> Koramangala, Bangalore-560034</p>
-            <p style="margin:4px 0;">+91-80-67601000 / 9019400500</p>
+            <p style="margin:4px 0;">1st Floor, JK Nirmala Arcade, Plot no. 780, 80 Feet Rd, 4th Block,<br> Koramangala, Bengaluru, Karnataka 560034</p>
+            <p style="margin:4px 0;">+91-80-67601000 / 9021335577 / +91 08049768088</p>
             <p style="margin:4px 0;"><a href="mailto:immigration@xiphias.in" style="color:#004fa3;">immigration@xiphias.in</a> | <a href="https://www.xiphiasimmigration.com" style="color:#004fa3;">www.xiphiasimmigration.com</a></p>
             <div style="margin-top:10px;">
               <a href="https://play.google.com/store/apps/details?id=com.xiphiasimmigration.app.android" target="_blank" style="margin-right:10px;">
@@ -124,6 +231,9 @@ export async function POST(req: Request) {
             <tr><td style="padding:8px;border-bottom:1px solid #eee;"><strong>Email</strong></td><td style="padding:8px;border-bottom:1px solid #eee;"><a href="${mailto}" style="color:#004fa3;text-decoration:none;">${safeEmail}</a></td></tr>
             <tr><td style="padding:8px;border-bottom:1px solid #eee;"><strong>Phone</strong></td><td style="padding:8px;border-bottom:1px solid #eee;">${safePhone}</td></tr>
             <tr><td style="padding:8px;border-bottom:1px solid #eee;"><strong>Country</strong></td><td style="padding:8px;border-bottom:1px solid #eee;">${safeCountry}</td></tr>
+            <tr><td style="padding:8px;border-bottom:1px solid #eee;"><strong>Lead ID</strong></td><td style="padding:8px;border-bottom:1px solid #eee;">${escapeHtml(lead.id)}</td></tr>
+            <tr><td style="padding:8px;border-bottom:1px solid #eee;"><strong>Page</strong></td><td style="padding:8px;border-bottom:1px solid #eee;">${safePage}</td></tr>
+            <tr><td style="padding:8px;border-bottom:1px solid #eee;"><strong>Referrer</strong></td><td style="padding:8px;border-bottom:1px solid #eee;">${safeReferrer}</td></tr>
             <tr><td style="padding:8px;"><strong>Message</strong></td><td style="padding:8px;">${safeMessage}</td></tr>
           </table>
 
@@ -153,7 +263,7 @@ export async function POST(req: Request) {
 
     await Promise.all([transporter.sendMail(adminMail), transporter.sendMail(userMail)]);
 
-    return NextResponse.json({ ok: true, message: "Emails sent successfully" });
+    return NextResponse.json({ ok: true, message: "Lead captured and emails sent successfully", leadId: lead.id });
   } catch (err: any) {
     console.error("Error in /api/enquiry:", err);
     return NextResponse.json({ error: err?.message || "Request failed" }, { status: 500 });

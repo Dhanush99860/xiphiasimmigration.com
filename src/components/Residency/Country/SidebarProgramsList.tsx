@@ -5,6 +5,7 @@
 import * as React from "react";
 import Link from "next/link";
 import SectionHeader from "./SectionHeader";
+import { formatTimelineLong, hasTimelineValue } from "@/lib/timeline";
 
 // --- accept programs from any vertical (types only) ---
 import type { ProgramMeta as ResidencyProgram } from "@/lib/residency-content";
@@ -31,11 +32,8 @@ type SidebarProgramsListProps = {
    Helpers (formatting & paths)
 ================================== */
 
-function formatTimeline(months?: number) {
-  if (typeof months === "number" && months > 0) {
-    return `${months} ${months === 1 ? "month" : "months"}`;
-  }
-  return "Timeline varies";
+function formatTimeline(months?: number, label?: string) {
+  return formatTimelineLong(months, label, "Timeline varies");
 }
 
 function formatInvestment(value?: number, currency?: string) {
@@ -177,6 +175,7 @@ export default function SidebarProgramsList({
               !!activeProgramSlug && p.programSlug === activeProgramSlug;
             const timelineLabel = formatTimeline(
               (p as any).timelineMonths as number | undefined,
+              (p as any).timelineLabel as string | undefined,
             );
             const investmentLabel = formatInvestment(
               (p as any).minInvestment as number | undefined,
@@ -259,7 +258,10 @@ export default function SidebarProgramsList({
                         id={metaId}
                         className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-12 text-neutral-600 dark:text-neutral-300/80"
                       >
-                        {(p as any).timelineMonths ? (
+                        {hasTimelineValue(
+                          (p as any).timelineMonths as number | undefined,
+                          (p as any).timelineLabel as string | undefined,
+                        ) ? (
                           <span
                             className="
                               inline-flex items-center gap-1

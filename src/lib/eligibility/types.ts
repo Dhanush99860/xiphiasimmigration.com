@@ -34,11 +34,22 @@ export type Question = {
 
 export type AnswerMap = Record<string, unknown>;
 
-export type Program = { name: string; why: string };
+export type Program = {
+  name: string;
+  why: string;
+  country?: string;
+  href?: string;
+  score?: number;
+};
 
 export type Result = {
   /** keep your existing tiers to match scoring logic */
   tier: "Eligible" | "Borderline" | "Not Yet Eligible";
   summary: string;
   programs: Program[];
+  confidence?: number;
+  criteria?: string[];
+  sources?: { label: string; href: string }[];
+  handoffRequired?: boolean;
+  countryFocus?: string;
 };

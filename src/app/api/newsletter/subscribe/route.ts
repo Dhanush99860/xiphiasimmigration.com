@@ -6,6 +6,8 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import { getPlatformRepository } from "@/lib/platform/repository";
+import { captureVisitorEvent } from "@/lib/platform/visitor-analytics";
 
 // If you want to be explicit:
 export const runtime = "nodejs";
@@ -33,7 +35,10 @@ const TEAM_EMAIL =
 type SubscribePayload = {
   email: string;
   source?: string; // e.g. "footer", "popup", etc.
+  hp?: string;
 };
+
+const ALLOWED_SOURCES = new Set(["footer", "popup", "sidebar"]);
 
 // --------- utils ---------
 
@@ -51,6 +56,25 @@ function getClientIp(req: NextRequest): string | undefined {
 function normalizeSingleLine(value: unknown, max = 240): string {
   if (typeof value !== "string") return "";
   return value.replace(/[\r\n\t]+/g, " ").trim().slice(0, max);
+}
+
+function sanitizeSource(value: unknown): string {
+  const rawSource = normalizeSingleLine(value, 80).toLowerCase();
+  if (ALLOWED_SOURCES.has(rawSource)) return rawSource;
+  return "footer";
+}
+
+function isValidBotRequest(req: NextRequest, hp?: string) {
+  const requestedWith = req.headers.get("x-requested-with") || "";
+  const userAgent = req.headers.get("user-agent") || "";
+
+  if (hp && hp.trim().length > 0) return true;
+  if (requestedWith.toLowerCase() !== "xmlhttprequest") return true;
+  if (!userAgent || userAgent.toLowerCase().includes("curl") || userAgent.toLowerCase().includes("postman")) {
+    return true;
+  }
+
+  return false;
 }
 
 function escapeHtml(value: unknown): string {
@@ -203,8 +227,8 @@ function clientHtml(email: string): string {
 
 // -------- Internal email (to your team) --------
 
-function internalSubject(source?: string): string {
-  return `New newsletter subscriber${source ? ` (${source})` : ""}`;
+function internalSubject(): string {
+  return "New newsletter subscriber";
 }
 
 function internalText(opts: {
@@ -315,7 +339,18 @@ export async function POST(req: NextRequest) {
     const body = (await req.json()) as SubscribePayload;
     const rawEmail = normalizeSingleLine(body?.email?.toString(), 160);
     const email = rawEmail?.toLowerCase();
-    const source = normalizeSingleLine(body?.source || "footer", 80) || "footer";
+    const source = sanitizeSource(body?.source || "footer");
+    const honeypot = normalizeSingleLine(body?.hp, 80);
+
+    if (isValidBotRequest(req, honeypot)) {
+      return NextResponse.json(
+        {
+          ok: false,
+          message: "Please provide a valid email address.",
+        },
+        { status: 400 }
+      );
+    }
 
     if (!email || !isValidEmail(email)) {
       return NextResponse.json(
@@ -343,6 +378,46 @@ export async function POST(req: NextRequest) {
     const uaRaw = req.headers.get("user-agent");
     const userAgent = uaRaw ? normalizeSingleLine(uaRaw, 500) : undefined;
 
+    let leadId: string | undefined;
+    try {
+      const repo = getPlatformRepository();
+      const lead = repo.createLead({
+        source: "website",
+        status: "new",
+        name: email.split("@")[0] || "Newsletter subscriber",
+        email,
+        message: `Newsletter subscription captured from ${source}.`,
+        page: req.headers.get("referer") || "/",
+        referrer: req.headers.get("referer") || undefined,
+        consent: true,
+        tags: ["newsletter", source].filter(Boolean),
+      });
+      leadId = lead.id;
+      repo.createConversation({
+        leadId: lead.id,
+        channel: "email",
+        direction: "inbound",
+        from: email,
+        to: "XIPHIAS",
+        body: `Subscribed to newsletter from ${source}.`,
+      });
+      await captureVisitorEvent(
+        {
+          type: "lead_capture",
+          visitorId: lead.id,
+          path: req.headers.get("referer") || "/",
+          referrer: req.headers.get("referer") || undefined,
+          label: `newsletter:${source}`,
+          email,
+          interests: ["newsletter", source],
+          metadata: { leadId: lead.id, source: "newsletter" },
+        },
+        req.headers,
+      );
+    } catch (leadError) {
+      console.error("[newsletter] X-Hub lead capture failed:", leadError);
+    }
+
     const transporter = await createTransport();
 
     // Send both emails in parallel
@@ -357,7 +432,7 @@ export async function POST(req: NextRequest) {
       transporter.sendMail({
         from: FROM_EMAIL,
         to: TEAM_EMAIL,
-        subject: internalSubject(source),
+        subject: internalSubject(),
         text: internalText({ email, source, ip, userAgent }),
         html: internalHtml({ email, source, ip, userAgent }),
       }),
@@ -367,6 +442,7 @@ export async function POST(req: NextRequest) {
       {
         ok: true,
         message: "Subscribed",
+        leadId,
       },
       { status: 200 }
     );

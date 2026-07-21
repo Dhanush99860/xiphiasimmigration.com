@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Script from "next/script";
+import { formatTimelineShort } from "@/lib/timeline";
 
 export type CompareItem = {
   title: string;
@@ -12,6 +13,7 @@ export type CompareItem = {
   minInvestment?: number;
   currency?: string;
   timelineMonths?: number;
+  timelineLabel?: string;
   tags?: string[];
   heroImage?: string; // absolute path preferred
 };
@@ -359,9 +361,10 @@ export default function CompareDrawer({
                       <div className="rounded-lg bg-white/90 dark:bg-white/5 px-2 py-1 ring-1 ring-blue-100/80 dark:ring-blue-900/40">
                         <dt className="text-zinc-500">Timeline</dt>
                         <dd className="tabular-nums">
-                          {it.timelineMonths
-                            ? `${it.timelineMonths} mo`
-                            : "Varies"}
+                          {formatTimelineShort(
+                            it.timelineMonths,
+                            it.timelineLabel,
+                          )}
                         </dd>
                       </div>
                     </dl>
@@ -419,9 +422,10 @@ export default function CompareDrawer({
                             : "—"}
                         </td>
                         <td className="p-2 text-right tabular-nums">
-                          {it.timelineMonths
-                            ? `${it.timelineMonths} mo`
-                            : "Varies"}
+                          {formatTimelineShort(
+                            it.timelineMonths,
+                            it.timelineLabel,
+                          )}
                         </td>
                         <td className="p-2 text-right">
                           <Link

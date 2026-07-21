@@ -13,29 +13,37 @@
 
 import * as React from "react";
 import { Banknote, Clock, Sparkles } from "lucide-react";
+import {
+  formatTimelineLong,
+  hasTimelineValue,
+  timelineISODuration,
+} from "@/lib/timeline";
 
 export default function QuickFacts({
   minInvestment,
   currency,
   timelineMonths,
+  timelineLabel,
   tags,
 }: {
   minInvestment?: number;
   currency?: string;
   timelineMonths?: number;
+  timelineLabel?: string;
   tags?: string[];
 }) {
   const hasMin =
     typeof minInvestment === "number" && !Number.isNaN(minInvestment);
-  const hasTimeline =
-    typeof timelineMonths === "number" && !Number.isNaN(timelineMonths);
+  const hasTimeline = hasTimelineValue(timelineMonths, timelineLabel);
 
   const minDisplay = hasMin
     ? formatMoney(minInvestment!, currency)
     : "No minimum";
-  const timelineDisplay = hasTimeline
-    ? pluralizeMonths(timelineMonths!)
-    : "Varies";
+  const timelineDisplay = formatTimelineLong(
+    timelineMonths,
+    timelineLabel,
+    "Varies",
+  );
 
   const allTags = Array.isArray(tags) ? tags.filter(Boolean) : [];
   const MAX_TAGS = 6;
@@ -143,9 +151,7 @@ export default function QuickFacts({
               <time
                 itemProp="duration"
                 // ISO 8601 duration (months → PnM), only when we know months
-                dateTime={
-                  hasTimeline ? toISOMonthDuration(timelineMonths!) : undefined
-                }
+                dateTime={timelineISODuration(timelineMonths, timelineLabel)}
               >
                 {timelineDisplay}
               </time>
@@ -238,10 +244,6 @@ function IconBadge({ children }: { children: React.ReactNode }) {
   );
 }
 
-function pluralizeMonths(m: number) {
-  return `${m} month${m === 1 ? "" : "s"}`;
-}
-
 function formatMoney(amount: number, currency?: string) {
   if (Number.isNaN(amount)) return "—";
   if (!currency) return compactNumber(amount);
@@ -275,12 +277,6 @@ function compactNumber(n: number) {
 
 function isISO4217(c?: string): c is string {
   return !!c && /^[A-Z]{3}$/.test(c);
-}
-
-function toISOMonthDuration(m: number) {
-  // e.g., 6 → "P6M"
-  const clamped = Math.max(0, Math.round(m));
-  return `P${clamped}M`;
 }
 
 function currencyFullName(code?: string) {

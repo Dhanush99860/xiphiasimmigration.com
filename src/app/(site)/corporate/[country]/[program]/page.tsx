@@ -18,6 +18,7 @@ const QuickFacts = nextDynamic(() => import("@/components/Residency/QuickFacts")
 const ProcessTimeline = nextDynamic(() => import("@/components/Residency/ProcessTimeline"));
 const FAQAccordion = nextDynamic(() => import("@/components/Residency/FAQAccordion"));
 const ContactForm = nextDynamic(() => import("@/components/ContactForm"));
+import { formatTimelineShort } from "@/lib/timeline";
 const ProgramQuickNav = nextDynamic(() => import("@/components/Residency/ProgramQuickNav"));
 const Breadcrumb = nextDynamic(() => import("@/components/Common/Breadcrumb"));
 const EligibilityQuickCheck = nextDynamic(() => import("@/components/Residency/EligibilityQuickCheck"));
@@ -187,6 +188,7 @@ export default async function ProgramPage(props: {
       minInvestment?: number;
       currency?: string;
       timelineMonths?: number;
+      timelineLabel?: string;
       tags?: string[];
       heroImage?: string;
       score: number;
@@ -212,6 +214,7 @@ export default async function ProgramPage(props: {
                 minInvestment: candMeta.minInvestment,
                 currency: candMeta.currency,
                 timelineMonths: candMeta.timelineMonths,
+                timelineLabel: (candMeta as any).timelineLabel as string | undefined,
                 tags: (candMeta as any).tags ?? [],
                 heroImage: (candMeta as any).heroImage as string | undefined,
                 score,
@@ -256,11 +259,22 @@ export default async function ProgramPage(props: {
           ? "comparison"
           : null;
 
+    const hasCompanySection = Boolean(
+      snapshot?.structure ||
+      snapshot?.ownership ||
+      snapshot?.office ||
+      snapshot?.visaQuota != null ||
+      snapshot?.bankReady != null ||
+      snapshot?.highlights?.length,
+    );
+    const hasOverviewSection = Boolean(sections[overviewKey]);
+    const hasFaqSection = Boolean((meta as any).faq?.length);
+
     /** Quick Nav — corporate */
     const sectionsForNav: { id: string; label: string }[] = [
       { id: "quick-facts", label: "Quick Facts" },
-      { id: "company", label: "Company" },
-      { id: "overview", label: "Overview" },
+      ...(hasCompanySection ? [{ id: "company", label: "Company" }] : []),
+      ...(hasOverviewSection ? [{ id: "overview", label: "Overview" }] : []),
       ...(sponsorship?.thresholds?.length || sponsorship?.notes?.length
         ? [{ id: "sponsorship", label: "Sponsorship" }]
         : []),
@@ -272,7 +286,7 @@ export default async function ProgramPage(props: {
       ...(comparisonKey ? [{ id: "comparison", label: "Comparison" }] : []),
       ...(sections[whyKey] ? [{ id: "why-country", label: `Why ${meta.country}` }] : []),
       ...(authorityNotes?.length ? [{ id: "authority-notes", label: "Authority notes" }] : []),
-      { id: "faq", label: "FAQ" },
+      ...(hasFaqSection ? [{ id: "faq", label: "FAQ" }] : []),
       ...(disqualifiers.length ? [{ id: "not-a-fit", label: "Not a fit?" }] : []),
       ...(otherPrograms.length ? [{ id: "other-programs", label: "Other Programs" }] : []),
       ...(relatedPrograms.length ? [{ id: "related", label: "Related" }] : []),
@@ -356,6 +370,7 @@ export default async function ProgramPage(props: {
                 minInvestment={meta.minInvestment}
                 currency={meta.currency}
                 timelineMonths={meta.timelineMonths}
+                timelineLabel={(meta as any).timelineLabel}
                 tags={(meta as any).tags}
               />
             </section>
@@ -371,12 +386,7 @@ export default async function ProgramPage(props: {
             ) : null}
 
             {/* COMPANY SNAPSHOT */}
-            {(snapshot?.structure ||
-              snapshot?.ownership ||
-              snapshot?.office ||
-              snapshot?.visaQuota != null ||
-              snapshot?.bankReady != null ||
-              snapshot?.highlights?.length) && (
+            {hasCompanySection && (
                 <section id="company" className="scroll-mt-28">
                   <CompanySnapshot
                     structure={snapshot?.structure}
@@ -587,7 +597,10 @@ export default async function ProgramPage(props: {
                       typeof r.minInvestment === "number"
                         ? `${r.currency ?? ""} ${r.minInvestment.toLocaleString()}`
                         : "No minimum";
-                    const time = r.timelineMonths ? `${r.timelineMonths} mo` : "Varies";
+                    const time = formatTimelineShort(
+                      r.timelineMonths,
+                      r.timelineLabel,
+                    );
                     return (
                       <li key={r.url}>
                         <Link
@@ -658,7 +671,7 @@ export default async function ProgramPage(props: {
           </div>
 
           {/* SIDEBAR (desktop) */}
-          <aside className="order-1 lg:order-2 lg:col-span-4 xl:col-span-4 space-y-6 self-start lg:sticky lg:top-24">
+          <aside className="hidden lg:block order-1 lg:order-2 lg:col-span-4 xl:col-span-4 space-y-6 self-start lg:sticky lg:top-24">
             {quickCheck?.questions?.length ? (
               <div className="hidden lg:block">
                 <EligibilityQuickCheck config={quickCheck} />

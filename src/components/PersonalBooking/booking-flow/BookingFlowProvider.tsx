@@ -1,24 +1,18 @@
 "use client";
 
-import React, { useMemo, useState, useCallback, useEffect, useRef } from "react";
+import React, { useMemo, useCallback, useEffect, useRef } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { BookingFlowContext } from "./useBookingFlow";
-import BookingModal from "./BookingModal";
-import type { BookingPlan } from "./types";
-import { getLocalTimezone } from "./utils/time";
+import { TOPMATE_BOOKING_URL } from "./index";
 
 type Props = { children: React.ReactNode };
 
 export default function BookingFlowProvider({ children }: Props) {
-  const [openModal, setOpenModal] = useState(false);
-  const [initialPlan, setInitialPlan] = useState<BookingPlan | undefined>();
-
-  const open = useCallback((args?: { plan?: BookingPlan }) => {
-    setInitialPlan(args?.plan);
-    setOpenModal(true);
+  const open = useCallback((_args?: { plan?: unknown }) => {
+    window.open(TOPMATE_BOOKING_URL, "_blank", "noopener,noreferrer");
   }, []);
 
-  const close = useCallback(() => setOpenModal(false), []);
+  const close = useCallback(() => {}, []);
 
   const value = useMemo(() => ({ open, close }), [open, close]);
 
@@ -39,11 +33,9 @@ export default function BookingFlowProvider({ children }: Props) {
         : null);
 
     if (param != null) {
-      const plan: BookingPlan = param === "paid" ? "paid" : "free";
       openedFromUrl.current = true;
-      open({ plan });
 
-      // Clean the URL (remove ?book=... / #book) without scrolling or reload
+      // Clean the URL first, then open Topmate
       const url = new URL(window.location.href);
       url.searchParams.delete("book");
       url.hash = "";
@@ -51,23 +43,14 @@ export default function BookingFlowProvider({ children }: Props) {
         url.pathname + (url.search ? `?${url.searchParams.toString()}` : ""),
         { scroll: false }
       );
-    }
-  }, [sp, open, router, pathname]);
 
-  // Resolve the user's timezone once per mount
-  const defaultTimezone = useMemo(() => getLocalTimezone(), []);
+      window.open(TOPMATE_BOOKING_URL, "_blank", "noopener,noreferrer");
+    }
+  }, [sp, router, pathname]);
 
   return (
     <BookingFlowContext.Provider value={value}>
       {children}
-
-      {openModal && (
-        <BookingModal
-          onCloseAction={close}
-          initialPlan={initialPlan}
-          defaultTimezone={defaultTimezone}
-        />
-      )}
     </BookingFlowContext.Provider>
   );
 }

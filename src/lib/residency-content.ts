@@ -8,6 +8,7 @@ import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import type { ReactNode } from "react";
+import { normalizeTimelineValue } from "@/lib/timeline";
 
 /* =========================
  * Types
@@ -22,6 +23,8 @@ export type CountryMeta = {
   heroImage?: string;
   heroVideo?: string;
   heroPoster?: string;
+  timelineMonths?: number;
+  timelineLabel?: string;
   introPoints?: string[];
   tags?: string[];
   seo?: { title?: string; description?: string; keywords?: string[] };
@@ -30,10 +33,18 @@ export type CountryMeta = {
 
 export type Step = { title: string; description?: string };
 
+export type GovernmentFee = {
+  label: string;
+  amount?: number;
+  currency?: "USD" | "EUR" | "AED" | "INR" | "CAD" | "GBP" | "CHF";
+  sourceLabel?: string;
+  sourceUrl?: string;
+};
+
 export type PriceRow = {
   label: string;
   amount?: number;
-  currency?: "USD" | "EUR" | "AED" | "INR" | "CAD" | "GBP";
+  currency?: "USD" | "EUR" | "AED" | "INR" | "CAD" | "GBP" | "CHF";
   when?: string;
   notes?: string;
 };
@@ -41,7 +52,7 @@ export type PriceRow = {
 export type ProofOfFundsRow = {
   label?: string;
   amount: number;
-  currency?: "USD" | "EUR" | "AED" | "INR" | "CAD" | "GBP";
+  currency?: "USD" | "EUR" | "AED" | "INR" | "CAD" | "GBP" | "CHF";
   notes?: string;
 };
 
@@ -53,6 +64,50 @@ export type QuickCheckConfig = {
     type: "boolean" | "select" | "number" | "text";
     options?: string[];
   }[];
+  ctas?: {
+    primaryHref?: string;
+    primaryText?: string;
+    secondaryHref?: string;
+    secondaryText?: string;
+  };
+};
+
+export type DocumentChecklistGroup = {
+  group: string;
+  documents: string[];
+  notes?: string;
+};
+
+export type FamilyMatrix = {
+  childrenUpTo?: number;
+  parentsFromAge?: number;
+  siblings?: boolean;
+  spouse?: boolean;
+};
+
+export type ProjectRow = {
+  name: string;
+  minBuyIn?: number;
+  holdMonths?: number;
+  notes?: string;
+  image?: string;
+};
+
+export type CostEstimatorConfig = {
+  baseOptions?: {
+    id: string;
+    label: string;
+    amount: number;
+  }[];
+  defaultBaseId?: string;
+  adults?: number;
+  children?: number;
+  addons?: {
+    id: string;
+    label: string;
+    amount: number;
+    per?: "application" | "adult" | "child";
+  }[];
 };
 
 export type ProgramMeta = {
@@ -63,8 +118,9 @@ export type ProgramMeta = {
   programSlug: string;
   tagline?: string;
   minInvestment?: number;
-  currency?: "USD" | "EUR" | "AED" | "INR" | "CAD" | "GBP";
+  currency?: "USD" | "EUR" | "AED" | "INR" | "CAD" | "GBP" | "CHF";
   timelineMonths?: number;
+  timelineLabel?: string;
   tags?: string[];
   benefits?: string[];
   requirements?: string[];
@@ -75,6 +131,16 @@ export type ProgramMeta = {
   proofOfFunds?: ProofOfFundsRow[];
   disqualifiers?: string[];
   quickCheck?: QuickCheckConfig;
+  routeType?: string;
+  holdingPeriodMonths?: number;
+  lastUpdated?: string;
+  governmentFees?: GovernmentFee[];
+  riskNotes?: string[];
+  complianceNotes?: string[];
+  projectList?: ProjectRow[];
+  documentChecklist?: DocumentChecklistGroup[];
+  familyMatrix?: FamilyMatrix;
+  costEstimator?: CostEstimatorConfig;
   heroImage?: string;
   heroVideo?: string;
   heroPoster?: string;
@@ -88,6 +154,7 @@ export type ProgramSections = Record<string, ReactNode>;
  * Constants & tiny utils
  * =======================*/
 const ROOT = path.join(process.cwd(), "content", "residency");
+const DEFAULT_PROJECT_IMAGE = "/images/citizenship/grenada/harborview-suites-share-units.webp";
 
 const exists = (p: string) => {
   try {
@@ -108,6 +175,38 @@ const coerceNum = (v: unknown): number | undefined => {
   if (typeof v === "number") return v;
   if (typeof v === "string" && v.trim() !== "" && !isNaN(Number(v))) return Number(v);
   return undefined;
+};
+
+const coerceStringArray = (v: unknown): string[] | undefined => {
+  if (typeof v === "string") {
+    const s = v.trim();
+    return s ? [s] : undefined;
+  }
+  if (!Array.isArray(v)) return undefined;
+  const out = v
+    .map((item) => (typeof item === "string" ? item.trim() : ""))
+    .filter(Boolean);
+  return out.length ? out : undefined;
+};
+
+const normalizeAssetPath = (v: unknown): string | undefined => {
+  if (typeof v !== "string") return undefined;
+  const s = v.trim();
+  if (!s) return undefined;
+  if (/^https?:\/\//i.test(s)) return s;
+  return s.startsWith("/") ? s : `/${s.replace(/^\.?\/*/, "")}`;
+};
+
+const publicAssetExists = (assetPath: string): boolean => {
+  if (/^https?:\/\//i.test(assetPath)) return true;
+  const localPath = assetPath.split(/[?#]/, 1)[0];
+  return exists(path.join(process.cwd(), "public", localPath.replace(/^\/+/, "")));
+};
+
+const resolveProjectImage = (v: unknown): string => {
+  const assetPath = normalizeAssetPath(v);
+  if (!assetPath) return DEFAULT_PROJECT_IMAGE;
+  return publicAssetExists(assetPath) ? assetPath : DEFAULT_PROJECT_IMAGE;
 };
 
 /** MDX options */
@@ -202,6 +301,7 @@ function touchCacheForDir(dir: string) {
  * Normalizers
  * =======================*/
 function normalizeCountry(meta: Partial<CountryMeta>, slug: string): CountryMeta {
+  const timeline = normalizeTimelineValue((meta as any).timelineMonths);
   const countrySlug = meta.countrySlug || slug;
   const country = meta.country || meta.title || toTitle(countrySlug);
   const title = meta.title || (typeof country === "string" ? country : toTitle(countrySlug));
@@ -212,6 +312,8 @@ function normalizeCountry(meta: Partial<CountryMeta>, slug: string): CountryMeta
     country: String(country),
     countrySlug: String(countrySlug),
     heroImage: String(heroImage),
+    timelineMonths: timeline.months,
+    timelineLabel: timeline.label,
     category: "residency",
   } as CountryMeta;
 }
@@ -225,13 +327,24 @@ function normalizeProgram(
 
   // tolerate misspellings from content (e.g., "procesSteps")
   if (meta.procesSteps && !meta.processSteps) meta.processSteps = meta.procesSteps;
+  if (meta.applicationProcess && !meta.processSteps) meta.processSteps = meta.applicationProcess;
+  if (meta.governmentfees && !meta.governmentFees) meta.governmentFees = meta.governmentfees;
+  if (meta.risknotes && !meta.riskNotes) meta.riskNotes = meta.risknotes;
+  if (meta.compliancenotes && !meta.complianceNotes)
+    meta.complianceNotes = meta.compliancenotes;
 
   meta.programSlug = meta.programSlug || pSlug;
   meta.countrySlug = meta.countrySlug || cSlug;
   meta.category = "residency";
 
   if (meta.minInvestment !== undefined) meta.minInvestment = coerceNum(meta.minInvestment);
-  if (meta.timelineMonths !== undefined) meta.timelineMonths = coerceNum(meta.timelineMonths);
+  if (meta.timelineMonths !== undefined) {
+    const timeline = normalizeTimelineValue(meta.timelineMonths);
+    meta.timelineMonths = timeline.months;
+    meta.timelineLabel = timeline.label;
+  }
+  if (meta.holdingPeriodMonths !== undefined)
+    meta.holdingPeriodMonths = coerceNum(meta.holdingPeriodMonths);
 
   if (Array.isArray(meta.prices)) {
     meta.prices = meta.prices.map((row: any) => ({
@@ -244,6 +357,103 @@ function normalizeProgram(
       ...row,
       amount: coerceNum(row?.amount) ?? 0,
     }));
+  }
+  if (Array.isArray(meta.processSteps)) {
+    meta.processSteps = meta.processSteps
+      .map((row: any) => {
+        if (typeof row === "string") return { title: row };
+        if (!row || typeof row !== "object") return null;
+        const title = String(row.title ?? row.name ?? row.step ?? "").trim();
+        if (!title) return null;
+        const description =
+          typeof row.description === "string" && row.description.trim()
+            ? row.description.trim()
+            : undefined;
+        return { ...row, title, description };
+      })
+      .filter(Boolean);
+  }
+  if (Array.isArray(meta.governmentFees)) {
+    meta.governmentFees = meta.governmentFees.map((row: any) => ({
+      ...row,
+      amount: coerceNum(row?.amount),
+    }));
+  }
+  meta.riskNotes = coerceStringArray(meta.riskNotes);
+  meta.complianceNotes = coerceStringArray(meta.complianceNotes);
+  if (Array.isArray(meta.projectList)) {
+    meta.projectList = meta.projectList.map((row: any) => ({
+      ...row,
+      minBuyIn: coerceNum(row?.minBuyIn),
+      holdMonths: coerceNum(row?.holdMonths),
+      image: resolveProjectImage(row?.image),
+    }));
+  }
+  if (Array.isArray(meta.documentChecklist)) {
+    meta.documentChecklist = meta.documentChecklist
+      .map((row: any) => {
+        const group = typeof row?.group === "string" ? row.group.trim() : "";
+        const documents = Array.isArray(row?.documents)
+          ? row.documents
+              .map((item: unknown) => (typeof item === "string" ? item.trim() : ""))
+              .filter(Boolean)
+          : [];
+        if (!group || !documents.length) return null;
+        return {
+          group,
+          documents,
+          notes:
+            typeof row?.notes === "string" && row.notes.trim() ? row.notes.trim() : undefined,
+        };
+      })
+      .filter(Boolean);
+  }
+  if (meta.familyMatrix && typeof meta.familyMatrix === "object") {
+    meta.familyMatrix = {
+      ...meta.familyMatrix,
+      childrenUpTo: coerceNum(meta.familyMatrix.childrenUpTo),
+      parentsFromAge: coerceNum(meta.familyMatrix.parentsFromAge),
+      siblings: Boolean(meta.familyMatrix.siblings),
+      spouse:
+        meta.familyMatrix.spouse === undefined ? undefined : Boolean(meta.familyMatrix.spouse),
+    };
+  }
+  if (meta.costEstimator && typeof meta.costEstimator === "object") {
+    meta.costEstimator = {
+      ...meta.costEstimator,
+      adults: coerceNum(meta.costEstimator.adults),
+      children: coerceNum(meta.costEstimator.children),
+      baseOptions: Array.isArray(meta.costEstimator.baseOptions)
+        ? meta.costEstimator.baseOptions
+            .map((row: any) => {
+              const id = typeof row?.id === "string" ? row.id.trim() : "";
+              const label = typeof row?.label === "string" ? row.label.trim() : "";
+              const amount = coerceNum(row?.amount);
+              if (!id || !label || amount === undefined) return null;
+              return { id, label, amount };
+            })
+            .filter(Boolean)
+        : undefined,
+      addons: Array.isArray(meta.costEstimator.addons)
+        ? meta.costEstimator.addons
+            .map((row: any) => {
+              const id = typeof row?.id === "string" ? row.id.trim() : "";
+              const label = typeof row?.label === "string" ? row.label.trim() : "";
+              const amount = coerceNum(row?.amount);
+              if (!id || !label || amount === undefined) return null;
+              return {
+                id,
+                label,
+                amount,
+                per:
+                  row?.per === "application" || row?.per === "adult" || row?.per === "child"
+                    ? row.per
+                    : undefined,
+              };
+            })
+            .filter(Boolean)
+        : undefined,
+    };
   }
 
   return meta as ProgramMeta;

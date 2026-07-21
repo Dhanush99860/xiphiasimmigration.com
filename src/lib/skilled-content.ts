@@ -8,6 +8,7 @@ import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import type { ReactNode } from "react";
+import { normalizeTimelineValue } from "@/lib/timeline";
 
 /* =========================
  * Types (Skilled — compatible with existing UI)
@@ -34,6 +35,8 @@ export type CountryMeta = {
   heroImage?: string;
   heroVideo?: string;
   heroPoster?: string;
+  timelineMonths?: number;
+  timelineLabel?: string;
   introPoints?: string[];
   tags?: string[];
   seo?: { title?: string; description?: string; keywords?: string[] };
@@ -110,6 +113,7 @@ export type ProgramMeta = {
   minInvestment?: number;              // reused for min salary / lowest cost
   currency?: CurrencyCode;
   timelineMonths?: number;
+  timelineLabel?: string;
   tags?: string[];
 
   /** Skilled-specific */
@@ -379,6 +383,7 @@ function normalizeCountry(
   slug: string
 ): CountryMeta {
   const meta: any = { ...metaIn };
+  const timeline = normalizeTimelineValue(meta.timelineMonths);
 
   const countrySlug = meta.countrySlug || slug;
   const country = meta.country || meta.title || toTitle(countrySlug);
@@ -400,6 +405,8 @@ function normalizeCountry(
     title: String(title),
     country: String(country),
     countrySlug: String(countrySlug),
+    timelineMonths: timeline.months,
+    timelineLabel: timeline.label,
     category: "skilled",
   } as CountryMeta;
 }
@@ -417,7 +424,11 @@ function normalizeProgram(
 
   // Backwards-compatible numeric coercions
   if (meta.minInvestment !== undefined) meta.minInvestment = coerceNum(meta.minInvestment);
-  if (meta.timelineMonths !== undefined) meta.timelineMonths = coerceNum(meta.timelineMonths);
+  if (meta.timelineMonths !== undefined) {
+    const timeline = normalizeTimelineValue(meta.timelineMonths);
+    meta.timelineMonths = timeline.months;
+    meta.timelineLabel = timeline.label;
+  }
   if (meta.minSalary !== undefined) meta.minSalary = coerceNum(meta.minSalary);
   if (meta.experienceMinYears !== undefined)
     meta.experienceMinYears = coerceNum(meta.experienceMinYears);

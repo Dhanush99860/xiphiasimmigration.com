@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { Phone, Mail, Facebook, Twitter, Instagram, Youtube, Linkedin } from 'lucide-react';
+import { Phone, PhoneCall, Mail, Globe, LogIn } from 'lucide-react';
 import GlobalSearch from '@/components/GlobalSearch';
 
 export default function TopBar() {
@@ -10,111 +10,76 @@ export default function TopBar() {
     <div className="hidden lg:block">
       <div className="mx-auto max-w-screen-2xl px-4">
         <div
-          className={[
-            'grid grid-cols-[auto_1fr_auto] items-center gap-3 py-2 px-2',
-            'text-[13px] leading-6 text-white',
-            'rounded-xl ring-1 ring-white/10',
-            'bg-white/[0.08] backdrop-blur-md',
-          ].join(' ')}
+          className="flex items-center justify-between py-2 px-0 text-[12.5px] leading-6 text-white"
         >
-          {/* Contact chips */}
-          <div className="flex items-center gap-2 xl:gap-3">
-            {/* 🔧 FIXED: tel: now matches the displayed number +91 90194 00500 */}
-            <Chip
-              href="tel:+919019400500"
-              label="+91 9019400500"
-              ariaLabel="Call +91 9019400500"
-            />
-            <Chip
-              href="mailto:immigration@xiphias.in"
-              label="immigration@xiphias.in"
-              ariaLabel="Email immigration@xiphias.in"
-            />
-          </div>
-
-          {/* Center: GlobalSearch trigger (real, pill-style) */}
-          <div className="flex justify-center">
-            <div className="w-full max-w-xl">
-              <GlobalSearch placeholder="Search..." />
-            </div>
-          </div>
-
-          {/* Social + Login */}
-          <div className="flex items-center justify-end gap-1.5">
-            <CircleLink href="https://www.facebook.com/xiphiasimmigration" label="Facebook">
-              <Facebook className="h-4 w-4" aria-hidden />
-            </CircleLink>
-            <CircleLink href="https://www.instagram.com/xiphias.immigration/" label="Instagram">
-              <Instagram className="h-4 w-4" aria-hidden />
-            </CircleLink>
-            <CircleLink href="https://x.com/XiphiasInfo" label="Twitter">
-              <Twitter className="h-4 w-4" aria-hidden />
-            </CircleLink>
-            <CircleLink href="https://www.youtube.com/@immigrationxiphias5228" label="Youtube">
-              <Youtube className="h-4 w-4" aria-hidden />
-            </CircleLink>
-            <CircleLink
-              href="https://www.linkedin.com/company/xiphias-immigration-pvt-limited?trk=prof-following-company-logo"
-              label="Linkedin"
+          {/* Left — inline contact info */}
+          <div className="flex items-center gap-3">
+            <a
+              href="tel:+919021335577"
+              aria-label="Call +91 9021335577"
+              className="group flex items-center gap-1.5 text-white/80 hover:text-white transition-colors duration-150"
             >
-              <Linkedin className="h-4 w-4" aria-hidden />
-            </CircleLink>
+              <span className="inline-flex h-[22px] w-[22px] items-center justify-center rounded-full bg-secondary/90 text-primary shrink-0 group-hover:bg-secondary transition-colors duration-150">
+                <Phone className="h-3 w-3" aria-hidden />
+              </span>
+              <span className="font-medium tracking-wide">+91 9021335577</span>
+            </a>
+
+            <a
+              href="tel:+918049768088"
+              aria-label="Call landline +91 08049768088"
+              title="Landline"
+              className="group flex items-center gap-1.5 font-medium tracking-wide text-white/80 hover:text-white transition-colors duration-150"
+            >
+              <span className="inline-flex h-[22px] w-[22px] items-center justify-center rounded-full bg-secondary/90 text-primary shrink-0 group-hover:bg-secondary transition-colors duration-150">
+                <PhoneCall className="h-3 w-3" aria-hidden />
+              </span>
+              +91 08049768088
+            </a>
+
+            <span className="h-4 w-px bg-white/20" aria-hidden />
+
+            <a
+              href="mailto:immigration@xiphias.in"
+              aria-label="Email immigration@xiphias.in"
+              className="group flex items-center gap-1.5 text-white/80 hover:text-white transition-colors duration-150"
+            >
+              <span className="inline-flex h-[22px] w-[22px] items-center justify-center rounded-full bg-secondary/90 text-primary shrink-0 group-hover:bg-secondary transition-colors duration-150">
+                <Mail className="h-3 w-3" aria-hidden />
+              </span>
+              <span className="font-medium tracking-wide">immigration@xiphias.in</span>
+            </a>
+          </div>
+
+          {/* Right — actions */}
+          <div className="flex items-center gap-2.5">
+
+            {/* Compact search icon */}
+            <GlobalSearch compact />
+
+            <span className="h-4 w-px bg-white/20" aria-hidden />
+
+            {/* Passport Power */}
+            <Link
+              href="/passport-index"
+              className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1.5 text-[12px] font-bold text-primary ring-1 ring-white/20 hover:bg-[#f0cb3b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 transition-colors duration-150"
+            >
+              <Globe className="h-3.5 w-3.5 shrink-0" aria-hidden />
+              Passport Power
+            </Link>
+
+            {/* Login icon */}
             <Link
               href="https://www.xiphiasimmigration.com/XIPHIAS/Account/Login"
-              className="ml-1 inline-flex h-8 items-center justify-center rounded-full bg-primary/45 px-3 text-[12px] text-white ring-1 ring-white/20 hover:bg-primary/55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+              aria-label="Sign in to X-Hub"
+              title="X-Hub Login"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/15 text-white ring-1 ring-white/30 hover:bg-white/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 transition-colors duration-150"
             >
-              Login
+              <LogIn className="h-4 w-4" aria-hidden />
             </Link>
           </div>
         </div>
       </div>
     </div>
-  );
-}
-
-/* ---------------------------------------------
-   Sub components
----------------------------------------------- */
-
-function Chip({ href, label, ariaLabel }: { href: string; label: string; ariaLabel: string }) {
-  const isTel = href.startsWith('tel');
-  return (
-    <a
-      href={href}
-      aria-label={ariaLabel}
-      className="inline-flex min-h-[36px] items-center gap-2 rounded-full bg-primary/45 px-3 py-1.5 text-white ring-1 ring-white/20 hover:bg-primary/55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
-    >
-      <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/95 text-primary">
-        {isTel ? (
-          <Phone className="h-3.5 w-3.5" aria-hidden />
-        ) : (
-          <Mail className="h-3.5 w-3.5" aria-hidden />
-        )}
-      </span>
-      <span className="whitespace-nowrap">{label}</span>
-    </a>
-  );
-}
-
-function CircleLink({
-  href,
-  label,
-  children,
-}: {
-  href: string;
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <a
-      href={href}
-      title={label}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={label}
-      className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary/45 text-white ring-1 ring-white/20 hover:bg-primary/55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
-    >
-      {children}
-    </a>
   );
 }

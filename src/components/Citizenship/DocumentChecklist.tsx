@@ -8,7 +8,7 @@ import React from "react";
  * - SEO: ItemList JSON-LD
  */
 
-export type ChecklistGroup = { group: string; documents: string[] };
+export type ChecklistGroup = { group: string; documents: string[]; notes?: string };
 
 type Props = {
   groups: ChecklistGroup[];
@@ -245,6 +245,11 @@ export default function DocumentChecklistNeo({
                   </li>
                 ))}
               </ul>
+              {g.notes ? (
+                <p className="mt-3 text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">
+                  {g.notes}
+                </p>
+              ) : null}
             </div>
           </details>
         ))}

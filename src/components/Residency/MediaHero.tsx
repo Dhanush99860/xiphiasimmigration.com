@@ -57,6 +57,8 @@ export default function MediaHero({
   loop?: boolean;
   startAt?: number; // seconds to start from (YouTube + HTML5)
 }) {
+  const shouldRenderImage = Boolean(imageSrc);
+  const shouldRenderVideo = !shouldRenderImage && Boolean(videoSrc);
   const ytId = videoSrc && isYouTubeUrl(videoSrc) ? getYouTubeId(videoSrc) : null;
 
   // Build the YouTube URL with flags that mirror the HTML5 attrs
@@ -81,7 +83,9 @@ export default function MediaHero({
     <header className="relative mb-4 overflow-hidden rounded-3xl">
       {/* MEDIA: mobile 16:9; desktop 16:7 */}
       <div className="relative w-full aspect-video md:aspect-[16/7] rounded-2xl md:rounded-3xl overflow-hidden">
-        {videoSrc ? (
+        {shouldRenderImage ? (
+          <Image src={imageSrc!} alt={title} fill className="object-cover" />
+        ) : shouldRenderVideo ? (
           ytId && youTubeSrc ? (
             // YouTube embed
             <iframe
@@ -115,8 +119,6 @@ export default function MediaHero({
               <source src={videoSrc} type="video/mp4" />
             </video>
           )
-        ) : imageSrc ? (
-          <Image src={imageSrc} alt={title} fill className="object-cover" />
         ) : (
           <div className="absolute inset-0 bg-slate-200 dark:bg-slateGray" />
         )}

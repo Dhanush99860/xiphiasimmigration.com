@@ -1,6 +1,7 @@
 // src/components/Citizenship/RelatedCompare.tsx
 import Link from "next/link";
 import React from "react";
+import { formatTimelineLong, formatTimelineShort } from "@/lib/timeline";
 
 export type RelatedItem = {
   url: string; // ideally internal like "/citizenship/malta"
@@ -9,6 +10,7 @@ export type RelatedItem = {
   minInvestment?: number;
   currency?: string;
   timelineMonths?: number;
+  timelineLabel?: string;
   tags?: string[];
   heroImage?: string;
 };
@@ -62,9 +64,7 @@ export default function RelatedCompare({
           const price = isNum(r.minInvestment)
             ? fmtCurrency(r.minInvestment!, r.currency)
             : "No minimum";
-          const time = isNum(r.timelineMonths)
-            ? plural(r.timelineMonths!, "mo")
-            : "Varies";
+          const time = formatTimelineShort(r.timelineMonths, r.timelineLabel);
 
           // ✅ Make sure Link always receives an internal path
           const href = toInternalPath(r.url);
@@ -333,7 +333,7 @@ function toItemListJsonLd(items: RelatedItem[]) {
         {
           "@type": "PropertyValue",
           name: "Typical timeline",
-          value: plural(r.timelineMonths, "month"),
+          value: formatTimelineLong(r.timelineMonths, r.timelineLabel),
         },
       ];
     }

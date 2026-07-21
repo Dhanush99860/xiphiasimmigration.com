@@ -5,7 +5,7 @@
 // ============================
 "use client";
 
-import React, { useId, useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
@@ -13,17 +13,26 @@ import LogoWhite from "@/components/Layout/Header/LogoWhite/index";
 
 // --------- Groups (landing links only) ----------
 const EXPLORE = [
+  { label: "Programs", href: "/programs" },
+  { label: "Countries", href: "/countries" },
+  { label: "Solutions", href: "/solutions" },
   { label: "Residency", href: "/residency" },
   { label: "Citizenship", href: "/citizenship" },
   { label: "Corporate", href: "/corporate" },
   { label: "Skilled", href: "/skilled" },
+  { label: "Work Permits", href: "/work-permits" },
 ];
 
 const RESOURCES = Object.freeze([
-  { label: "Eligibility Checker", href: "/eligibility" },
+  { label: "Start Your Journey", href: "/eligibility" },
+  { label: "XIA Intelligence", href: "/xia-intelligence" },
+  { label: "X-Hub", href: "/x-hub" },
   { label: "Guides & Resources", href: "/guide" },
+  { label: "Insights", href: "/insights" },
   { label: "Events", href: "/event" },
   { label: "Awards & Recognition", href: "/awards" },
+  { label: 'Partner With Us', href: '/partner-with-us' },
+  { label: 'Reviews', href: '/reviews' },
 ]);
 
 
@@ -51,13 +60,13 @@ const LEGAL = [
 const OFFICES = [
   {
     name: "Bengaluru HQ",
-    street: "Aurbis Prime, 11 Kaveri Regent Coronet, 80 ft Rd, 3rd Blk, Koramangala",
+    street: "1st Floor, JK Nirmala Arcade, Plot no. 780, 80 Feet Rd, 4th Block, Koramangala",
     city: "Bengaluru",
     postal: "560034",
     country: "India",
     hours: "Mon–Sat, 9:30–18:30",
-    phone: "+91 90194 00500",
-    maps: "https://maps.google.com/?q=Aurbis+Prime+Kaveri+Regent+Coronet+Koramangala+Bengaluru+560034",
+    phone: "+91 9021335577",
+    maps: "https://maps.google.com/?q=JK+Nirmala+Arcade+Plot+780+80+Feet+Road+4th+Block+Koramangala+Bengaluru+560034",
   },
   {
     name: "Gurugram",
@@ -82,7 +91,7 @@ const OFFICES = [
 
   {
     name: "Qatar",
-    street: "International Law Chambers LLC, Office 3402, Al Jazeera Tower, Conference Center Rd, West Bay",
+    street: "ILC LLC, Office 3402, Al Jazeera Tower, Conference Center Rd, West Bay",
     city: "Doha",
     postal: "",
     country: "Qatar",
@@ -92,13 +101,13 @@ const OFFICES = [
   },
   {
     name: "Australia",
-    street: "19 McLochlan St, Mount Waverley",
-    city: "Melbourne",
-    postal: "VIC 3149",
+    street: "SSCS-Suite 204, 227 Collins Street, Melbourne, Vic – 3000.",
+    city: "",
+    postal: "",
     country: "Australia",
-    hours: "Mon–Fri, 9:00–17:00",
+    hours: "Mon–Sat, 9:00–17:00",
     phone: "+61 451 239 239",
-    maps: "https://maps.google.com/?q=19+McLochlan+St+Mount+Waverley+VIC+3149",
+    maps: "https://maps.google.com/?q=NextGen+Group+Level+2/415+Bourke+St+Melbourne+VIC+3000+Australia",
   },
   {
     name: "Canada (Waterloo)",
@@ -106,7 +115,7 @@ const OFFICES = [
     city: "Waterloo, ON",
     postal: "N2J 3G9",
     country: "Canada",
-    hours: "Mon–Fri, 9:00–17:00",
+    hours: "Mon–Sat, 9:00–17:00",
     phone: "+1 438 379 9101",
     maps: "https://maps.google.com/?q=3-133+Weber+St+N+Suite+514+Waterloo+ON+N2J+3G9",
   },
@@ -165,7 +174,7 @@ function Collapsible({
   children: React.ReactNode;
   defaultOpen?: boolean;
 }) {
-  const panelId = useId();
+  const panelId = `footer-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}`;
   const [open, setOpen] = useState(defaultOpen);
   return (
     <div className="border-b border-white/15 md:border-none" aria-label={title}>
@@ -197,6 +206,7 @@ export default function Footer() {
 
   // Newsletter state
   const [email, setEmail] = React.useState("");
+  const [honeypot, setHoneypot] = React.useState("");
   const [status, setStatus] = React.useState<"idle" | "loading" | "success" | "error">("idle");
   const [statusMessage, setStatusMessage] = React.useState<string | null>(null);
 
@@ -215,10 +225,14 @@ export default function Footer() {
 
       const res = await fetch("/api/newsletter/subscribe", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-Requested-With": "XMLHttpRequest",
+        },
         body: JSON.stringify({
           email,
           source: "footer", // helps you track where it came from
+          hp: honeypot,
         }),
       });
 
@@ -298,8 +312,9 @@ export default function Footer() {
 
               <div className="flex flex-wrap gap-2 md:justify-end">
                 {[
-                  { href: "tel:+91-9019400500", icon: "mdi:phone", label: "+91-9019400500" },
-                  { href: "https://wa.me/91-9019400500", icon: "mdi:whatsapp", label: "WhatsApp", ext: true },
+                  { href: "tel:+919021335577", icon: "mdi:phone", label: "+91 9021335577" },
+                  { href: "tel:+918049768088", icon: "mdi:phone-classic", label: "+91 08049768088" },
+                  { href: "https://wa.me/919021335577", icon: "mdi:whatsapp", label: "WhatsApp", ext: true },
                   { href: "mailto:immigration@xiphias.in", icon: "mdi:email-outline", label: "Email" },
                 ].map(({ href, icon, label, ext }) => (
                   <Link
@@ -346,57 +361,67 @@ export default function Footer() {
               <div aria-label="Subscribe" className="w-full md:max-w-sm rounded-xl border border-white/15 bg-white/10 backdrop-blur-md p-3.5">
                 <h3 className="text-white/95 text-sm font-semibold mb-2">Subscribe</h3>
                 <form onSubmit={handleNewsletterSubmit} noValidate>
-  <label htmlFor="footer-email" className="sr-only">
-    Email address
-  </label>
+                  <label htmlFor="footer-email" className="sr-only">
+                    Email address
+                  </label>
 
-  <div className="flex items-stretch rounded-full overflow-hidden ring-1 ring-white/20 focus-within:ring-2 focus-within:ring-white/40">
-    <input
-      id="footer-email"
-      name="email"
-      type="email"
-      inputMode="email"
-      placeholder="you@email.com"
-      required
-      className="flex-1 min-w-0 px-3 h-10 bg-transparent text-white placeholder-white/70 outline-none"
-      value={email}
-      onChange={(e) => {
-        setEmail(e.target.value);
-        if (status !== "idle") {
-          setStatus("idle");
-          setStatusMessage(null);
-        }
-      }}
-      disabled={status === "loading"}
-    />
+                  <div className="flex items-stretch rounded-full overflow-hidden ring-1 ring-white/20 focus-within:ring-2 focus-within:ring-white/40">
+                    <input
+                      id="footer-email"
+                      name="email"
+                      type="email"
+                      inputMode="email"
+                      placeholder="you@email.com"
+                      required
+                      className="flex-1 min-w-0 px-3 h-10 bg-transparent text-white placeholder-white/70 outline-none"
+                      value={email}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        if (status !== "idle") {
+                          setStatus("idle");
+                          setStatusMessage(null);
+                        }
+                      }}
+                      disabled={status === "loading"}
+                    />
 
-    <button
-      type="submit"
-      className="px-4 h-10 text-sm font-medium text-black bg-secondary focus-visible:outline-none disabled:opacity-70 disabled:cursor-not-allowed"
-      disabled={!email || status === "loading"}
-    >
-      {status === "loading" ? "Subscribing..." : "Subscribe"}
-    </button>
-  </div>
+                    <button
+                      type="submit"
+                      className="px-4 h-10 text-sm font-medium text-black bg-secondary focus-visible:outline-none disabled:opacity-70 disabled:cursor-not-allowed"
+                      disabled={!email || status === "loading"}
+                    >
+                      {status === "loading" ? "Subscribing..." : "Subscribe"}
+                    </button>
+                  </div>
 
-  {/* Helper text + success/error */}
-  <p className="mt-1.5 text-[11px] text-white/75">
-    Weekly insights. No spam. By subscribing, you consent to our{" "}
-    <Link href="/privacy-policy" className="underline">
-      Privacy Policy
-    </Link>.
-  </p>
+                  <input
+                    type="text"
+                    name="hp"
+                    value={honeypot}
+                    onChange={(e) => setHoneypot(e.target.value)}
+                    className="sr-only"
+                    aria-hidden="true"
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
 
-  {statusMessage && (
-    <p
-      className={`mt-1 text-[11px] ${
-        status === "success" ? "text-emerald-200" : "text-red-200"
-      }`}
-    >
-      {statusMessage}
-    </p>
-  )}
-</form>
+                  <p className="mt-1.5 text-[11px] text-white/75">
+                    Weekly insights. No spam. By subscribing, you consent to our{" "}
+                    <Link href="/privacy-policy" className="underline">
+                      Privacy Policy
+                    </Link>.
+                  </p>
+
+                  {statusMessage && (
+                    <p
+                      className={`mt-1 text-[11px] ${
+                        status === "success" ? "text-emerald-200" : "text-red-200"
+                      }`}
+                    >
+                      {statusMessage}
+                    </p>
+                  )}
+                </form>
 
               </div>
             </div>
@@ -424,7 +449,7 @@ export default function Footer() {
               <Collapsible title="Resources">
                 <ul className="space-y-1.5">
                   {RESOURCES.map((l) => (
-                    <li key={l.href}>
+                    <li key={l.label}>
                       <Link
                         className="text-[13.5px] lg:text-[14px] text-white/85 hover:text-white underline-offset-4 hover:underline"
                         href={l.href}
@@ -550,10 +575,6 @@ export default function Footer() {
                     </a>
                   </div>
 
-                  {/* Optional deep-link row (hidden from layout; useful for crawlers) */}
-                  <span className="sr-only">
-                    iOS: apps.apple.com/app/id0000000000 — Android: play.google.com/store/apps/details?id=com.xiphias.app
-                  </span>
                 </div>
               </div>
             </div>
@@ -564,8 +585,9 @@ export default function Footer() {
               <h3 className="text-white/95 text-sm font-semibold mb-2">Get in touch</h3>
               <div className="flex flex-wrap gap-2 mb-2">
                 {[
-                  { href: "tel:+919019400500", icon: "mdi:phone", label: "Call" },
-                  { href: "https://wa.me/919019400500", icon: "mdi:whatsapp", label: "WhatsApp", ext: true },
+                  { href: "tel:+919021335577", icon: "mdi:phone", label: "Call" },
+                  { href: "tel:+918049768088", icon: "mdi:phone-classic", label: "Landline" },
+                  { href: "https://wa.me/919021335577", icon: "mdi:whatsapp", label: "WhatsApp", ext: true },
                   { href: "mailto:immigration@xiphias.in", icon: "mdi:email-outline", label: "Email" },
                   { href: "/personal-booking", icon: "mdi:calendar-clock", label: "Personal Paid Consultation" },
                 ].map(({ href, icon, label, ext }) => (
@@ -626,7 +648,7 @@ export default function Footer() {
                     <Icon icon="mdi:certificate-outline" className="h-5 w-5 mt-0.5" />
                     <div>
                       <strong className="text-[13.5px]">Accreditations</strong>
-                      <p className="text-[13px] text-white/85">RCIC R516194 • MARA 0854840</p>
+                      <p className="text-[13px] text-white/85">RCIC R516194 • MARA 1680615</p>
                     </div>
                   </div>
                 </li>
@@ -737,9 +759,17 @@ export default function Footer() {
 
         {/* ===== Bottom Legal Bar ===== */}
         <div className="py-5 border-t border-white/15">
-          <div className="mt-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-[11.5px] text-white/80">©2009–{year} XIPHIAS Immigration. All rights reserved.</p>
-            <p className="text-[11.5px] text-white/75">Registered in India • CIN: U74900KA2015PTC078396 • Jurisdiction: Bengaluru, Karnataka</p>
+            <p className="text-[11.5px] text-white/75">
+              Registered in India • CIN: U74900KA2015PTC078396 • Jurisdiction: Bengaluru, Karnataka
+            </p>
+            <Link
+              href="/content-admin"
+              className="inline-flex w-fit items-center justify-center rounded-full border border-white/25 bg-white/12 px-3 py-1.5 text-[11.5px] font-semibold text-white hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
+            >
+              Blog Admin Login
+            </Link>
           </div>
         </div>
       </div>
@@ -749,4 +779,3 @@ export default function Footer() {
     </footer>
   );
 }
-

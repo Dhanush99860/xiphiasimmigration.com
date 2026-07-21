@@ -76,11 +76,11 @@ export default function HeaderLink({ item }: Props) {
       hoverTimer.current = null;
     }
   };
-  const openWithIntent = (delay = 150) => {
+  const openWithIntent = (delay = 60) => {
     clearTimer();
     hoverTimer.current = window.setTimeout(() => setOpen(true), delay);
   };
-  const closeWithIntent = (delay = 200) => {
+  const closeWithIntent = (delay = 120) => {
     clearTimer();
     hoverTimer.current = window.setTimeout(() => setOpen(false), delay);
   };
@@ -123,12 +123,14 @@ export default function HeaderLink({ item }: Props) {
   React.useEffect(() => () => clearTimer(), []);
 
   const basePill =
-    'relative inline-flex items-center gap-1 rounded-xl px-3 py-2 text-[14px] font-medium leading-6 outline-none transition-colors';
+    'relative inline-flex items-center gap-1 rounded-xl px-3 py-2 text-[14px] font-medium leading-6 outline-none transition-all duration-200 ease-out';
   const colorIdle =
     'text-white/90 hover:text-white focus-visible:ring-2 focus-visible:ring-white/40';
   const colorActive =
-    'text-white after:pointer-events-none after:absolute after:left-3 after:right-3 after:-bottom-0.5 after:h-0.5 after:rounded-full after:bg-white/80';
-  const pillBg = isActive ? 'bg-white/10 ring-1 ring-white/10' : 'hover:bg-white/10';
+    'text-white after:pointer-events-none after:absolute after:left-3 after:right-3 after:-bottom-0.5 after:h-[2px] after:rounded-full after:bg-secondary';
+  const pillBg = isActive
+    ? ''
+    : 'hover:text-white hover:bg-white/10 hover:rounded-xl';
 
   const shouldInterceptClick = !enableHover;
 

@@ -60,7 +60,7 @@ export default function WhyChooseUs() {
     <section
       id="why-choose-us"
       aria-labelledby="why-choose-heading"
-      className="py-10 sm:py-16 md:py-20"
+      className="py-10 sm:py-16 md:py-10"
     >
       <div className="container mx-auto lg:max-w-screen-2xl px-4 sm:px-6 lg:px-8 overflow-x-clip">
 

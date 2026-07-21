@@ -4,7 +4,7 @@ import * as React from "react";
 type Props = {
   headline: string;
   sub: string;
-  phone: string;     // e.g. "+91 90194 00500"
+  phone: string;     // e.g. "+91 9021335577"
   email: string;     // e.g. "immigration@xiphias.in"
   whatsapp?: string;
   responseNote?: string;

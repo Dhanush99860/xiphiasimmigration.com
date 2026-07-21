@@ -6,28 +6,45 @@ import { useMemo, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import type { Track, Result, AnswerMap } from "@/lib/eligibility/types";
 import { trackEvent } from "@/lib/eligibility/analytics";
+import { TOPMATE_REGISTRATION_URL } from "@/lib/topmate";
 
 type Props = {
   track: Track;
   result: Result;
   name: string;
+  email?: string;
+  phone?: string;
   answers: AnswerMap;
   /** Server-Action-safe handler to satisfy Next rule */
   onBackAction?: () => void | Promise<void>;
 };
 
 const SPRING = { type: "spring", stiffness: 340, damping: 32, mass: 0.72 };
+const DETAILED_REPORT_PRICE_INR = process.env.NEXT_PUBLIC_ASSESSMENT_REPORT_PRICE_INR || "10000";
+const DETAILED_REPORT_PAYMENT_URL = process.env.NEXT_PUBLIC_ASSESSMENT_REPORT_PAYMENT_URL || TOPMATE_REGISTRATION_URL;
 
-export function ResultCard({ track, result, name, answers, onBackAction }: Props) {
+function formatInr(value: string) {
+  const numeric = Number(String(value).replace(/[^\d.]/g, ""));
+  if (!Number.isFinite(numeric) || numeric <= 0) return `INR ${value}`;
+  return `INR ${numeric.toLocaleString("en-IN")}`;
+}
+
+export function ResultCard({ track, result, name, email, phone, answers, onBackAction }: Props) {
   const reduceMotion = useReducedMotion();
   const [downloading, setDownloading] = useState(false);
   const [status, setStatus] = useState<string>("");
+  const detailedReportPrice = useMemo(() => formatInr(DETAILED_REPORT_PRICE_INR), []);
 
   // Guard: ensure shape is always safe to render
   const safeResult: Result = {
     tier: result?.tier ?? "Borderline",
-    summary: result?.summary ?? "We couldn’t render the full summary. You can still download the PDF or talk to an expert.",
+    summary: result?.summary ?? "We could not render the full summary. You can still download the preview PDF or talk to an expert.",
     programs: Array.isArray(result?.programs) ? result.programs : [],
+    confidence: result?.confidence,
+    criteria: result?.criteria,
+    sources: result?.sources,
+    handoffRequired: result?.handoffRequired,
+    countryFocus: result?.countryFocus,
   };
 
   const whatsappLink = useMemo(() => {
@@ -41,19 +58,19 @@ export function ResultCard({ track, result, name, answers, onBackAction }: Props
 
   const handleDownload = async () => {
     try {
-      setStatus("Preparing your PDF…");
+      setStatus("Preparing your preview PDF...");
       setDownloading(true);
       const res = await fetch("/api/eligibility/report", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, track, answers }),
+        body: JSON.stringify({ name, email, phone, track, answers }),
       });
       if (!res.ok) throw new Error("Failed to generate PDF");
       const blob = await res.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `Eligibility_${track}.pdf`;
+      a.download = `XIPHIAS_Assessment_Preview_${track}.pdf`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -61,12 +78,42 @@ export function ResultCard({ track, result, name, answers, onBackAction }: Props
       trackEvent("pdf_download", { track });
       setStatus("Download started.");
     } catch {
-      setStatus("Sorry — couldn’t generate the PDF. Please try again.");
+      setStatus("Sorry - could not generate the preview PDF. Please try again.");
     } finally {
       setDownloading(false);
       // auto-clear the status after a moment
       setTimeout(() => setStatus(""), 3000);
     }
+  };
+
+  const recordDetailedReportIntent = () => {
+    trackEvent("detailed_report_cta_click", { track });
+    const payload = JSON.stringify({
+      source: "registration",
+      name,
+      email,
+      phone,
+      track,
+      country: safeResult.countryFocus,
+      program: safeResult.programs?.[0]?.name,
+      message: "Clicked INR 10,000 detailed report registration CTA.",
+      page: typeof window !== "undefined" ? window.location.pathname : "/eligibility",
+      tags: ["detailed-report-intent", "topmate-registration"],
+      consent: true,
+    });
+
+    if (typeof navigator !== "undefined" && "sendBeacon" in navigator) {
+      const blob = new Blob([payload], { type: "application/json" });
+      navigator.sendBeacon("/api/platform/lead", blob);
+      return;
+    }
+
+    void fetch("/api/platform/lead", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: payload,
+      keepalive: true,
+    });
   };
 
   const programs = safeResult.programs;
@@ -86,9 +133,14 @@ export function ResultCard({ track, result, name, answers, onBackAction }: Props
     >
       {/* Top bar */}
       <div className="mb-2 flex items-center justify-between gap-2">
-        <h3 id="result-title" className="text-lg sm:text-xl md:text-2xl font-semibold">
-          Your Eligibility Results
-        </h3>
+        <div>
+          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-blue-700 dark:text-blue-300">
+            Free assessment preview
+          </p>
+          <h3 id="result-title" className="mt-1 text-lg sm:text-xl md:text-2xl font-semibold">
+            Your XIPHIAS route direction
+          </h3>
+        </div>
         {onBackAction ? (
           <button
             type="button"
@@ -117,10 +169,25 @@ export function ResultCard({ track, result, name, answers, onBackAction }: Props
           <BadgeDot /> {capitalize(track)}
         </span>
         <TierBadge tier={safeResult.tier} />
+        {safeResult.countryFocus ? (
+          <span className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-800 ring-1 ring-blue-100 dark:bg-blue-950/40 dark:text-blue-200 dark:ring-blue-900">
+            {safeResult.countryFocus}
+          </span>
+        ) : null}
+        {typeof safeResult.confidence === "number" ? (
+          <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-700 ring-1 ring-slate-200 dark:bg-slate-900 dark:text-slate-200 dark:ring-slate-700">
+            Confidence {safeResult.confidence}
+          </span>
+        ) : null}
+        {safeResult.handoffRequired ? (
+          <span className="inline-flex items-center gap-2 rounded-full bg-amber-50 px-2 py-1 text-xs font-semibold text-amber-800 ring-1 ring-amber-200 dark:bg-amber-950/40 dark:text-amber-200 dark:ring-amber-900">
+            Staff review
+          </span>
+        ) : null}
       </div>
 
-      <p className="mt-2 text-sm sm:text-base">
-        <span className="font-semibold">{safeResult.tier}</span> — {safeResult.summary}
+      <p className="mt-3 max-w-3xl text-sm leading-7 text-black/75 dark:text-white/75 sm:text-base">
+        <span className="font-semibold">{safeResult.tier}</span> - {safeResult.summary}
       </p>
 
       {/* Programs */}
@@ -130,24 +197,126 @@ export function ResultCard({ track, result, name, answers, onBackAction }: Props
             <article
               key={`${p.name}-${p.why ?? ""}-${idx}`}
               className={[
-                "rounded-xl p-4 sm:p-5",
+                "rounded-xl p-4",
                 "ring-1 ring-black/10 dark:ring-white/10",
-                "bg-white dark:bg-black",
+                "bg-slate-50/70 dark:bg-white/[0.03]",
                 "hover:shadow-sm transition",
               ].join(" ")}
             >
-              <h4 className="text-sm font-medium">{p.name}</h4>
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <h4 className="text-sm font-semibold">{p.name}</h4>
+                  {p.country ? (
+                    <p className="mt-0.5 text-xs text-black/55 dark:text-white/55">{p.country}</p>
+                  ) : null}
+                </div>
+                {typeof p.score === "number" ? (
+                  <span className="shrink-0 rounded-full bg-emerald-50 px-2 py-1 text-xs font-bold text-emerald-700 ring-1 ring-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-200 dark:ring-emerald-900">
+                    {p.score}
+                  </span>
+                ) : null}
+              </div>
               {p.why ? (
-                <p className="mt-1 text-xs text-black/70 dark:text-white/70">{p.why}</p>
+                <p className="mt-2 line-clamp-5 text-xs leading-6 text-black/70 dark:text-white/70">{p.why}</p>
+              ) : null}
+              {p.href ? (
+                <Link href={p.href} className="mt-3 inline-flex text-xs font-bold text-blue-700 hover:text-blue-900 dark:text-blue-300">
+                  View source page
+                </Link>
               ) : null}
             </article>
           ))
         ) : (
           <div className="rounded-xl ring-1 ring-black/10 dark:ring-white/10 p-4 text-sm">
-            We didn’t detect a clear recommended program from your answers. You can still download
-            the PDF or talk to an expert.
+            We did not detect a clear recommended program from your answers. You can still download
+            the preview PDF or talk to an expert.
           </div>
         )}
+      </div>
+
+      {safeResult.criteria?.length ? (
+        <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-white/[0.03]">
+          <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
+            Criteria used
+          </p>
+          <ul className="mt-2 grid gap-2 text-sm text-slate-700 dark:text-slate-300 sm:grid-cols-2">
+            {safeResult.criteria.slice(0, 6).map((item) => (
+              <li key={item} className="flex gap-2">
+                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-600" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      {safeResult.sources?.length ? (
+        <div className="mt-4">
+          <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
+            Sources
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {safeResult.sources.slice(0, 6).map((source) => (
+              <Link
+                key={`${source.label}-${source.href}`}
+                href={source.href}
+                className="rounded-full border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5"
+              >
+                {source.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      <div className="mt-5 overflow-hidden rounded-2xl border border-[#d8b650]/50 bg-[#071a3a] text-white shadow-lg shadow-blue-950/10">
+        <div className="grid gap-4 p-4 sm:p-5 lg:grid-cols-[1.4fr_0.9fr] lg:items-center">
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#f6d86d]">
+              Detailed personal report
+            </p>
+            <h4 className="mt-2 text-xl font-black sm:text-2xl">
+              Unlock the 20-30 page assessment after registration
+            </h4>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-white/80">
+              The full report expands this preview into route comparison, document checklist,
+              risk flags, timeline, country/product fit, and advisor notes for your profile.
+            </p>
+            <div className="mt-4 grid gap-2 text-sm text-white/90 sm:grid-cols-2">
+              <span className="inline-flex items-center gap-2 rounded-xl bg-white/10 px-3 py-2 ring-1 ring-white/10">
+                <CheckIcon /> Personal route matrix
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-xl bg-white/10 px-3 py-2 ring-1 ring-white/10">
+                <CheckIcon /> Document and risk review
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-xl bg-white/10 px-3 py-2 ring-1 ring-white/10">
+                <CheckIcon /> X-Hub onboarding
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-xl bg-white/10 px-3 py-2 ring-1 ring-white/10">
+                <CheckIcon /> Advisor follow-up path
+              </span>
+            </div>
+          </div>
+
+          <div className="rounded-2xl bg-white p-4 text-[#071a3a] ring-1 ring-white/20">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-700">
+              Registration
+            </p>
+            <p className="mt-2 text-3xl font-black">{detailedReportPrice}</p>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              Paid registration uses a dedicated Topmate registration product. After payment,
+              X-Hub opens the client case, checklist, milestones, and detailed report workflow.
+            </p>
+            <Link
+              href={DETAILED_REPORT_PAYMENT_URL}
+              className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-700 px-4 py-3 text-sm font-black text-white shadow-sm transition hover:bg-blue-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d8b650]"
+              onClick={recordDetailedReportIntent}
+            >
+              Register for detailed report
+              <ArrowRightIcon />
+            </Link>
+          </div>
+        </div>
       </div>
 
       {/* Actions */}
@@ -189,11 +358,11 @@ export function ResultCard({ track, result, name, answers, onBackAction }: Props
         >
           {downloading ? (
             <>
-              <Spinner /> Preparing PDF…
+              <Spinner /> Preparing preview...
             </>
           ) : (
             <>
-              Download PDF
+              Download preview PDF
               <DownloadIcon />
             </>
           )}
@@ -215,13 +384,9 @@ export function ResultCard({ track, result, name, answers, onBackAction }: Props
         </p>
       ) : null}
 
-      {/* optional: help QA by showing raw answers */}
-      <details className="mt-3">
-        <summary className="cursor-pointer text-xs opacity-70">Show my answers</summary>
-        <pre className="mt-2 overflow-x-auto rounded-md bg-black/5 dark:bg-white/10 p-2 text-[11px]">
-          {JSON.stringify(answers, null, 2)}
-        </pre>
-      </details>
+      <p className="mt-4 text-xs leading-6 text-black/55 dark:text-white/55">
+        This is an indicative result based on approved site content and deterministic rules. Final eligibility, fees, timelines, and risk flags require advisor verification.
+      </p>
     </motion.section>
   );
 }
@@ -245,6 +410,17 @@ function TierBadge({ tier }: { tier: Result["tier"] }) {
 
 function BadgeDot() {
   return <span className="inline-block h-1.5 w-1.5 rounded-full bg-black/70 dark:bg-white/70" />;
+}
+
+function CheckIcon() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 text-emerald-300">
+      <path
+        fill="currentColor"
+        d="M9.55 17.25 4.8 12.5l1.4-1.4 3.35 3.35 8.25-8.25 1.4 1.4-9.65 9.65z"
+      />
+    </svg>
+  );
 }
 
 function ArrowRightIcon() {

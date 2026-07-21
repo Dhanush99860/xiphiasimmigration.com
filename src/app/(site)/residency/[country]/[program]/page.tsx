@@ -16,6 +16,7 @@ const QuickFacts = nextDynamic(() => import("@/components/Residency/QuickFacts")
 const ProcessTimeline = nextDynamic(() => import("@/components/Residency/ProcessTimeline"));
 const FAQAccordion = nextDynamic(() => import("@/components/Residency/FAQAccordion"));
 import { JsonLd, breadcrumbLd, faqLd } from "@/lib/seo";
+import { formatTimelineShort } from "@/lib/timeline";
 const ContactForm = nextDynamic(() => import("@/components/ContactForm"));
 const ProgramQuickNav = nextDynamic(() => import("@/components/Residency/ProgramQuickNav"));
 const Breadcrumb = nextDynamic(() => import("@/components/Common/Breadcrumb"));
@@ -23,6 +24,12 @@ import { Prose } from "@/components/ui/Prose";
 const EligibilityQuickCheck = nextDynamic(() => import("@/components/Residency/EligibilityQuickCheck"));
 const SocialProof = nextDynamic(() => import("@/components/Residency/SocialProof"));
 const Prices = nextDynamic(() => import("@/components/Residency/Prices"));
+const RiskCompliance = nextDynamic(() => import("@/components/Citizenship/RiskCompliance"));
+const CostCalculator = nextDynamic(() => import("@/components/Citizenship/CostCalculator"));
+const DocumentChecklist = nextDynamic(() => import("@/components/Citizenship/DocumentChecklist"));
+const FamilyMatrix = nextDynamic(() => import("@/components/Citizenship/FamilyMatrix"));
+const GovernmentFees = nextDynamic(() => import("@/components/Citizenship/GovernmentFees"));
+import { FileSignature, Hourglass, CalendarClock } from "lucide-react";
 
 /** Cache once/day */
 export const revalidate = 86400;
@@ -117,6 +124,11 @@ const slug = (s: string) =>
     .trim()
     .replace(/\s+/g, "-");
 
+const humanizeSectionKey = (key: string) =>
+  key
+    .replace(/[-_]+/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+
 // Try to find a section key by exact match or "starts with"
 function findSectionKey(sections: Record<string, React.ReactNode>, ...candidates: string[]) {
   const keys = Object.keys(sections);
@@ -158,6 +170,37 @@ export default async function ProgramPage(props: {
       | { label?: string; amount: number; currency?: string; notes?: string }[]
       | undefined;
     const disqualifiers: string[] = (meta as any).disqualifiers ?? [];
+    const routeType = (meta as any).routeType as string | undefined;
+    const holdingPeriodMonths = (meta as any).holdingPeriodMonths as number | undefined;
+    const lastUpdated = (meta as any).lastUpdated as string | undefined;
+    const governmentFees = (meta as any).governmentFees as
+      | { label: string; amount?: number; currency?: string; sourceLabel?: string; sourceUrl?: string }[]
+      | undefined;
+    const riskNotes = (meta as any).riskNotes as string[] | undefined;
+    const complianceNotes = (meta as any).complianceNotes as string[] | undefined;
+    const projectList = (meta as any).projectList as
+      | { name: string; minBuyIn?: number; holdMonths?: number; notes?: string; image?: string }[]
+      | undefined;
+    const documentChecklist = (meta as any).documentChecklist as
+      | { group: string; documents: string[]; notes?: string }[]
+      | undefined;
+    const familyMatrix = (meta as any).familyMatrix as
+      | { childrenUpTo?: number; parentsFromAge?: number; siblings?: boolean; spouse?: boolean }
+      | undefined;
+    const costEstimator = (meta as any).costEstimator as
+      | {
+          baseOptions?: { id: string; label: string; amount: number }[];
+          defaultBaseId?: string;
+          adults?: number;
+          children?: number;
+          addons?: {
+            id: string;
+            label: string;
+            amount: number;
+            per?: "application" | "adult" | "child";
+          }[];
+        }
+      | undefined;
 
     /** Programs in same country */
     const otherPrograms = getResidencyPrograms(params.country).filter(
@@ -173,6 +216,7 @@ export default async function ProgramPage(props: {
       minInvestment?: number;
       currency?: string;
       timelineMonths?: number;
+      timelineLabel?: string;
       tags?: string[];
       heroImage?: string;
       score: number;
@@ -198,6 +242,7 @@ export default async function ProgramPage(props: {
                 minInvestment: candMeta.minInvestment,
                 currency: candMeta.currency,
                 timelineMonths: candMeta.timelineMonths,
+                timelineLabel: (candMeta as any).timelineLabel as string | undefined,
                 tags: (candMeta as any).tags ?? [],
                 heroImage: (candMeta as any).heroImage as string | undefined,
                 score,
@@ -239,6 +284,45 @@ export default async function ProgramPage(props: {
       Object.keys(sections).find(
         (k) => k.startsWith("why-") && k.includes(slug(meta.country)),
       );
+    const renderedSectionKeys = new Set(
+      [overviewKey, investmentKey, comparisonKey, whyCountryKey].filter(Boolean) as string[],
+    );
+
+    const hasSpecifics = !!(routeType || typeof holdingPeriodMonths === "number" || lastUpdated);
+    const hasPrices = !!(prices?.length || proofOfFunds?.length);
+    const hasGovFees = !!governmentFees?.length;
+    const hasRequirements = !!((meta as any).requirements?.length ?? 0);
+    const hasBenefits = !!((meta as any).benefits?.length ?? 0);
+    const hasDocs = !!documentChecklist?.length;
+    const hasDeps = !!familyMatrix;
+    const hasProcess = processSteps.length > 0;
+    const hasCompliance = !!(riskNotes?.length || complianceNotes?.length);
+    const hasComparison = comparisonKey ? !!sections[comparisonKey] : false;
+    const hasWhyCountry = whyCountryKey ? !!sections[whyCountryKey] : false;
+    const hasProjects = !!projectList?.length;
+    const hasEstimator = !!costEstimator?.baseOptions?.length;
+    const hasFAQ = !!(meta as any).faq?.length;
+    const reservedSectionIds = new Set(
+      [
+        hasSpecifics ? "specifics" : null,
+        hasPrices ? "prices" : null,
+        hasGovFees ? "gov-fees" : null,
+        hasRequirements ? "requirements" : null,
+        hasBenefits ? "benefits" : null,
+        hasDocs ? "documents" : null,
+        hasDeps ? "dependents" : null,
+        hasProcess ? "process" : null,
+        hasCompliance ? "compliance" : null,
+        hasProjects ? "projects" : null,
+        hasEstimator ? "cost-estimator" : null,
+        hasFAQ ? "faq" : null,
+        disqualifiers.length ? "not-a-fit" : null,
+      ].filter(Boolean) as string[],
+    );
+    const extraSectionEntries = Object.entries(sections).filter(
+      ([key, content]) =>
+        !!content && !renderedSectionKeys.has(key) && !reservedSectionIds.has(key),
+    );
 
     /** JSON-LD */
     const howToLdData =
@@ -290,18 +374,24 @@ export default async function ProgramPage(props: {
     /** In-page Quick Nav IDs — FINAL ORDER: mobile & desktop consistent */
     const sectionsForNav: { id: string; label: string }[] = [
       { id: "quick-facts", label: "Quick Facts" },
+      ...(hasSpecifics ? [{ id: "specifics", label: "Program specifics" }] : []),
       ...(sections[overviewKey] ? [{ id: "overview", label: "Overview" }] : []),
       ...(sections[investmentKey] ? [{ id: "investment", label: "Investment" }] : []),
-      ...(prices?.length || proofOfFunds?.length ? [{ id: "prices", label: "Costs & Funds" }] : []),
-      ...(((meta as any).requirements?.length ?? 0)
-        ? [{ id: "requirements", label: "Eligibility" }]
-        : []),
-      ...(((meta as any).benefits?.length ?? 0) ? [{ id: "benefits", label: "Benefits" }] : []),
-      ...(processSteps.length ? [{ id: "process", label: "Process" }] : []),
-      ...(comparisonKey ? [{ id: "comparison", label: "Comparison" }] : []),
-      ...(whyCountryKey ? [{ id: "why-country", label: `Why ${meta.country}` }] : []),
-      ...(Boolean((meta as any).faq?.length) ? [{ id: "faq", label: "FAQ" }] : []),
+      ...(hasPrices ? [{ id: "prices", label: "Costs & Funds" }] : []),
+      ...(hasGovFees ? [{ id: "gov-fees", label: "Government fees" }] : []),
+      ...(hasRequirements ? [{ id: "requirements", label: "Eligibility" }] : []),
+      ...(hasBenefits ? [{ id: "benefits", label: "Benefits" }] : []),
+      ...(hasDocs ? [{ id: "documents", label: "Documents" }] : []),
+      ...(hasDeps ? [{ id: "dependents", label: "Dependents" }] : []),
+      ...(hasProcess ? [{ id: "process", label: "Process" }] : []),
+      ...(hasComparison ? [{ id: "comparison", label: "Comparison" }] : []),
+      ...(hasWhyCountry ? [{ id: "why-country", label: `Why ${meta.country}` }] : []),
+      ...(hasCompliance ? [{ id: "compliance", label: "Risk & compliance" }] : []),
+      ...(hasProjects ? [{ id: "projects", label: "Approved projects" }] : []),
+      ...(hasEstimator ? [{ id: "cost-estimator", label: "Cost estimator" }] : []),
+      ...extraSectionEntries.map(([key]) => ({ id: key, label: humanizeSectionKey(key) })),
       ...(disqualifiers.length ? [{ id: "not-a-fit", label: "Not a fit?" }] : []),
+      ...(hasFAQ ? [{ id: "faq", label: "FAQ" }] : []),
       ...(otherPrograms.length ? [{ id: "other-programs", label: "Other Programs" }] : []),
       ...(relatedPrograms.length ? [{ id: "related", label: "Related" }] : []),
     ];
@@ -383,9 +473,103 @@ export default async function ProgramPage(props: {
                 minInvestment={meta.minInvestment}
                 currency={meta.currency}
                 timelineMonths={meta.timelineMonths}
+                timelineLabel={(meta as any).timelineLabel}
                 tags={(meta as any).tags}
               />
             </section>
+
+            {/* Program specifics */}
+            {hasSpecifics ? (
+              <section id="specifics" className="scroll-mt-28" aria-labelledby="specifics-heading">
+                <div className="mb-2 flex items-center gap-2">
+                  <span className="inline-flex items-center rounded-md bg-sky-600/10 px-2 py-1 text-xs font-semibold text-sky-700 dark:text-sky-300">
+                    Program
+                  </span>
+                  <h2 id="specifics-heading" className="text-sm font-semibold opacity-80">
+                    Program specifics
+                  </h2>
+                </div>
+
+                <div
+                  className="
+                    relative overflow-hidden rounded-2xl p-4 sm:p-6
+                    bg-gradient-to-br from-white to-slate-50 dark:from-neutral-900/60 dark:to-neutral-900/20
+                    ring-1 ring-neutral-200/80 dark:ring-neutral-800/70 shadow-sm
+                  "
+                  role="group"
+                  aria-label="Key program parameters"
+                >
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute -right-10 -top-10 h-44 w-44 rounded-full bg-sky-500/5 blur-2xl"
+                  />
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute -left-10 -bottom-12 h-40 w-40 rounded-full bg-indigo-500/5 blur-2xl"
+                  />
+
+                  <div className="grid gap-3 sm:gap-4 sm:grid-cols-3">
+                    {routeType ? (
+                      <dl className="grid gap-1.5">
+                        <dt className="flex items-center gap-2 text-[11px] uppercase tracking-wide text-neutral-600 dark:text-neutral-300">
+                          <span className="inline-grid h-6 w-6 place-items-center rounded-md bg-white ring-1 ring-neutral-200 dark:bg-white/10 dark:ring-neutral-700">
+                            <FileSignature className="h-4 w-4 text-sky-700 dark:text-sky-300" aria-hidden />
+                          </span>
+                          Route type
+                        </dt>
+                        <dd className="text-[15px] sm:text-base font-semibold leading-6">
+                          {prettyRouteType(routeType)}
+                        </dd>
+                        <dd className="text-xs opacity-70">Eligible residency pathway</dd>
+                      </dl>
+                    ) : null}
+
+                    {typeof holdingPeriodMonths === "number" ? (
+                      <dl className="grid gap-1.5 sm:border-l sm:border-neutral-200/70 sm:dark:border-neutral-800/70 sm:pl-4">
+                        <dt className="flex items-center gap-2 text-[11px] uppercase tracking-wide text-neutral-600 dark:text-neutral-300">
+                          <span className="inline-grid h-6 w-6 place-items-center rounded-md bg-white ring-1 ring-neutral-200 dark:bg-white/10 dark:ring-neutral-700">
+                            <Hourglass className="h-4 w-4 text-emerald-700 dark:text-emerald-300" aria-hidden />
+                          </span>
+                          Holding period
+                        </dt>
+                        <dd className="text-[15px] sm:text-base font-semibold leading-6">
+                          <time dateTime={toISOMonthDuration(holdingPeriodMonths)}>
+                            {holdingPeriodMonths} {holdingPeriodMonths === 1 ? "month" : "months"}
+                          </time>
+                          {holdingPeriodMonths >= 12 ? (
+                            <span className="ml-2 text-sm font-normal opacity-80">
+                              ({approxYears(holdingPeriodMonths)})
+                            </span>
+                          ) : null}
+                        </dd>
+                        <dd className="text-xs opacity-70">Minimum investment retention</dd>
+                      </dl>
+                    ) : null}
+
+                    {lastUpdated ? (
+                      <dl className="grid gap-1.5 sm:border-l sm:border-neutral-200/70 sm:dark:border-neutral-800/70 sm:pl-4">
+                        <dt className="flex items-center gap-2 text-[11px] uppercase tracking-wide text-neutral-600 dark:text-neutral-300">
+                          <span className="inline-grid h-6 w-6 place-items-center rounded-md bg-white ring-1 ring-neutral-200 dark:bg-white/10 dark:ring-neutral-700">
+                            <CalendarClock className="h-4 w-4 text-indigo-700 dark:text-indigo-300" aria-hidden />
+                          </span>
+                          Last updated
+                        </dt>
+                        <dd className="text-[15px] sm:text-base font-semibold leading-6">
+                          <time dateTime={toISO(lastUpdated)} title={toISO(lastUpdated)}>
+                            {toNiceDate(lastUpdated)}
+                          </time>
+                        </dd>
+                        <dd className="text-xs opacity-70">Subject to regulatory change</dd>
+                      </dl>
+                    ) : null}
+                  </div>
+
+                  <p className="mt-3 text-[11px] text-neutral-500 dark:text-neutral-400">
+                    Information is indicative and may change; confirm current terms with an advisor.
+                  </p>
+                </div>
+              </section>
+            ) : null}
 
             {/* MOBILE: Quick eligibility check near top */}
             {quickCheck?.questions?.length ? (
@@ -422,7 +606,7 @@ export default async function ProgramPage(props: {
             )}
 
             {/* COSTS & FUNDS */}
-            {prices?.length || proofOfFunds?.length ? (
+            {hasPrices ? (
               <section id="prices" className="scroll-mt-28 overflow-visible">
                 <header className="mb-3">
                   <h2 className="text-xl font-semibold">Costs & proof of funds</h2>
@@ -434,6 +618,16 @@ export default async function ProgramPage(props: {
                     defaultCurrency={(meta as any).currency}
                   />
                 </div>
+              </section>
+            ) : null}
+
+            {/* GOV FEES */}
+            {hasGovFees ? (
+              <section id="gov-fees" className="scroll-mt-28">
+                <GovernmentFees
+                  fees={governmentFees!}
+                  defaultCurrency={(meta as any).currency || "USD"}
+                />
               </section>
             ) : null}
 
@@ -479,8 +673,23 @@ export default async function ProgramPage(props: {
               </section>
             ) : null}
 
+            {/* DOCUMENTS & DEPENDENTS */}
+            {hasDocs ? (
+              <section id="documents" className="scroll-mt-28">
+                <DocumentChecklist
+                  groups={documentChecklist!}
+                  note="Documents vary by profile and family composition; we'll tailor your final list."
+                />
+              </section>
+            ) : null}
+            {hasDeps ? (
+              <section id="dependents" className="scroll-mt-28">
+                <FamilyMatrix {...familyMatrix!} />
+              </section>
+            ) : null}
+
             {/* PROCESS */}
-            {processSteps.length > 0 && (
+            {hasProcess && (
               <section id="process" className="scroll-mt-28">
                 <header className="mb-3">
                   <h2 className="text-xl font-semibold">Application process</h2>
@@ -490,24 +699,117 @@ export default async function ProgramPage(props: {
             )}
 
             {/* COMPARISON */}
-            {comparisonKey && (
+            {hasComparison && (
               <section id="comparison" className="scroll-mt-28">
                 <header className="mb-3">
                   <h2 className="text-xl font-semibold">Comparison</h2>
                 </header>
-                <Prose>{sections[comparisonKey]}</Prose>
+                <Prose>{sections[comparisonKey!]}</Prose>
               </section>
             )}
 
             {/* WHY COUNTRY */}
-            {whyCountryKey && (
+            {hasWhyCountry && (
               <section id="why-country" className="scroll-mt-28">
                 <header className="mb-3">
                   <h2 className="text-xl font-semibold">Why {meta.country}</h2>
                 </header>
-                <Prose>{sections[whyCountryKey]}</Prose>
+                <Prose>{sections[whyCountryKey!]}</Prose>
               </section>
             )}
+
+            {/* RISK & COMPLIANCE */}
+            {hasCompliance ? (
+              <section id="compliance" className="scroll-mt-28">
+                <RiskCompliance
+                  riskNotes={riskNotes ?? []}
+                  complianceNotes={complianceNotes ?? []}
+                />
+              </section>
+            ) : null}
+
+            {/* APPROVED PROJECTS */}
+            {hasProjects ? (
+              <section id="projects" className="scroll-mt-28">
+                <header className="mb-3">
+                  <h2 className="text-xl font-semibold">Approved projects</h2>
+                  <p className="text-sm opacity-80">
+                    Government-approved developments or investment options vetted for eligibility and exit horizons.
+                  </p>
+                </header>
+                <ul className="grid gap-4 sm:grid-cols-2">
+                  {projectList!.map((p) => (
+                    <li
+                      key={p.name}
+                      className="overflow-hidden rounded-2xl ring-1 ring-neutral-200/80 dark:ring-neutral-800/80 bg-white/80 dark:bg-neutral-900/40"
+                    >
+                      <div className="relative aspect-[16/9] overflow-hidden">
+                        {p.image ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={p.image}
+                            alt={`${p.name} project in ${meta.country}`}
+                            loading="lazy"
+                            decoding="async"
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <div className="h-full w-full bg-gradient-to-br from-slate-200 to-slate-100 dark:from-neutral-800 dark:to-neutral-700 grid place-items-center">
+                            <span className="text-xs opacity-70">{meta.country}</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-4">
+                        <h3 className="text-base font-semibold">{p.name}</h3>
+                        <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
+                          <div className="rounded-lg bg-black/5 dark:bg-white/10 ring-1 ring-neutral-200 dark:ring-neutral-700 p-2">
+                            <div className="opacity-70 text-[11px]">Min buy-in</div>
+                            <div className="font-medium tabular-nums">
+                              {typeof p.minBuyIn === "number" ? p.minBuyIn.toLocaleString() : "-"}{" "}
+                              {(meta as any).currency || ""}
+                            </div>
+                          </div>
+                          <div className="rounded-lg bg-black/5 dark:bg-white/10 ring-1 ring-neutral-200 dark:ring-neutral-700 p-2">
+                            <div className="opacity-70 text-[11px]">Hold period</div>
+                            <div className="font-medium tabular-nums">
+                              {typeof p.holdMonths === "number" ? `${p.holdMonths} mo` : "-"}
+                            </div>
+                          </div>
+                        </div>
+                        {p.notes ? <p className="mt-2 text-sm opacity-80">{p.notes}</p> : null}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
+
+            {/* COST ESTIMATOR */}
+            {hasEstimator ? (
+              <section id="cost-estimator" className="scroll-mt-28">
+                <header className="mb-3">
+                  <h2 className="text-xl font-semibold">Cost estimator</h2>
+                </header>
+                <CostCalculator
+                  currency={(meta as any).currency || "USD"}
+                  baseOptions={costEstimator!.baseOptions!}
+                  defaultBaseId={costEstimator?.defaultBaseId}
+                  adults={costEstimator?.adults ?? 2}
+                  children={costEstimator?.children ?? 0}
+                  addons={costEstimator?.addons ?? []}
+                />
+              </section>
+            ) : null}
+
+            {/* EXTRA MDX SECTIONS */}
+            {extraSectionEntries.map(([key, content]) => (
+              <section id={key} key={key} className="scroll-mt-28">
+                <header className="mb-3">
+                  <h2 className="text-xl font-semibold">{humanizeSectionKey(key)}</h2>
+                </header>
+                <Prose>{content}</Prose>
+              </section>
+            ))}
 
             {/* NOT A FIT? */}
             {disqualifiers.length ? (
@@ -626,7 +928,10 @@ export default async function ProgramPage(props: {
                       typeof r.minInvestment === "number"
                         ? `${r.currency ?? ""} ${r.minInvestment.toLocaleString()}`
                         : "No minimum";
-                    const time = r.timelineMonths ? `${r.timelineMonths} mo` : "Varies";
+                    const time = formatTimelineShort(
+                      r.timelineMonths,
+                      r.timelineLabel,
+                    );
                     return (
                       <li key={`${r.url}|${idx}`}>
                         <Link
@@ -720,7 +1025,7 @@ export default async function ProgramPage(props: {
           </div>
 
           {/* SIDEBAR (desktop) */}
-          <aside className="order-1 lg:order-2 lg:col-span-4 xl:col-span-4 space-y-6 self-start lg:sticky lg:top-24">
+          <aside className="hidden lg:block order-1 lg:order-2 lg:col-span-4 xl:col-span-4 space-y-6 self-start lg:sticky lg:top-24">
             {quickCheck?.questions?.length ? (
               <div className="hidden lg:block">
                 <EligibilityQuickCheck config={quickCheck} />
@@ -754,4 +1059,35 @@ export default async function ProgramPage(props: {
     console.error("[ProgramPage] load error", e);
     notFound();
   }
+}
+
+function toISOMonthDuration(m: number) {
+  const clamped = Math.max(0, Math.round(m));
+  return `P${clamped}M`;
+}
+
+function approxYears(m: number) {
+  const years = m / 12;
+  const rounded = years >= 2 ? Math.round(years) : Math.round(years * 2) / 2;
+  return `~${rounded} yr${rounded === 1 ? "" : "s"}`;
+}
+
+function toISO(d: string) {
+  const date = new Date(d);
+  return isNaN(date.getTime()) ? d : date.toISOString();
+}
+
+function toNiceDate(d: string) {
+  const date = new Date(d);
+  return isNaN(date.getTime())
+    ? d
+    : new Intl.DateTimeFormat(undefined, {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      }).format(date);
+}
+
+function prettyRouteType(rt: string) {
+  return rt.replace(/[-_]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }

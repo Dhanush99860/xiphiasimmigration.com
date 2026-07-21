@@ -1,7 +1,10 @@
 // Use these anywhere as <Link href={BOOKING_PAID_ROUTE} />
-export const BOOKING_ROUTE = "/booking";
-export const BOOKING_FREE_ROUTE = "/booking?plan=free";
-export const BOOKING_PAID_ROUTE = "/booking?plan=paid";
+export {
+  BOOKING_FREE_ROUTE,
+  BOOKING_PAID_ROUTE,
+  BOOKING_ROUTE,
+  TOPMATE_BOOKING_URL,
+} from "@/lib/topmate";
 
 // re-export (optional)
 export { default as BookingModal } from "./BookingModal";

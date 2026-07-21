@@ -4,6 +4,13 @@
 
 import type { Badge, MenuNode } from './menu.types';
 
+const COUNTRY_CODE_ALIASES: Record<string, string> = {
+  EJ: 'EG',
+  SP: 'ES',
+  UK: 'GB',
+  USA: 'US',
+};
+
 /**
  * Split a flat array into `cols` columns in a round-robin (balanced) way.
  * Keeps visual density even when item count isn't divisible by `cols`.
@@ -79,13 +86,27 @@ export function isExternal(href: string) {
 export const FOCUSABLE_SELECTOR =
   'a,button,[href],input,select,textarea,details,[tabindex]:not([tabindex="-1"])';
 
-/** Convert ISO-2 code to emoji flag (e.g., 'CA' → 🇨🇦). Returns null on bad input. */
-export function flagEmojiFromCode(code?: string | null): string | null {
+/** Normalize country codes so menu flags are consistent across data sources. */
+export function normalizeMenuCountryCode(code?: string | null): string | null {
   if (!code) return null;
   const cc = code.trim().toUpperCase();
-  if (cc.length !== 2) return null;
+  const normalized = COUNTRY_CODE_ALIASES[cc] ?? cc;
+  return /^[A-Z]{2}$/.test(normalized) ? normalized : null;
+}
+
+/** Convert ISO-2 code to emoji flag (e.g., 'CA' → 🇨🇦). Returns null on bad input. */
+export function flagEmojiFromCode(code?: string | null): string | null {
+  const cc = normalizeMenuCountryCode(code);
+  if (!cc) return null;
   const base = 127397; // regional indicator base
   return String.fromCodePoint(cc.charCodeAt(0) + base) + String.fromCodePoint(cc.charCodeAt(1) + base);
+}
+
+/** Build a deterministic image-based flag URL so flags render on systems without emoji-flag support. */
+export function flagImageSrcFromCode(code?: string | null): string | null {
+  const cc = normalizeMenuCountryCode(code);
+  if (!cc) return null;
+  return `https://flagcdn.com/24x18/${cc.toLowerCase()}.png`;
 }
 
 /** Get a display emoji for a MenuNode via meta (iconEmoji wins, else meta.code). */

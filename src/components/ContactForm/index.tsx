@@ -14,6 +14,7 @@ type Props = {
   defaults?: Partial<Record<"name" | "phone" | "email" | "message", string>>;
   apiEndpoint?: string;          // UI only — backend unchanged
   onSuccessRedirect?: string;
+  onSuccess?: () => void | Promise<void>;
   idPrefix?: string;
 };
 
@@ -25,6 +26,7 @@ export default function ContactForm({
   defaults,
   apiEndpoint = "/api/enquiry",
   onSuccessRedirect,
+  onSuccess,
   idPrefix = "contact",
 }: Props) {
   const isFull = variant === "full";
@@ -125,6 +127,13 @@ export default function ContactForm({
       f.reset();
       setTouched({});
       setMsgLen(0);
+      if (onSuccess) {
+        try {
+          await Promise.resolve(onSuccess());
+        } catch {
+          // keep submission successful even if parent callback fails
+        }
+      }
       if (onSuccessRedirect) router.push(onSuccessRedirect);
     } catch (err: any) {
       toast.error(err?.message || "Something went wrong. Please try again.");
@@ -312,9 +321,8 @@ export default function ContactForm({
 }
 
 /* ====================== Sub-components ====================== */
-/* FIX: labels are shown ONLY when empty. As soon as there is a value,
-   the label is fully hidden (no overlay while typing). Inputs keep
-   symmetric vertical padding so text is visually centered. */
+/* Keep labels outside the text line so entered values are visible from the
+   first keystroke, while placeholders continue to guide the user. */
 
 function Field({
   id,
@@ -351,6 +359,14 @@ function Field({
 }) {
   return (
     <div className={["relative", className].join(" ")}>
+      <label
+        htmlFor={id}
+        className="mb-1.5 block text-[12px] font-medium text-neutral-600 dark:text-neutral-400"
+      >
+        {label}
+        {required ? <span className="ml-1 text-red-600">*</span> : null}
+      </label>
+
       <div className="relative">
         {icon ? (
           <span
@@ -365,7 +381,7 @@ function Field({
           id={id}
           name={name}
           type={type}
-          placeholder=" "
+          placeholder={placeholder || label}
           aria-invalid={invalid || undefined}
           required={required}
           defaultValue={defaultValue}
@@ -374,30 +390,14 @@ function Field({
           autoComplete={autoComplete}
           onBlur={onBlur}
           className={[
-            "peer w-full rounded-xl bg-white dark:bg-neutral-950",
+            "w-full rounded-xl bg-white dark:bg-neutral-950",
             "ring-1 ring-neutral-300 dark:ring-neutral-700",
-            "px-10 py-3 text-sm text-neutral-900 dark:text-neutral-50",
+            "pl-10 pr-4 py-3 text-sm text-neutral-900 dark:text-neutral-50 caret-primary",
             "focus:outline-none focus:ring-2 focus:ring-primary",
-            "placeholder-transparent",
+            "placeholder:text-neutral-400 dark:placeholder:text-neutral-500",
             invalid ? "ring-red-400 focus:ring-red-500" : "",
           ].join(" ")}
         />
-
-        {/* SHOW ONLY WHEN EMPTY (placeholder-shown). Remove the old peer-focus rule. */}
-        <label
-          htmlFor={id}
-          className={[
-            "pointer-events-none absolute left-10 bg-white dark:bg-neutral-950 px-1 rounded",
-            "text-neutral-500 dark:text-neutral-400 transition-all z-10",
-            // hidden by default (when there is a value)
-            "opacity-0 top-2 translate-y-0 text-[12px]",
-            // when empty: center & show
-            "peer-placeholder-shown:opacity-100 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm",
-          ].join(" ")}
-        >
-          {label}
-          {required ? <span className="ml-1 text-red-600">*</span> : null}
-        </label>
       </div>
 
       {help ? (
@@ -448,6 +448,14 @@ function Textarea({
 }) {
   return (
     <div className={["relative", className].join(" ")}>
+      <label
+        htmlFor={id}
+        className="mb-1.5 block text-[12px] font-medium text-neutral-600 dark:text-neutral-400"
+      >
+        {label}
+        {required ? <span className="ml-1 text-red-600">*</span> : null}
+      </label>
+
       <div className="relative">
         {icon ? (
           <span
@@ -461,7 +469,7 @@ function Textarea({
         <textarea
           id={id}
           name={name}
-          placeholder=" "
+          placeholder={placeholder || label}
           aria-invalid={invalid || undefined}
           required={required}
           defaultValue={defaultValue}
@@ -470,28 +478,14 @@ function Textarea({
           onBlur={onBlur}
           onInput={(e) => onInput?.((e.target as HTMLTextAreaElement).value.length)}
           className={[
-            "peer w-full rounded-xl bg-white dark:bg-neutral-950",
+            "w-full rounded-xl bg-white dark:bg-neutral-950",
             "ring-1 ring-neutral-300 dark:ring-neutral-700",
-            "px-10 py-3 text-sm text-neutral-900 dark:text-neutral-50",
+            "pl-10 pr-4 py-3 text-sm text-neutral-900 dark:text-neutral-50 caret-primary",
             "focus:outline-none focus:ring-2 focus:ring-primary",
-            "resize-y placeholder-transparent",
+            "resize-y placeholder:text-neutral-400 dark:placeholder:text-neutral-500",
             invalid ? "ring-red-400 focus:ring-red-500" : "",
           ].join(" ")}
         />
-
-        {/* SHOW ONLY WHEN EMPTY */}
-        <label
-          htmlFor={id}
-          className={[
-            "pointer-events-none absolute left-10 bg-white dark:bg-neutral-950 px-1 rounded",
-            "text-neutral-500 dark:text-neutral-400 transition-all z-10",
-            "opacity-0 top-2 translate-y-0 text-[12px]",
-            "peer-placeholder-shown:opacity-100 peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm",
-          ].join(" ")}
-        >
-          {label}
-          {required ? <span className="ml-1 text-red-600">*</span> : null}
-        </label>
       </div>
 
       {help ? (

@@ -10,6 +10,11 @@ import { compileMDX } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import { rehypePrefixRelativeAssetUrls } from "@/lib/mdx-plugins";
+import {
+  listContentAdminRuntimeSources,
+  listDeletedContentAdminKeys,
+} from "@/lib/content-admin/store";
 
 import mdxComponents from "@/components/MDX/registry";
 
@@ -28,6 +33,7 @@ import type {
 
 const INSIGHT_KINDS: InsightKind[] = ["articles", "news", "media", "blog"];
 const DEV = process.env.NODE_ENV !== "production";
+const RUNTIME_CACHE_MS = Number(process.env.XIPHIAS_INSIGHTS_CACHE_MS || 5000);
 
 // Safety caps (no UI changes; just prevents edge-case abuse)
 const MAX_PAGE_SIZE = 50;
@@ -65,6 +71,24 @@ function toUrl(kind: InsightKind, slug: string) {
   }
 }
 
+function rawDocKey(kind: InsightKind, slug: string) {
+  return `${kind}:${slug}`;
+}
+
+function relativeAssetBaseForKind(kind: InsightKind) {
+  switch (kind) {
+    case "articles":
+      return "/images/articles";
+    case "news":
+      return "/images/news";
+    case "media":
+      return "/images/media";
+    case "blog":
+    default:
+      return "/images/blogs";
+  }
+}
+
 function normalizeArray(val?: unknown): string[] | undefined {
   if (val == null) return undefined;
   if (Array.isArray(val)) return val.map((v) => String(v));
@@ -80,6 +104,15 @@ function coerceString(val?: unknown): string | undefined {
   if (val == null) return undefined;
   const s = String(val).trim();
   return s || undefined;
+}
+
+function isHiddenInsight(data: Record<string, unknown>) {
+  return (
+    data.draft === true ||
+    (data as any).hidden === true ||
+    coerceString((data as any).visibility)?.toLowerCase() === "hidden" ||
+    coerceString((data as any).status)?.toLowerCase() === "hidden"
+  );
 }
 
 function readingTimeMins(text: string) {
@@ -155,7 +188,8 @@ async function loadRawDocs(): Promise<RawDoc[]> {
 
   if (DEV) console.log(`[insights] matched files: ${files.length}`);
 
-  const out: RawDoc[] = [];
+  const deletedRuntimeKeys = new Set(await listDeletedContentAdminKeys());
+  const out = new Map<string, RawDoc>();
   for (const filePath of files) {
     const file = await fs.readFile(filePath, "utf8");
     const { content, data } = matter(file);
@@ -168,7 +202,10 @@ async function loadRawDocs(): Promise<RawDoc[]> {
     if (!assertKind(kindDir)) continue;
 
     const slug = path.basename(filePath).replace(/(?:\.mdx)+$/i, "");
-    out.push({
+    const key = rawDocKey(kindDir, slug);
+    if (deletedRuntimeKeys.has(key) || isHiddenInsight(data)) continue;
+
+    out.set(key, {
       kind: kindDir as InsightKind,
       slug,
       filePath,
@@ -177,7 +214,26 @@ async function loadRawDocs(): Promise<RawDoc[]> {
     });
   }
 
-  return out;
+  const runtimeDocs = await listContentAdminRuntimeSources();
+  for (const doc of runtimeDocs) {
+    if (!assertKind(doc.kind)) continue;
+    const { content, data } = matter(doc.source);
+    const key = rawDocKey(doc.kind, doc.slug);
+    if (isHiddenInsight(data)) {
+      out.delete(key);
+      continue;
+    }
+
+    out.set(key, {
+      kind: doc.kind,
+      slug: doc.slug,
+      filePath: doc.filePath,
+      source: content,
+      data,
+    });
+  }
+
+  return Array.from(out.values());
 }
 
 /* ────────────────────────────────────────────────────────────────────────── */
@@ -275,8 +331,12 @@ function metaFromRaw(raw: RawDoc): InsightMeta {
 let _cache: { metas: InsightMeta[]; raw: RawDoc[]; loadedAt: number } | null =
   null;
 
+export async function invalidateInsightsCache() {
+  _cache = null;
+}
+
 async function ensureCache() {
-  if (!DEV && _cache) return _cache; // reuse in prod
+  if (!DEV && _cache && Date.now() - _cache.loadedAt < RUNTIME_CACHE_MS) return _cache; // brief reuse in prod
 
   const raw = await loadRawDocs();
   const metas = raw.map(metaFromRaw).sort(sortByDateDesc);
@@ -403,6 +463,7 @@ export async function getInsightBySlug(
               properties: { className: ["anchor"] },
             },
           ],
+          [rehypePrefixRelativeAssetUrls, relativeAssetBaseForKind(kind)],
         ] as any,
       },
     },

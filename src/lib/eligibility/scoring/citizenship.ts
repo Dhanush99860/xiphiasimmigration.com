@@ -4,7 +4,7 @@ export function scoreCitizenship(answers: AnswerMap): Result {
   const a = answers ?? {};
   const route = String(a["route"] ?? "");
   const clean = yn(a["clean_record"]);
-  const inv = String(a["investment"] ?? "");
+  const inv = String(a["investment"] ?? a["budget_usd"] ?? "");
 
   if (clean === "no") {
     return {
@@ -31,7 +31,7 @@ export function scoreCitizenship(answers: AnswerMap): Result {
 
   // Citizenship by investment (coarse)
   if (route === "cbi") {
-    if (inv === "500-1000" || inv === "1000+") {
+    if (inv === "400-1000" || inv === "500-1000" || inv === "1000+") {
       return {
         tier: "Eligible",
         summary: "Your budget fits mainstream citizenship-by-investment options.",
@@ -41,7 +41,7 @@ export function scoreCitizenship(answers: AnswerMap): Result {
         ],
       };
     }
-    if (inv === "250-500") {
+    if (inv === "150-250" || inv === "250-400" || inv === "250-500") {
       return {
         tier: "Borderline",
         summary:

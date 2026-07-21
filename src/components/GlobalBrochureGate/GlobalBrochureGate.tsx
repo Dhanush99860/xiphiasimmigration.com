@@ -19,6 +19,23 @@ export default function GlobalBrochureGate() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent("xiphias-brochure-gate-state", { detail: { open } }),
+    );
+  }, [open]);
+
+  useEffect(
+    () => () => {
+      window.dispatchEvent(
+        new CustomEvent("xiphias-brochure-gate-state", {
+          detail: { open: false },
+        }),
+      );
+    },
+    [],
+  );
+
+  useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (open) return;
 

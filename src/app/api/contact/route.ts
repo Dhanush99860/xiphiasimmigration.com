@@ -2,6 +2,9 @@
 export const runtime = "nodejs";
 
 import { NextResponse, type NextRequest } from "next/server";
+import { getPlatformRepository } from "@/lib/platform/repository";
+import { sendLeadAlert } from "@/lib/platform/whatsapp";
+import { captureVisitorEvent } from "@/lib/platform/visitor-analytics";
 
 // ✅ This route never throws to the frontend (always 200).
 // ✅ If Email/WhatsApp envs are missing, it SKIPS those sends.
@@ -35,12 +38,54 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const platformLead = getPlatformRepository().createLead({
+      source: "website",
+      name,
+      email: email || undefined,
+      phone,
+      message: message || undefined,
+      page: page || undefined,
+      referrer: referrer || undefined,
+      consent: Boolean(consent),
+      tags: [variant].filter(Boolean),
+    });
+    getPlatformRepository().createConversation({
+      leadId: platformLead.id,
+      channel: "portal",
+      direction: "inbound",
+      from: name,
+      to: "XIPHIAS",
+      body: message || `Consultation/enquiry form submitted from ${page || "website"}.`,
+    });
+
+    await captureVisitorEvent(
+      {
+        type: "lead_capture",
+        visitorId: String(body?.visitorId || platformLead.id),
+        sessionId: String(body?.sessionId || ""),
+        path: page || req.headers.get("referer") || "/",
+        referrer,
+        name,
+        email,
+        phone,
+        label: variant,
+        query: message,
+        interests: [variant],
+      },
+      req.headers,
+    );
+
     // ---------- EMAIL (optional) ----------
     let emailStatus: "sent" | "skipped" | "failed" = "skipped";
-    const hasEmailCfg =
-      !!process.env.SMTP_HOST &&
-      !!process.env.EMAIL_FROM &&
-      !!process.env.EMAIL_TO;
+    const fromEmail =
+      process.env.EMAIL_FROM ||
+      process.env.SMTP_USER ||
+      "immigration@xiphias.in";
+    const toEmail =
+      process.env.EMAIL_TO ||
+      process.env.SMTP_USER ||
+      "immigration@xiphias.in";
+    const hasEmailCfg = !!process.env.SMTP_HOST && !!fromEmail && !!toEmail;
 
     if (hasEmailCfg) {
       try {
@@ -75,8 +120,9 @@ export async function POST(req: NextRequest) {
         `;
 
         await transporter.sendMail({
-          from: process.env.EMAIL_FROM!,
-          to: process.env.EMAIL_TO!,
+          from: fromEmail,
+          to: toEmail,
+          replyTo: email || undefined,
           subject,
           html,
         });
@@ -90,48 +136,11 @@ export async function POST(req: NextRequest) {
 
     // ---------- WHATSAPP (optional, Meta Cloud API) ----------
     let whatsappStatus: "sent" | "skipped" | "failed" = "skipped";
-    const hasWaCfg =
-      !!process.env.META_WABA_TOKEN &&
-      !!process.env.META_WABA_PHONE_NUMBER_ID &&
-      !!process.env.WHATSAPP_TO;
-
-    if (hasWaCfg) {
-      try {
-        const url = `https://graph.facebook.com/v20.0/${process.env.META_WABA_PHONE_NUMBER_ID}/messages`;
-
-        const bodyJson = {
-          messaging_product: "whatsapp",
-          to: normalizePhone(process.env.WHATSAPP_TO!),
-          type: "text",
-          text: {
-            body:
-              `New enquiry (${variant})\n` +
-              `Name: ${name}\n` +
-              `Phone: ${phone}${email ? `\nEmail: ${email}` : ""}${
-                message ? `\nMessage: ${message}` : ""
-              }` +
-              (page ? `\nPage: ${page}` : "") +
-              (referrer ? `\nRef: ${referrer}` : ""),
-          },
-        };
-
-        const r = await fetch(url, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${process.env.META_WABA_TOKEN}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(bodyJson),
-        });
-
-        whatsappStatus = r.ok ? "sent" : "failed";
-      } catch {
-        whatsappStatus = "failed";
-      }
-    }
+    const whatsapp = await sendLeadAlert(platformLead);
+    whatsappStatus = whatsapp.status === "sent" ? "sent" : whatsapp.status === "failed" ? "failed" : "skipped";
 
     return NextResponse.json(
-      { ok: true, email: emailStatus, whatsapp: whatsappStatus, tookMs: Date.now() - t0 },
+      { ok: true, leadId: platformLead.id, email: emailStatus, whatsapp: whatsappStatus, tookMs: Date.now() - t0 },
       { status: 200 }
     );
   } catch {
@@ -150,7 +159,3 @@ function escapeHtml(s: string) {
     .replaceAll("'", "&#039;");
 }
 
-function normalizePhone(s: string) {
-  // WhatsApp Cloud API expects MSISDN digits only
-  return s.replace(/[^\d]/g, "");
-}

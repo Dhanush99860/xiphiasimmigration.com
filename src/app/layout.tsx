@@ -1,23 +1,16 @@
 // src/app/layout.tsx
-import { Suspense } from "react";
 import type { Metadata, Viewport } from "next";
 import { Lato, Inter, Sora } from "next/font/google";
 import "./globals.css";
 
-import Header from "@/components/Layout/Header";
-import Footer from "@/components/Layout/Footer";
 import { ThemeProvider } from "next-themes";
-import ScrollToTop from "@/components/ScrollToTop";
 import MDXProviders from "@/components/MDX/MDXProviders";
-import ChatWidget from "@/components/ChatWidget";
+import SiteChrome from "@/components/Layout/SiteChrome";
 // Import dynamic to load client‑only components
 // The GlobalBrochureGate component is a client component. We import it
 // directly here — Next.js will treat it as a client boundary.
-import GlobalBrochureGate from "@/components/GlobalBrochureGate/GlobalBrochureGate";
 
 // ✅ GA4 components
-import GoogleAnalytics from "@/components/Analytics/GoogleAnalytics";
-import GA4RouteChange from "@/components/Analytics/GA4RouteChange";
 
 
 const inter = Inter({
@@ -173,7 +166,7 @@ const orgJsonLd = {
   address: {
     "@type": "PostalAddress",
     streetAddress:
-      "Aurbis Prime, 11, Kaveri Regent Coronet, 80 Feet Road, 3rd Block, Koramangala",
+      "1st Floor, JK Nirmala Arcade, Plot no. 780, 80 Feet Rd, 4th Block, Koramangala",
     addressLocality: "Bengaluru",
     addressRegion: "KA",
     postalCode: "560034",
@@ -182,7 +175,7 @@ const orgJsonLd = {
   contactPoint: [
     {
       "@type": "ContactPoint",
-      telephone: "+919019400500",
+      telephone: ["+919021335577", "+918049768088"],
       contactType: "customer service",
       areaServed: "IN",
       availableLanguage: ["en", "hi"],
@@ -228,34 +221,13 @@ export default function RootLayout({
 
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
             <MDXProviders>
-              <Header />
-
-              <main id="main" className="min-h-screen">
+              <SiteChrome gaId={GA_ID}>
                 {children}
-              </main>
+              </SiteChrome>
             </MDXProviders>
-
-            <Footer />
-            <ScrollToTop />
-            <ChatWidget />
-            {/* Inject the global lead gate to intercept brochure downloads site‑wide */}
-            <GlobalBrochureGate />
         </ThemeProvider>
 
         {/* ✅ GA4 */}
-        {GA_ID ? (
-          <>
-            <GoogleAnalytics gaId={GA_ID} />
-            {/*
-              `GA4RouteChange` uses `useSearchParams()`.
-              Next.js requires `useSearchParams()` to be inside a Suspense boundary
-              to avoid a full CSR bailout during prerendering.
-            */}
-            <Suspense fallback={null}>
-              <GA4RouteChange gaId={GA_ID} />
-            </Suspense>
-          </>
-        ) : null}
 
         {/* JSON-LD */}
         <script

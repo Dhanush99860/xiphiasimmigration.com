@@ -11,6 +11,7 @@
 
 # next.js
 /.next/
+/.next.deploy-backup*/
 /out/
 
 # production
@@ -24,9 +25,18 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+*.log
+/.xiphias-platform/
+/your/
 
 # local env files
 .env*.local
+.env*.production
+/env.download
+/env.production
+
+# local agent configuration
+/.codex/
 
 # vercel
 .vercel
@@ -35,3 +45,13 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+
+# Large local archives — never commit (GitHub rejects files > 100MB)
+/WebsiteV4.zip
+/WebsiteV18.zip
+*.zip
+# audit screenshots / generated samples
+/report-samples/
+/report-design-previews/
+/reports/
+/scripts/_*.mjs

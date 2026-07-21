@@ -12,8 +12,18 @@ export default function ProgramQuickNav({ sections }: { sections: Section[] }) {
   const tickingRef = useRef(false);
 
   /* ---------- helpers ---------- */
+  const readCssVarPx = (name: string) => {
+    const raw = getComputedStyle(document.documentElement)
+      .getPropertyValue(name)
+      .trim();
+    const px = Number.parseFloat(raw);
+    return Number.isFinite(px) ? px : 0;
+  };
+
   const getTopOffset = () => {
-    // Only count top-stuck bars (mobile nav is fixed to the bottom now)
+    // Header height is maintained in CSS var by the sticky site header.
+    const headerH = readCssVarPx("--header-h");
+    // Only count top-stuck bars inside this component.
     const maybeStickyIds = ["program-top-nav"];
     let topH = 0;
     for (const id of maybeStickyIds) {
@@ -25,7 +35,7 @@ export default function ProgramQuickNav({ sections }: { sections: Section[] }) {
         topH += el.offsetHeight;
       }
     }
-    return topH + 12; // breathing room
+    return headerH + topH + 12; // breathing room
   };
 
   const measurePositions = () => {
@@ -160,7 +170,7 @@ export default function ProgramQuickNav({ sections }: { sections: Section[] }) {
         id="program-top-nav"
         aria-label="Section navigation"
         className="
-          hidden md:block sticky top-0 z-40
+          hidden md:block sticky top-[var(--header-h)] z-40
           backdrop-blur
           border-b border-white/20 dark:border-black/20
           bg-white/65 dark:bg-neutral-900/65
@@ -316,8 +326,6 @@ export default function ProgramQuickNav({ sections }: { sections: Section[] }) {
         </div>
       </nav>
 
-      {/* spacer for the fixed bottom bar so content isn't covered */}
-      <div className="md:hidden h-14" aria-hidden />
     </>
   );
 }

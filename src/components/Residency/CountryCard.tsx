@@ -2,6 +2,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import React from "react";
+import { formatTimelineShort } from "@/lib/timeline";
 
 // --- accept all verticals without changing UI ---
 import type { CountryMeta as ResidencyCountry } from "@/lib/residency-content";
@@ -70,11 +71,6 @@ function fmtCurrency(amount?: number, cur = "USD", locale = "en-US") {
   }
 }
 
-function plural(n?: number, s = "mo") {
-  if (typeof n !== "number") return "Varies";
-  return `${n} ${s}${n === 1 ? "" : "s"}`;
-}
-
 function slugify(s: string) {
   return s
     .toLowerCase()
@@ -114,6 +110,7 @@ export default function CountryCard({
   const minInvestment = (country as any).minInvestment as number | undefined;
   const currency = ((country as any).currency as string | undefined) || "USD";
   const timelineMonths = (country as any).timelineMonths as number | undefined;
+  const timelineLabel = (country as any).timelineLabel as string | undefined;
   const tags = ((country as any).tags as string[] | undefined) || [];
 
   const computedHref = country?.countrySlug
@@ -124,7 +121,7 @@ export default function CountryCard({
   const serviceType = serviceTypeFromCategory(country.category);
 
   const price = fmtCurrency(minInvestment, currency, "en-US");
-  const time = plural(timelineMonths, "mo");
+  const time = formatTimelineShort(timelineMonths, timelineLabel);
 
   const { headingId, descId } = stableIds(country, title);
 

@@ -3,7 +3,6 @@
 
 import * as React from "react";
 import { Banknote, Wallet, Info, CalendarDays, FileText } from "lucide-react";
-
 /**
  * Prices (Residency) — blue primary, WHITE surfaces, subtle light grid
  * - Readability first: solid white cards, neutral text, restrained blue accents
@@ -441,21 +440,34 @@ const fmt = (amt?: number, cur?: string) => {
           </div>
 
           {/* Inline note */}
-          <div className="px-4 pb-4 sm:px-6 sm:pb-6">
-            <div
-              className="
-                mt-2 inline-flex items-center gap-2 rounded-lg
-                bg-neutral-100 dark:bg-neutral-800
-                px-3 py-1.5 text-[12px] ring-1 ring-neutral-200 dark:ring-neutral-700
-                text-neutral-800 dark:text-neutral-200
-              "
-            >
-              <FileText className="h-3.5 w-3.5" />
-              <span>
-                We’ll share a personalized cost sheet after your pre-screen.
-              </span>
-            </div>
-          </div>
+<div className="px-4 pb-4 sm:px-6 sm:pb-6">
+  <div className="mt-2 flex flex-wrap items-center gap-2">
+    <div
+      className="
+        inline-flex items-center gap-2 rounded-lg
+        bg-neutral-100 dark:bg-neutral-800
+        px-3 py-1.5 text-[12px] ring-1 ring-neutral-200 dark:ring-neutral-700
+        text-neutral-800 dark:text-neutral-200
+      "
+    >
+      <FileText className="h-3.5 w-3.5" />
+      <span>We’ll share a personalized cost sheet after your pre-screen.</span>
+    </div>
+
+    <div
+      className="
+        inline-flex items-center gap-2 rounded-lg
+        bg-neutral-100 dark:bg-neutral-800
+        px-3 py-1.5 text-[12px] ring-1 ring-neutral-200 dark:ring-neutral-700
+        text-neutral-700 dark:text-neutral-300
+      "
+    >
+      {/* use any icon you already have; Info is nice if available */}
+      <Info className="h-3.5 w-3.5" />
+      <span>Estimates only — final costs may vary by case & government updates.</span>
+    </div>
+  </div>
+</div>
         </div>
       ) : null}
 

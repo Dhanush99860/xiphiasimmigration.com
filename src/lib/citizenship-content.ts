@@ -8,6 +8,7 @@ import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import type { ReactNode } from "react";
+import { normalizeTimelineValue } from "@/lib/timeline";
 
 /* =========================
  * Types (citizenship-only; backward compatible)
@@ -34,6 +35,8 @@ export type CountryMeta = {
   heroImage?: string;
   heroVideo?: string;
   heroPoster?: string;
+  timelineMonths?: number;
+  timelineLabel?: string;
   introPoints?: string[];
   tags?: string[];
   seo?: { title?: string; description?: string; keywords?: string[] };
@@ -96,6 +99,7 @@ export type ProgramMeta = {
   minInvestment?: number;
   currency?: CurrencyCode;
   timelineMonths?: number;
+  timelineLabel?: string;
   tags?: string[];
   benefits?: string[];
   requirements?: string[];
@@ -139,6 +143,7 @@ export type ProgramSections = Record<string, ReactNode>;
  * Constants & tiny utils
  * =======================*/
 const ROOT = path.join(process.cwd(), "content", "citizenship");
+const DEFAULT_PROJECT_IMAGE = "/images/citizenship/grenada/harborview-suites-share-units.webp";
 
 const exists = (p: string) => {
   try {
@@ -177,6 +182,25 @@ const toAbsolute = (p: string | undefined, fallback: string) => {
   // allow absolute local (/...), absolute remote (http/https), or normalize "images/.."
   if (p.startsWith("/") || /^https?:\/\//i.test(p)) return p;
   return `/${p.replace(/^\.?\/*/, "")}`;
+};
+
+const projectImagePath = (v: unknown): string | undefined => {
+  if (typeof v !== "string") return undefined;
+  const s = v.trim();
+  if (!s) return undefined;
+  return toAbsolute(s, DEFAULT_PROJECT_IMAGE);
+};
+
+const publicAssetExists = (assetPath: string): boolean => {
+  if (/^https?:\/\//i.test(assetPath)) return true;
+  const localPath = assetPath.split(/[?#]/, 1)[0];
+  return exists(path.join(process.cwd(), "public", localPath.replace(/^\/+/, "")));
+};
+
+const resolveProjectImage = (v: unknown): string => {
+  const assetPath = projectImagePath(v);
+  if (!assetPath) return DEFAULT_PROJECT_IMAGE;
+  return publicAssetExists(assetPath) ? assetPath : DEFAULT_PROJECT_IMAGE;
 };
 
 /** MDX options */
@@ -328,6 +352,7 @@ function normalizeCountry(
   slug: string,
 ): CountryMeta {
   const meta: any = { ...metaIn };
+  const timeline = normalizeTimelineValue(meta.timelineMonths);
   const countrySlug = meta.countrySlug || slug;
   const country = meta.country || meta.title || toTitle(countrySlug);
   const title =
@@ -370,6 +395,8 @@ function normalizeCountry(
     title: String(title),
     country: String(country),
     countrySlug: String(countrySlug),
+    timelineMonths: timeline.months,
+    timelineLabel: timeline.label,
     category: "citizenship",
   } as CountryMeta;
 }
@@ -393,8 +420,11 @@ function normalizeProgram(
 
   if (meta.minInvestment !== undefined)
     meta.minInvestment = coerceNum(meta.minInvestment);
-  if (meta.timelineMonths !== undefined)
-    meta.timelineMonths = coerceNum(meta.timelineMonths);
+  if (meta.timelineMonths !== undefined) {
+    const timeline = normalizeTimelineValue(meta.timelineMonths);
+    meta.timelineMonths = timeline.months;
+    meta.timelineLabel = timeline.label;
+  }
   if (meta.holdingPeriodMonths !== undefined)
     meta.holdingPeriodMonths = coerceNum(meta.holdingPeriodMonths);
 
@@ -434,6 +464,7 @@ function normalizeProgram(
       ...p,
       minBuyIn: coerceNum(p?.minBuyIn) ?? 0,
       holdMonths: coerceNum(p?.holdMonths) ?? 0,
+      image: resolveProjectImage(p?.image),
     }));
   }
 

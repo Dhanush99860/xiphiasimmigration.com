@@ -5,7 +5,7 @@ import matter from "gray-matter";
 import { AnyDoc, HubDoc, ProgramDoc, Vertical } from "./types";
 
 const CONTENT_DIR = path.join(process.cwd(), "content");
-const HUB_DIRS = new Set(["blog", "news", "articles"]);
+const HUB_DIRS = new Set(["blog", "news", "articles", "media", "jobs"]);
 
 const walk = (dir: string): string[] =>
   fs.readdirSync(dir).flatMap((name) => {
@@ -21,6 +21,7 @@ const toUrl = (file: string): string => {
   if (HUB_DIRS.has(segs[0])) {
     const type = segs[0];
     const slug = path.basename(file, ".mdx");
+    if (type === "jobs") return `/careers/${slug}`;
     return `/${type}/${slug}`;
   }
   const [vertical, country, fileName] = segs;
@@ -43,7 +44,7 @@ export function loadAllContent(): AnyDoc[] {
     if (HUB_DIRS.has(a)) {
       out.push({
         kind: "hub",
-        type: a as HubDoc["type"],
+        type: (a === "articles" ? "article" : a === "jobs" ? "job" : a) as HubDoc["type"],
         title: data.title ?? path.basename(file, ".mdx"),
         summary: data.summary ?? "",
         updatedAt: data.updatedAt ?? data.date ?? "",
@@ -62,6 +63,8 @@ export function loadAllContent(): AnyDoc[] {
     const vertical = a as Vertical;
     const country = b;
     const fileName = c;
+
+    if (!country || !fileName) continue;
 
     if (fileName === "_country.mdx") {
       out.push({

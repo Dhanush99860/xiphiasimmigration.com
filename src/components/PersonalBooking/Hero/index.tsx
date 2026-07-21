@@ -44,7 +44,7 @@ export default function HeroPremium({
   ],
   align = "left",
   microNote = "Confidential • NDA on request",
-  priceNote = "Paid strategy call • 45–90 mins • Credited on engagement",
+  priceNote = "Paid strategy call • 60 mins • Credited on engagement",
 }: Props) {
   const isPdf =
     typeof secondaryHref === "string" &&

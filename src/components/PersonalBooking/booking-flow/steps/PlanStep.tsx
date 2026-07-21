@@ -65,8 +65,8 @@ export default function PlanStep({
           title="Strategy Consultation"
           subtitle="Senior advisor deep-dive & action plan (Varun Singh .  Fellow, IMC)"
           badge="Most thorough"
-          price="₹25,500"
-          duration="90m"
+          price="₹25,000"
+          duration="60m"
           onSelectAction={() => onChangePlanAction("paid")}
         />
       </div>

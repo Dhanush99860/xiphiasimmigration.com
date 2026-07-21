@@ -1,6 +1,7 @@
 // src/components/Citizenship/CountryCardPro.tsx
 import Link from "next/link";
 import React from "react";
+import { formatTimelineShort } from "@/lib/timeline";
 
 type Props = {
   href: string;
@@ -13,6 +14,7 @@ type Props = {
   minInvestment?: number;
   currency?: string; // e.g. USD
   timelineMonths?: number; // typical processing
+  timelineLabel?: string;
   tags?: string[];
   className?: string;
 };
@@ -72,10 +74,6 @@ function fmtCurrency(amount?: number, cur = "USD", locale = "en-IN") {
   }
 }
 
-function plural(n: number, s: string) {
-  return `${n} ${s}${n === 1 ? "" : "s"}`;
-}
-
 /* ---------------- component ---------------- */
 
 export default function CountryCardPro({
@@ -89,6 +87,7 @@ export default function CountryCardPro({
   minInvestment,
   currency = "USD",
   timelineMonths,
+  timelineLabel,
   tags = [],
   className = "",
 }: Props) {
@@ -96,8 +95,7 @@ export default function CountryCardPro({
   const absoluteHref = ensureAbsoluteUrl(hrefInternal); // ✅ for schema
 
   const price = fmtCurrency(minInvestment, currency, "en-IN");
-  const time =
-    typeof timelineMonths === "number" ? plural(timelineMonths, "mo") : "Varies";
+  const time = formatTimelineShort(timelineMonths, timelineLabel);
 
   const normalizedImg = ensureAbsoluteImage(heroImage);
   const { hId, dId } = stableIds(hrefInternal, title);

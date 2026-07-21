@@ -84,8 +84,9 @@ export default function MediaHero({
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const hasVideo = !!videoSrc;
-  const [isPlaying, setIsPlaying] = useState<boolean>(!!videoSrc); // auto-start if video exists
+  const hasImage = !!imageSrc;
+  const hasVideo = !hasImage && !!videoSrc;
+  const [isPlaying, setIsPlaying] = useState<boolean>(hasVideo); // auto-start if video exists
   const [isMuted, setIsMuted] = useState<boolean>(true); // browsers block autoplay w/ sound
   const [duration, setDuration] = useState<number>(0);
   const [current, setCurrent] = useState<number>(0);
@@ -248,7 +249,16 @@ export default function MediaHero({
           focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500/60
         "
       >
-        {hasVideo ? (
+        {hasImage ? (
+          <Image
+            src={imageSrc!}
+            alt={title}
+            fill
+            priority
+            sizes="(min-width: 1024px) 1024px, 100vw"
+            className="object-cover"
+          />
+        ) : hasVideo ? (
           <>
             <video
               ref={videoRef}
@@ -414,15 +424,6 @@ export default function MediaHero({
               </div>
             </div>
           </>
-        ) : imageSrc ? (
-          <Image
-            src={imageSrc}
-            alt={title}
-            fill
-            priority
-            sizes="(min-width: 1024px) 1024px, 100vw"
-            className="object-cover"
-          />
         ) : (
           <div className="absolute inset-0 bg-[radial-gradient(80%_60%_at_30%_0%,theme(colors.sky.400/.35),transparent),linear-gradient(to_bottom_right,theme(colors.slate.50),theme(colors.slate.100))] dark:bg-[radial-gradient(80%_60%_at_30%_0%,theme(colors.sky.900/.5),transparent),linear-gradient(to_bottom_right,theme(colors.neutral.900),theme(colors.neutral.950))]" />
         )}

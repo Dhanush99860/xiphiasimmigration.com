@@ -2,6 +2,148 @@ import type { EventRecord } from "@/types/events";
 
 export const EVENTS: EventRecord[] = [
   {
+    "slug": "raah-a-new-path-book-launch-2025-11-26-mum",
+    "title": "RAAH - A New Path Book Launch",
+    "date": "2025-11-26",
+    "location": "Mumbai, India",
+    "summary": "Participated in Book Turner Gala 2025 in Mumbai on 26-Nov-2025, where Varun Singh launched \"RAAH - A New Path\".",
+    "description": "XIPHIAS participated in Book Turner Gala 2025 on 26-Nov-2025 in Mumbai, where Varun Singh launched \"RAAH - A New Path\" with Chetan Bhagat as chief guest.\n\nThe literary event brought together authors, publishers, media, and guests for the launch and recognition of new works on a prominent Mumbai stage.",
+    "photos": [
+      {
+        "src": "/images/events/RAAH _ Book Launch/raah-varun-singh.webp",
+        "alt": "RAAH - A New Path book launch event photo",
+        "w": 1248,
+        "h": 832,
+        "caption": "Venue: Book Turner Gala, Mumbai"
+      }
+    ]
+  },
+  {
+    "slug": "investpro-india-mumbai-2025-11-04-mum",
+    "title": "InvestPro India Mumbai 2025",
+    "date": "2025-11-04",
+    "location": "Mumbai, India",
+    "summary": "Participated in InvestPro India Mumbai 2025 at The St. Regis Mumbai on 04-Nov-2025.",
+    "description": "XIPHIAS participated in InvestPro India Mumbai 2025 on 04-Nov-2025 at The St. Regis Mumbai.\n\nThe conference brought together international advisors, investors, and migration professionals for focused discussions on investment migration, global mobility, and cross-border planning opportunities.",
+    "photos": [
+      {
+        "src": "/images/events/BOSCO Event - November 2025/583067877_1269665325175995_2057314072998862892_n (1).jpg",
+        "alt": "InvestPro India Mumbai 2025 event photo 1",
+        "w": 2048,
+        "h": 1365,
+        "caption": "Venue: The St. Regis Mumbai"
+      },
+      {
+        "src": "/images/events/BOSCO Event - November 2025/583191512_1269662311842963_3920094235690227698_n.jpg",
+        "alt": "InvestPro India Mumbai 2025 event photo 2",
+        "w": 2048,
+        "h": 1365,
+        "caption": "Venue: The St. Regis Mumbai"
+      },
+      {
+        "src": "/images/events/BOSCO Event - November 2025/583210047_1269657455176782_7860292866315345522_n (1).jpg",
+        "alt": "InvestPro India Mumbai 2025 event photo 3",
+        "w": 2048,
+        "h": 1366,
+        "caption": "Venue: The St. Regis Mumbai"
+      },
+      {
+        "src": "/images/events/BOSCO Event - November 2025/583271058_1269658068510054_3423298869282475918_n.jpg",
+        "alt": "InvestPro India Mumbai 2025 event photo 4",
+        "w": 2048,
+        "h": 1365,
+        "caption": "Venue: The St. Regis Mumbai"
+      },
+      {
+        "src": "/images/events/BOSCO Event - November 2025/583334739_1269657988510062_6097466394579586290_n.jpg",
+        "alt": "InvestPro India Mumbai 2025 event photo 5",
+        "w": 2048,
+        "h": 1365,
+        "caption": "Venue: The St. Regis Mumbai"
+      },
+      {
+        "src": "/images/events/BOSCO Event - November 2025/583722463_1269663018509559_144128949988245252_n (1).jpg",
+        "alt": "InvestPro India Mumbai 2025 event photo 6",
+        "w": 2048,
+        "h": 1365,
+        "caption": "Venue: The St. Regis Mumbai"
+      },
+      {
+        "src": "/images/events/BOSCO Event - November 2025/583733404_1269663385176189_861092972552427127_n.jpg",
+        "alt": "InvestPro India Mumbai 2025 event photo 7",
+        "w": 2048,
+        "h": 1365,
+        "caption": "Venue: The St. Regis Mumbai"
+      },
+      {
+        "src": "/images/events/BOSCO Event - November 2025/5I2A7186.jpg",
+        "alt": "InvestPro India Mumbai 2025 event photo 8",
+        "w": 5843,
+        "h": 3895,
+        "caption": "Venue: The St. Regis Mumbai"
+      },
+      {
+        "src": "/images/events/BOSCO Event - November 2025/5I2A7299.jpg",
+        "alt": "InvestPro India Mumbai 2025 event photo 9",
+        "w": 4424,
+        "h": 2949,
+        "caption": "Venue: The St. Regis Mumbai"
+      },
+      {
+        "src": "/images/events/BOSCO Event - November 2025/5I2A7541.jpg",
+        "alt": "InvestPro India Mumbai 2025 event photo 10",
+        "w": 6000,
+        "h": 4000,
+        "caption": "Venue: The St. Regis Mumbai"
+      }
+    ]
+  },
+  {
+    "slug": "global-investment-immigration-summit-2024-02-10-del",
+    "title": "14th Global Investment Immigration Summit",
+    "date": "2024-02-10",
+    "location": "New Delhi, India",
+    "summary": "Participated in the 14th Global Investment Immigration Summit at Shangri-La Hotel, New Delhi on 10-Feb-2024.",
+    "description": "XIPHIAS participated in the 14th Global Investment Immigration Summit on 10-Feb-2024 at the Shangri-La Hotel, New Delhi.\n\nThe summit connected investors, developers, and immigration professionals around residency by investment, citizenship planning, and strategic cross-border mobility opportunities.",
+    "photos": [
+      {
+        "src": "/images/events/GIIS - 2024/GIIS - IRES DELHI 2024.     2.jpeg",
+        "alt": "14th Global Investment Immigration Summit event photo 1",
+        "w": 1280,
+        "h": 960,
+        "caption": "Venue: Shangri-La Hotel, New Delhi"
+      },
+      {
+        "src": "/images/events/GIIS - 2024/GIIS - IRES DELHI 2024.jpeg",
+        "alt": "14th Global Investment Immigration Summit event photo 2",
+        "w": 1200,
+        "h": 1600,
+        "caption": "Venue: Shangri-La Hotel, New Delhi"
+      },
+      {
+        "src": "/images/events/GIIS - 2024/IMG-20240210-WA0002.jpg",
+        "alt": "14th Global Investment Immigration Summit event photo 3",
+        "w": 960,
+        "h": 1280,
+        "caption": "Venue: Shangri-La Hotel, New Delhi"
+      },
+      {
+        "src": "/images/events/GIIS - 2024/IMG-20240210-WA0004.jpg",
+        "alt": "14th Global Investment Immigration Summit event photo 4",
+        "w": 1280,
+        "h": 960,
+        "caption": "Venue: Shangri-La Hotel, New Delhi"
+      },
+      {
+        "src": "/images/events/GIIS - 2024/Varun Singh.jpeg",
+        "alt": "14th Global Investment Immigration Summit event photo 5",
+        "w": 800,
+        "h": 1066,
+        "caption": "Venue: Shangri-La Hotel, New Delhi"
+      }
+    ]
+  },
+  {
     "slug": "talent-skilled-migration-seminar-2023-09-16-blr",
     "title": "Talent-Skilled Migration Seminar",
     "date": "2023-09-16",
@@ -95,10 +237,10 @@ export const EVENTS: EventRecord[] = [
     "description": "XIPHIAS hosted \"Investment Migration Seminar - 2023\" on 19-Mar-2023 at XIPHIAS HQ with participants from across target migration profiles.\n\nThe event focused on practical pathway guidance, timeline planning, and program clarity for skilled, residency, and investment migration tracks.",
     "photos": [
       {
-        "src": "/images/logo/xiphias-immigration.png",
+        "src": "/images/events/2023-03-19/1.jpg",
         "alt": "Investment Migration Seminar - 2023 event photo",
-        "w": 940,
-        "h": 700,
+        "w": 960,
+        "h": 503,
         "caption": "Venue: XIPHIAS HQ"
       }
     ]
@@ -112,7 +254,7 @@ export const EVENTS: EventRecord[] = [
     "description": "XIPHIAS hosted \"Global Talent Migration Seminar\" on 18-Mar-2023 at XIPHIAS HQ with participants from across target migration profiles.\n\nThe event focused on practical pathway guidance, timeline planning, and program clarity for skilled, residency, and investment migration tracks.",
     "photos": [
       {
-        "src": "/images/logo/xiphias-immigration.png",
+        "src": "/images/events/2023-03-18/1.jpg",
         "alt": "Global Talent Migration Seminar event photo",
         "w": 1728,
         "h": 972,
@@ -146,7 +288,7 @@ export const EVENTS: EventRecord[] = [
     "description": "XIPHIAS hosted \"RESIDENCY -CITIZENSHIP BY INVESTMENT SEMINAR\" on 22-Jan-2023 at XIPHIAS HQ with participants from across target migration profiles.\n\nThe event focused on practical pathway guidance, timeline planning, and program clarity for skilled, residency, and investment migration tracks.",
     "photos": [
       {
-        "src": "/images/logo/xiphias-immigration.png",
+        "src": "/images/events/2023-01-22/1.jpg",
         "alt": "RESIDENCY -CITIZENSHIP BY INVESTMENT SEMINAR event photo",
         "w": 948,
         "h": 706,
@@ -163,7 +305,7 @@ export const EVENTS: EventRecord[] = [
     "description": "XIPHIAS hosted \"Global Talent Visa Seminar\" on 21-Jan-2023 at XIPHIAS HQ with participants from across target migration profiles.\n\nThe event focused on practical pathway guidance, timeline planning, and program clarity for skilled, residency, and investment migration tracks.",
     "photos": [
       {
-        "src": "/images/logo/xiphias-immigration.png",
+        "src": "/images/events/2023-01-21/1.jpg",
         "alt": "Global Talent Visa Seminar event photo",
         "w": 1280,
         "h": 960,
@@ -180,8 +322,43 @@ export const EVENTS: EventRecord[] = [
     "description": "XIPHIAS hosted \"Get a U.S.A Green Card\" on 03-Jul-2022 at Rajkot with participants from across target migration profiles.\n\nThe event focused on practical pathway guidance, timeline planning, and program clarity for skilled, residency, and investment migration tracks.",
     "photos": [
       {
-        "src": "/images/logo/xiphias-immigration.png",
-        "alt": "Get a U.S.A Green Card event photo",
+        "src": "/images/events/Rajkot-2022/DSC_8244.webp",
+        "alt": "Get a U.S.A Green Card event photo 6",
+        "w": 943,
+        "h": 704,
+        "caption": "Venue: Rajkot"
+      },
+      {
+        "src": "/images/events/Rajkot-2022/DSC_8260.webp",
+        "alt": "Get a U.S.A Green Card event photo 1",
+        "w": 943,
+        "h": 704,
+        "caption": "Venue: Rajkot"
+      },
+      {
+        "src": "/images/events/Rajkot-2022/DSC_8286.webp",
+        "alt": "Get a U.S.A Green Card event photo 2",
+        "w": 943,
+        "h": 704,
+        "caption": "Venue: Rajkot"
+      },
+      {
+        "src": "/images/events/Rajkot-2022/DSC_8292.webp",
+        "alt": "Get a U.S.A Green Card event photo 3",
+        "w": 943,
+        "h": 704,
+        "caption": "Venue: Rajkot"
+      },
+      {
+        "src": "/images/events/Rajkot-2022/DSC_8302.webp",
+        "alt": "Get a U.S.A Green Card event photo 4",
+        "w": 943,
+        "h": 704,
+        "caption": "Venue: Rajkot"
+      },
+      {
+        "src": "/images/events/Rajkot-2022/DSC_8315.webp",
+        "alt": "Get a U.S.A Green Card event photo 5",
         "w": 943,
         "h": 704,
         "caption": "Venue: Rajkot"
@@ -197,10 +374,87 @@ export const EVENTS: EventRecord[] = [
     "description": "XIPHIAS hosted \"Get a U.S.A Green Card\" on 02-Jul-2022 at Surat with participants from across target migration profiles.\n\nThe event focused on practical pathway guidance, timeline planning, and program clarity for skilled, residency, and investment migration tracks.",
     "photos": [
       {
-        "src": "/images/logo/xiphias-immigration.png",
-        "alt": "Get a U.S.A Green Card event photo",
-        "w": 948,
-        "h": 707,
+        "src": "/images/events/Surat/407A1521.webp",
+        "alt": "Get a U.S.A Green Card event photo 5",
+        "w": 6720,
+        "h": 4480,
+        "caption": "Venue: Surat"
+      },
+      {
+        "src": "/images/events/Surat/407A1601.webp",
+        "alt": "Get a U.S.A Green Card event photo 10",
+        "w": 6720,
+        "h": 4480,
+        "caption": "Venue: Surat"
+      },
+      {
+        "src": "/images/events/Surat/407A1647.webp",
+        "alt": "Get a U.S.A Green Card event photo 11",
+        "w": 6720,
+        "h": 4480,
+        "caption": "Venue: Surat"
+      },
+      {
+        "src": "/images/events/Surat/407A1514.webp",
+        "alt": "Get a U.S.A Green Card event photo 2",
+        "w": 6720,
+        "h": 4480,
+        "caption": "Venue: Surat"
+      },
+      {
+        "src": "/images/events/Surat/407A1515.webp",
+        "alt": "Get a U.S.A Green Card event photo 3",
+        "w": 6720,
+        "h": 4480,
+        "caption": "Venue: Surat"
+      },
+      {
+        "src": "/images/events/Surat/407A1520.webp",
+        "alt": "Get a U.S.A Green Card event photo 4",
+        "w": 6720,
+        "h": 4480,
+        "caption": "Venue: Surat"
+      },
+      {
+        "src": "/images/events/Surat/407A1542.webp",
+        "alt": "Get a U.S.A Green Card event photo 6",
+        "w": 6720,
+        "h": 4480,
+        "caption": "Venue: Surat"
+      },
+      {
+        "src": "/images/events/Surat/407A1544.webp",
+        "alt": "Get a U.S.A Green Card event photo 7",
+        "w": 6720,
+        "h": 4480,
+        "caption": "Venue: Surat"
+      },
+      {
+        "src": "/images/events/Surat/407A1551.webp",
+        "alt": "Get a U.S.A Green Card event photo 8",
+        "w": 6720,
+        "h": 4480,
+        "caption": "Venue: Surat"
+      },
+      {
+        "src": "/images/events/Surat/407A1553.webp",
+        "alt": "Get a U.S.A Green Card event photo 9",
+        "w": 6720,
+        "h": 4480,
+        "caption": "Venue: Surat"
+      },
+      {
+        "src": "/images/events/Surat/407A1698.webp",
+        "alt": "Get a U.S.A Green Card event photo 12",
+        "w": 6720,
+        "h": 4480,
+        "caption": "Venue: Surat"
+      },
+      {
+        "src": "/images/events/Surat/407A1507.webp",
+        "alt": "Get a U.S.A Green Card event photo 1",
+        "w": 6720,
+        "h": 4480,
         "caption": "Venue: Surat"
       }
     ]
@@ -495,6 +749,44 @@ export const EVENTS: EventRecord[] = [
     ]
   },
   {
+    "slug": "global-investment-immigration-summit-bengaluru-2019-09-21-blr",
+    "title": "Global Investment Immigration Summit Bengaluru 2019",
+    "date": "2019-09-21",
+    "location": "Bengaluru, India",
+    "summary": "Participated in Global Investment Immigration Summit Bengaluru 2019 at Shangri-La Hotel, Bengaluru on 21-Sep-2019.",
+    "description": "XIPHIAS participated in Global Investment Immigration Summit Bengaluru 2019 on 21-Sep-2019 at the Shangri-La Hotel, Bengaluru.\n\nThe summit brought together investors, attorneys, developers, regional centers, and migration professionals for focused discussions on residency, citizenship by investment, and international mobility strategies.",
+    "photos": [
+      {
+        "src": "/images/events/GIIS BLS Submit 2019/GIIS BLS Event .jpg",
+        "alt": "Global Investment Immigration Summit Bengaluru 2019 event photo 1",
+        "w": 1728,
+        "h": 1296,
+        "caption": "Venue: Shangri-La Hotel, Bengaluru"
+      },
+      {
+        "src": "/images/events/GIIS BLS Submit 2019/GIIS BLS Event 2019.jpg",
+        "alt": "Global Investment Immigration Summit Bengaluru 2019 event photo 2",
+        "w": 1728,
+        "h": 1296,
+        "caption": "Venue: Shangri-La Hotel, Bengaluru"
+      },
+      {
+        "src": "/images/events/GIIS BLS Submit 2019/GIIS BLS Event.jpg",
+        "alt": "Global Investment Immigration Summit Bengaluru 2019 event photo 3",
+        "w": 1728,
+        "h": 1296,
+        "caption": "Venue: Shangri-La Hotel, Bengaluru"
+      },
+      {
+        "src": "/images/events/GIIS BLS Submit 2019/BLS Event .jpg",
+        "alt": "Global Investment Immigration Summit Bengaluru 2019 event photo 4",
+        "w": 1728,
+        "h": 1296,
+        "caption": "Venue: Shangri-La Hotel, Bengaluru"
+      }
+    ]
+  },
+  {
     "slug": "germany-residency-summit-2019-06-15-blr",
     "title": "Germany Residency Summit",
     "date": "2019-06-15",
@@ -663,17 +955,24 @@ export const EVENTS: EventRecord[] = [
     "description": "XIPHIAS hosted \"Australia-Canada Skilled Migration Seminar By ICCR\" on 05-Oct-2018 at BurJuman Arjaan by Rotana, Dubai Meeting Room: C5 with participants from across target migration profiles.\n\nThe event focused on practical pathway guidance, timeline planning, and program clarity for skilled, residency, and investment migration tracks.",
     "photos": [
       {
-        "src": "/images/logo/xiphias-immigration.png",
-        "alt": "Dubai Seminar 2018 photo 1",
-        "w": 800,
-        "h": 600,
+        "src": "/images/events/seminar-2018-dubai-iccr/2.jpg",
+        "alt": "Dubai Seminar 2018 photo 2",
+        "w": 1280,
+        "h": 960,
         "caption": "Dubai Seminar 2018 highlights."
       },
       {
-        "src": "/images/logo/xiphias-immigration.png",
-        "alt": "Dubai Seminar 2018 photo 2",
-        "w": 800,
-        "h": 600,
+        "src": "/images/events/seminar-2018-dubai-iccr/3.jpg",
+        "alt": "Dubai Seminar 2018 photo 3",
+        "w": 1280,
+        "h": 960,
+        "caption": "Dubai Seminar 2018 highlights."
+      },
+      {
+        "src": "/images/events/seminar-2018-dubai-iccr/4.jpg",
+        "alt": "Dubai Seminar 2018 photo 4",
+        "w": 1280,
+        "h": 960,
         "caption": "Dubai Seminar 2018 highlights."
       }
     ]
@@ -687,10 +986,24 @@ export const EVENTS: EventRecord[] = [
     "description": "XIPHIAS hosted \"Australia-Canada-Skilled Migration Seminar\" on 30-Sep-2018 at XIPHIAS HQ with participants from across target migration profiles.\n\nThe event focused on practical pathway guidance, timeline planning, and program clarity for skilled, residency, and investment migration tracks.",
     "photos": [
       {
-        "src": "/images/logo/xiphias-immigration.png",
+        "src": "/images/events/seminar-2018-bengaluru-sep30/1.jpg",
         "alt": "Bengaluru Seminar 2018 photo 1",
-        "w": 800,
-        "h": 600,
+        "w": 1280,
+        "h": 516,
+        "caption": "Bengaluru Seminar 2018 highlights."
+      },
+      {
+        "src": "/images/events/seminar-2018-bengaluru-sep30/2.jpg",
+        "alt": "Bengaluru Seminar 2018 photo 2",
+        "w": 1280,
+        "h": 597,
+        "caption": "Bengaluru Seminar 2018 highlights."
+      },
+      {
+        "src": "/images/events/seminar-2018-bengaluru-sep30/3.jpg",
+        "alt": "Bengaluru Seminar 2018 photo 3",
+        "w": 1024,
+        "h": 768,
         "caption": "Bengaluru Seminar 2018 highlights."
       }
     ]
@@ -780,21 +1093,21 @@ export const EVENTS: EventRecord[] = [
     "description": "XIPHIAS hosted \"Australia-Canada Skilled Migration Seminar by ICCR\" on 22-Sep-2018 at CROWNE PLAZA with participants from across target migration profiles.\n\nThe event focused on practical pathway guidance, timeline planning, and program clarity for skilled, residency, and investment migration tracks.",
     "photos": [
       {
-        "src": "/images/logo/xiphias-immigration.png",
+        "src": "/images/events/seminar-2018-pune/1.JPG",
         "alt": "Pune Seminar 2018 photo 1",
         "w": 800,
         "h": 533,
         "caption": "Pune Seminar 2018 highlights."
       },
       {
-        "src": "/images/logo/xiphias-immigration.png",
+        "src": "/images/events/seminar-2018-pune/2.JPG",
         "alt": "Pune Seminar 2018 photo 2",
         "w": 800,
         "h": 533,
         "caption": "Pune Seminar 2018 highlights."
       },
       {
-        "src": "/images/logo/xiphias-immigration.png",
+        "src": "/images/events/seminar-2018-pune/3.JPG",
         "alt": "Pune Seminar 2018 photo 3",
         "w": 800,
         "h": 533,
@@ -811,7 +1124,7 @@ export const EVENTS: EventRecord[] = [
     "description": "XIPHIAS hosted \"Free Pre Departure Seminar-Canada\" on 08-Sep-2018 at XIPHIAS HQ with participants from across target migration profiles.\n\nThe event focused on practical pathway guidance, timeline planning, and program clarity for skilled, residency, and investment migration tracks.",
     "photos": [
       {
-        "src": "/images/logo/xiphias-immigration.png",
+        "src": "/images/events/seminar-2018-march-BNG/1.jpg",
         "alt": "Bengaluru Seminar 2018 photo 1",
         "w": 800,
         "h": 600,
@@ -852,15 +1165,29 @@ export const EVENTS: EventRecord[] = [
     "description": "XIPHIAS hosted \"Canada-Australia Skilled Migration Seminar-Dubai\" on 23-Mar-2018 at BurJuman Arjaan by Rotana, Dubai Meeting Room: C5 with participants from across target migration profiles.\n\nThe event focused on practical pathway guidance, timeline planning, and program clarity for skilled, residency, and investment migration tracks.",
     "photos": [
       {
-        "src": "/images/logo/xiphias-immigration.png",
+        "src": "/images/events/seminar-2018-dubai/2.JPG",
         "alt": "Dubai Seminar 2018 photo 1",
         "w": 800,
         "h": 600,
         "caption": "Dubai Seminar 2018 highlights."
       },
       {
-        "src": "/images/logo/xiphias-immigration.png",
+        "src": "/images/events/seminar-2018-dubai/1.JPG",
         "alt": "Dubai Seminar 2018 photo 2",
+        "w": 800,
+        "h": 600,
+        "caption": "Dubai Seminar 2018 highlights."
+      },
+      {
+        "src": "/images/events/seminar-2018-dubai/3.jpg",
+        "alt": "Dubai Seminar 2018 photo 3",
+        "w": 800,
+        "h": 600,
+        "caption": "Dubai Seminar 2018 highlights."
+      },
+      {
+        "src": "/images/events/seminar-2018-dubai/4.jpg",
+        "alt": "Dubai Seminar 2018 photo 4",
         "w": 800,
         "h": 600,
         "caption": "Dubai Seminar 2018 highlights."
@@ -907,7 +1234,14 @@ export const EVENTS: EventRecord[] = [
     "description": "XIPHIAS hosted \"Skilled Migration Seminar-Australia-Canada-NZ-HK\" on 25-Feb-2018 at XIPHIAS HQ with participants from across target migration profiles.\n\nThe event focused on practical pathway guidance, timeline planning, and program clarity for skilled, residency, and investment migration tracks.",
     "photos": [
       {
-        "src": "/images/logo/xiphias-immigration.png",
+        "src": "/images/events/skilled-migration seminar-australia-canada-nz-hk/1.jpg",
+        "alt": "Bengaluru Seminar 2018 photo 1",
+        "w": 800,
+        "h": 600,
+        "caption": "Bengaluru Seminar 2018 highlights."
+      },
+      {
+        "src": "/images/events/skilled-migration seminar-australia-canada-nz-hk/2.jpg",
         "alt": "Bengaluru Seminar 2018 photo 1",
         "w": 800,
         "h": 600,
@@ -941,50 +1275,36 @@ export const EVENTS: EventRecord[] = [
     "description": "XIPHIAS hosted \"Australia-Canada Skilled Migration 2018\" on 18-Feb-2018 at Mumbai with participants from across target migration profiles.\n\nThe event focused on practical pathway guidance, timeline planning, and program clarity for skilled, residency, and investment migration tracks.",
     "photos": [
       {
-        "src": "/images/logo/xiphias-immigration.png",
+        "src": "/images/events/mumbai-seminar-2018/1.JPG",
         "alt": "Mumbai Seminar 2018 photo 1",
         "w": 800,
         "h": 600,
         "caption": "Mumbai Seminar 2018 highlights."
       },
       {
-        "src": "/images/logo/xiphias-immigration.png",
+        "src": "/images/events/mumbai-seminar-2018/2.JPG",
         "alt": "Mumbai Seminar 2018 photo 2",
         "w": 800,
         "h": 600,
         "caption": "Mumbai Seminar 2018 highlights."
       },
       {
-        "src": "/images/logo/xiphias-immigration.png",
+        "src": "/images/events/mumbai-seminar-2018/3.jpg",
         "alt": "Mumbai Seminar 2018 photo 3",
         "w": 800,
         "h": 600,
         "caption": "Mumbai Seminar 2018 highlights."
       },
       {
-        "src": "/images/logo/xiphias-immigration.png",
+        "src": "/images/events/mumbai-seminar-2018/4.JPG",
         "alt": "Mumbai Seminar 2018 photo 4",
         "w": 800,
         "h": 600,
         "caption": "Mumbai Seminar 2018 highlights."
       },
       {
-        "src": "/images/logo/xiphias-immigration.png",
+        "src": "/images/events/mumbai-seminar-2018/5.jpg",
         "alt": "Mumbai Seminar 2018 photo 5",
-        "w": 800,
-        "h": 600,
-        "caption": "Mumbai Seminar 2018 highlights."
-      },
-      {
-        "src": "/images/logo/xiphias-immigration.png",
-        "alt": "Mumbai Seminar 2018 photo 6",
-        "w": 800,
-        "h": 600,
-        "caption": "Mumbai Seminar 2018 highlights."
-      },
-      {
-        "src": "/images/logo/xiphias-immigration.png",
-        "alt": "Mumbai Seminar 2018 photo 7",
         "w": 800,
         "h": 600,
         "caption": "Mumbai Seminar 2018 highlights."
@@ -1153,12 +1473,26 @@ export const EVENTS: EventRecord[] = [
     "description": "XIPHIAS hosted \"Australia-Canada Skilled Immigration Seminar\" on 23-Oct-2016 at XIPHIAS- HQ- 8th Floor-BMTC Bus Depot-Income Tax B with participants from across target migration profiles.\n\nThe event focused on practical pathway guidance, timeline planning, and program clarity for skilled, residency, and investment migration tracks.",
     "photos": [
       {
-        "src": "/images/logo/xiphias-immigration.png",
+        "src": "/images/events/2016-10-23/1.jpg",
         "alt": "Australia-Canada Skilled Immigration Seminar event photo",
         "w": 902,
         "h": 712,
         "caption": "Venue: XIPHIAS- HQ- 8th Floor-BMTC Bus Depot-Income Tax B"
-      }
+      },
+      {
+        "src": "/images/events/2016-10-23/2.jpg",
+        "alt": "Australia-Canada Skilled Immigration Seminar event photo",
+        "w": 902,
+        "h": 712,
+        "caption": "Venue: XIPHIAS- HQ- 8th Floor-BMTC Bus Depot-Income Tax B"
+      },
+      {
+        "src": "/images/events/2016-10-23/3.jpg",
+        "alt": "Australia-Canada Skilled Immigration Seminar event photo",
+        "w": 902,
+        "h": 712,
+        "caption": "Venue: XIPHIAS- HQ- 8th Floor-BMTC Bus Depot-Income Tax B"
+      },
     ]
   },
   {
@@ -1187,7 +1521,7 @@ export const EVENTS: EventRecord[] = [
     "description": "XIPHIAS hosted \"Canada-Australia-NZ Skilled Immigration Seminar\" on 09-Oct-2016 at The Windsor Castle Hotel with participants from across target migration profiles.\n\nThe event focused on practical pathway guidance, timeline planning, and program clarity for skilled, residency, and investment migration tracks.",
     "photos": [
       {
-        "src": "/images/logo/xiphias-immigration.png",
+        "src": "/images/events/2016-10-09/1.jpg",
         "alt": "Canada-Australia-NZ Skilled Immigration Seminar event photo",
         "w": 1728,
         "h": 1296,
@@ -1247,6 +1581,227 @@ export const EVENTS: EventRecord[] = [
     ]
   },
   {
+    "slug": "road-to-canada-2014-05-11-blr",
+    "title": "ROAD TO CANADA",
+    "date": "2014-05-11",
+    "location": "Bangalore, India",
+    "summary": "Hosted at Bangalore, Bangalore, India 560070 on 11-May-2014.",
+    "description": "XIPHIAS hosted \"ROAD TO CANADA\" on 11-May-2014 at Bangalore with participants from across target migration profiles.\n\nThe event featured direct assessment-focused guidance for skilled workers and professionals planning migration to Canada.",
+    "photos": [
+      {
+        "src": "/images/events/2014-05-11/1.jpg",
+        "alt": "ROAD TO CANADA event photo",
+        "w": 1024,
+        "h": 768,
+        "caption": "Venue: Bangalore"
+      }
+    ]
+  },
+  {
+    "slug": "immigration-seminar-2013-09-22-blr",
+    "title": "Immigration Seminar",
+    "date": "2013-09-22",
+    "location": "Bangalore, India",
+    "summary": "Hosted at Shilton Royale, Bangalore, Bangalore, India 560070 on 22-Sep-2013.",
+    "description": "XIPHIAS hosted \"Immigration Seminar\" on 22-Sep-2013 at Shilton Royale with participants from across target migration profiles.\n\nThe event featured Quebec-Australia immigration guidance, practical assessment clarity, and pathway planning support for aspiring migrants.",
+    "photos": [
+      {
+        "src": "/images/events/2013-09-22/1.jpg",
+        "alt": "Immigration Seminar event photo",
+        "w": 1024,
+        "h": 768,
+        "caption": "Venue: Shilton Royale, Bangalore"
+      },
+      {
+        "src": "/images/events/2013-09-22/2.jpg",
+        "alt": "Immigration Seminar event photo",
+        "w": 1024,
+        "h": 768,
+        "caption": "Venue: Shilton Royale, Bangalore"
+      },
+      {
+        "src": "/images/events/2013-09-22/3.jpg",
+        "alt": "Immigration Seminar event photo",
+        "w": 1024,
+        "h": 768,
+        "caption": "Venue: Shilton Royale, Bangalore"
+      },
+      {
+        "src": "/images/events/2013-09-22/4.jpg",
+        "alt": "Immigration Seminar event photo",
+        "w": 1024,
+        "h": 768,
+        "caption": "Venue: Shilton Royale, Bangalore"
+      },
+      {
+        "src": "/images/events/2013-09-22/5.jpg",
+        "alt": "Immigration Seminar event photo",
+        "w": 1024,
+        "h": 768,
+        "caption": "Venue: Shilton Royale, Bangalore"
+      },
+      {
+        "src": "/images/events/2013-09-22/6.jpg",
+        "alt": "Immigration Seminar event photo",
+        "w": 2048,
+        "h": 1370,
+        "caption": "Venue: Shilton Royale, Bangalore"
+      }
+    ]
+  },
+  {
+    "slug": "bangalore-immigration-seminar-2013-01-09-blr",
+    "title": "Bangalore Immigration Seminar",
+    "date": "2013-01-09",
+    "location": "Bangalore, India",
+    "summary": "Hosted at Bangalore from 09-Jan-2013 to 10-Jan-2013.",
+    "description": "XIPHIAS hosted \"Bangalore Immigration Seminar\" from 09-Jan-2013 to 10-Jan-2013 at Bangalore with participants from across target migration profiles.\n\nThe event focused on immigration pathway clarity, work permit guidance, student visa options, and practical planning support for overseas migration aspirants.",
+    "photos": [
+      {
+        "src": "/images/events/Bangalore Immigration Seminar 9-10 January 2013_/1.jpg",
+        "alt": "Bangalore Immigration Seminar event photo",
+        "w": 960,
+        "h": 642,
+        "caption": "Bangalore seminar 2013 highlights."
+      }
+    ]
+  },
+  {
+    "slug": "free-seminar-on-australia-immigration-2013-03-09-blr",
+    "title": "Free Seminar on Australia Immigration!",
+    "date": "2013-03-09",
+    "location": "Bangalore, India",
+    "summary": "Hosted at SHILTON ROYALE 9, 100 FEET ROAD, Koramangala, Bangalore, India 560047 from 09-Mar-2013 to 10-Mar-2013.",
+    "description": "XIPHIAS hosted \"Free Seminar on Australia Immigration!\" from 09-Mar-2013 to 10-Mar-2013 at SHILTON ROYALE 9, 100 FEET ROAD, Koramangala with participants from across target migration profiles.\n\nThe event focused on Australia immigration pathways, profile assessment clarity, and practical planning support for skilled migration applicants.",
+    "photos": [
+      {
+        "src": "/images/events/2013-03-09/1.jpg",
+        "alt": "Free Seminar on Australia Immigration! event photo",
+        "w": 1024,
+        "h": 768,
+        "caption": "Venue: SHILTON ROYALE 9, 100 FEET ROAD, Koramangala"
+      }
+    ]
+  },
+  {
+    "slug": "quebec-seminar-2012-03-03-rnc",
+    "title": "Quebec Seminar",
+    "date": "2012-03-03",
+    "location": "Ranchi, India",
+    "summary": "Hosted at Ranchi on 03-Mar-2012.",
+    "description": "XIPHIAS hosted \"Quebec Seminar\" on 03-Mar-2012 at Ranchi with participants from across target migration profiles.\n\nThe event focused on Quebec immigration pathways, profile assessment clarity, and practical planning support for aspiring migrants.",
+    "photos": [
+      {
+        "src": "/images/events/Ranchi Event Seminar-3rd March 2012/quebec.jpg",
+        "alt": "Quebec Seminar event photo 1",
+        "w": 960,
+        "h": 720,
+        "caption": "Ranchi seminar highlights."
+      },
+      {
+        "src": "/images/events/Ranchi Event Seminar-3rd March 2012/quebec .jpg",
+        "alt": "Quebec Seminar event photo 2",
+        "w": 960,
+        "h": 640,
+        "caption": "Ranchi seminar highlights."
+      },
+      {
+        "src": "/images/events/Ranchi Event Seminar-3rd March 2012/quebec 1.jpg",
+        "alt": "Quebec Seminar event photo 3",
+        "w": 960,
+        "h": 640,
+        "caption": "Ranchi seminar highlights."
+      },
+      {
+        "src": "/images/events/Ranchi Event Seminar-3rd March 2012/quebec 2.jpg",
+        "alt": "Quebec Seminar event photo 4",
+        "w": 960,
+        "h": 640,
+        "caption": "Ranchi seminar highlights."
+      },
+      {
+        "src": "/images/events/Ranchi Event Seminar-3rd March 2012/quebec 3.jpg",
+        "alt": "Quebec Seminar event photo 5",
+        "w": 960,
+        "h": 596,
+        "caption": "Ranchi seminar highlights."
+      },
+      {
+        "src": "/images/events/Ranchi Event Seminar-3rd March 2012/quebec 4.jpg",
+        "alt": "Quebec Seminar event photo 6",
+        "w": 960,
+        "h": 640,
+        "caption": "Ranchi seminar highlights."
+      },
+      {
+        "src": "/images/events/Ranchi Event Seminar-3rd March 2012/quebec 5.jpg",
+        "alt": "Quebec Seminar event photo 7",
+        "w": 960,
+        "h": 640,
+        "caption": "Ranchi seminar highlights."
+      },
+      {
+        "src": "/images/events/Ranchi Event Seminar-3rd March 2012/546095236_24406015905718252_5075817938243720391_n.jpg",
+        "alt": "Quebec Seminar event photo 8",
+        "w": 960,
+        "h": 720,
+        "caption": "Ranchi seminar highlights."
+      }
+    ]
+  },
+  {
+    "slug": "canada-pnp-seminar-2012-02-12-blr",
+    "title": "Canada PNP Seminar",
+    "date": "2012-02-12",
+    "location": "Bangalore, India",
+    "summary": "Hosted at Bangalore on 12-Feb-2012.",
+    "description": "XIPHIAS hosted \"Canada PNP Seminar\" on 12-Feb-2012 at Bangalore with participants from across target migration profiles.\n\nThe event focused on Canada's Provincial Nominee Program, skilled migration profile assessment, and practical pathway planning support for aspiring applicants.",
+    "photos": [
+      {
+        "src": "/images/events/Bangalore Event (Canada PNP Seminar) -12 February 2012_/Image 1.jpg",
+        "alt": "Canada PNP Seminar event photo 1",
+        "w": 800,
+        "h": 536,
+        "caption": "Bangalore seminar highlights."
+      },
+      {
+        "src": "/images/events/Bangalore Event (Canada PNP Seminar) -12 February 2012_/Image 2.jpg",
+        "alt": "Canada PNP Seminar event photo 2",
+        "w": 800,
+        "h": 536,
+        "caption": "Bangalore seminar highlights."
+      },
+      {
+        "src": "/images/events/Bangalore Event (Canada PNP Seminar) -12 February 2012_/545435290_24400047906315052_4879900350654464965_n.jpg",
+        "alt": "Canada PNP Seminar event photo 3",
+        "w": 960,
+        "h": 643,
+        "caption": "Bangalore seminar highlights."
+      },
+      {
+        "src": "/images/events/Bangalore Event (Canada PNP Seminar) -12 February 2012_/545521923_24400050139648162_6673729280232171048_n.jpg",
+        "alt": "Canada PNP Seminar event photo 4",
+        "w": 800,
+        "h": 536,
+        "caption": "Bangalore seminar highlights."
+      },
+      {
+        "src": "/images/events/Bangalore Event (Canada PNP Seminar) -12 February 2012_/545789422_24400047636315079_7684220082480671321_n.jpg",
+        "alt": "Canada PNP Seminar event photo 5",
+        "w": 800,
+        "h": 536,
+        "caption": "Bangalore seminar highlights."
+      },
+      {
+        "src": "/images/events/Bangalore Event (Canada PNP Seminar) -12 February 2012_/546161063_24400049792981530_736934308173474107_n.jpg",
+        "alt": "Canada PNP Seminar event photo 6",
+        "w": 960,
+        "h": 642,
+        "caption": "Bangalore seminar highlights."
+      }
+    ]
+  },
+  {
     "slug": "xiphias-legacy-archives-2011",
     "title": "XIPHIAS Legacy Archive Session",
     "date": "2011-09-18",
@@ -1283,7 +1838,3 @@ export function groupEventsByYear(
     return acc;
   }, {});
 }
-
-
-
-

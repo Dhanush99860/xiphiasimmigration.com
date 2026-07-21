@@ -5,7 +5,9 @@ const nextConfig = {
   outputFileTracingIncludes: { "*": ["./content/**/*"] },
 
   images: {
-    formats: ["image/avif", "image/webp"],
+    // WebP only: ~2-3x faster to decode than AVIF on low-power / CPU-throttled
+    // devices (AVIF is smaller but its decode cost hurts perceived load there).
+    formats: ["image/webp"],
     qualities: [75, 80],
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
@@ -14,6 +16,7 @@ const nextConfig = {
       { protocol: "https", hostname: "img.youtube.com" },
       { protocol: "https", hostname: "www.xiphiasimmigration.com" },
       { protocol: "https", hostname: "xiphiasimmigration.com" },
+      { protocol: "https", hostname: "flagcdn.com" },
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
       { protocol: "https", hostname: "drive.google.com" },
       { protocol: "https", hostname: "dl.dropboxusercontent.com" },
@@ -67,8 +70,11 @@ const nextConfig = {
       { source: "/apply-online.html", destination: "/eligibility", permanent: true },
       { source: "/index.html", destination: "/", permanent: true },
       { source: "/disclaimer", destination: "/terms", permanent: true },
-      { source: "/media.html", destination: "/about", permanent: true },
+      { source: "/media.html", destination: "/media", permanent: true },
       { source: "/why-xiphias.html", destination: "/about", permanent: true },
+      { source: "/gallery.html", destination: "/gallery", permanent: true },
+      { source: "/partner-with-us.html", destination: "/partner-with-us", permanent: true },
+      { source: "/reviews.html", destination: "/reviews", permanent: true },
 
       // Citizenship legacy
       {
@@ -115,8 +121,12 @@ const nextConfig = {
       { source: "/portugal-golden-visa-investment-immigration.html", destination: "/residency/portugal", permanent: true },
       { source: "/spain-golden-visa-investment-immigration.html", destination: "/residency", permanent: true },
       { source: "/spain-investor-visa.html", destination: "/residency", permanent: true },
-      { source: "/canada-immigration-visa.html", destination: "/", permanent: true },
+      { source: "/canada-immigration-visa.html", destination: "/skilled/canada/provincial-nominee-program", permanent: true },
       { source: "/usa-business-investor-visa.html", destination: "/residency/usa", permanent: true },
+      { source: "/usa-investor-visa-eb5.html", destination: "/residency/usa", permanent: true },
+      { source: "/us-employment-based-resident-visa.html", destination: "/skilled/usa", permanent: true },
+      { source: "/us-employment-based-visa.html", destination: "/corporate/usa/l1-corporate-transfer-visa", permanent: true },
+      { source: "/canada/start-up-visa", destination: "/residency/canada/canada-start-up-visa", permanent: true },
 
       // Canada legacy (both with/without .html + php)
       { source: "/investment-immigration-visa-canada.html", destination: "/skilled/canada", permanent: true },
@@ -191,6 +201,35 @@ const nextConfig = {
       // This one is HUGE in your internal links report (1,660 links)
       { source: "/XIPHIAS/Account/Login", destination: "/contact", permanent: true },
 
+      // Legacy brochure and media aliases
+      { source: "/brochures/residency/canada.pdf", destination: "/images/residency/xiphias-corporate-mobility.pdf", permanent: true },
+      { source: "/images/citizenship/antigua/xiphias-immigration.pdf", destination: "/images/citizenship/antigua/antigua_barbuda_cbi.pdf", permanent: true },
+      { source: "/images/citizenship/saotome/sao_tome_príncipe.pdf", destination: "/images/citizenship/saotome/sao_tome.pdf", permanent: true },
+      { source: "/images/personal/video/sample.mp4", destination: "/images/personal/video/sample-1234.mp4", permanent: true },
+
+      // Asset aliases from historical content and crawler reports
+      { source: "/images/blogs/seconday-citizenship.webp", destination: "/images/blogs/second-citizenship.webp", permanent: true },
+      { source: "/images/articles/us-visa-waiver-program.webp", destination: "/images/articles/US-visa-waiver-program.webp", permanent: true },
+      { source: "/images/blogs/european-golden-visa-guide.png", destination: "/images/blogs/european-golden-visa-guide.webp", permanent: true },
+      { source: "/images/blogs/goldenvisa.webp", destination: "/images/blogs/goldenvisa.png", permanent: true },
+      { source: "/images/blogs/abroad-jobs-indian-graduates-2024.webp", destination: "/images/blogs/jobs-foreign-countries.webp", permanent: true },
+      { source: "/images/blogs/best-country-to-work-abroad-2024.webp", destination: "/images/blogs/jobs-foreign-countries.webp", permanent: true },
+      { source: "/images/blogs/Most-Powerful-Passports-in-2023.png", destination: "/images/blogs/powerful-passport.webp", permanent: true },
+      { source: "/images/blogs/Digital-Nomad-Visa-1024x576.png", destination: "/images/blogs/digital-nomad-visa.webp", permanent: true },
+      { source: "/images/blogs/real-estate-investments-2022.jpg", destination: "/images/blogs/real-estate-investments.webp", permanent: true },
+
+      // Relative MDX image fallbacks that were rendered under /blog/*
+      { source: "/blog/dubai-investment.jpg", destination: "/images/blogs/dubai-investment.webp", permanent: true },
+      { source: "/blog/european-golden-visa-guide.png", destination: "/images/blogs/european-golden-visa-guide.webp", permanent: true },
+      { source: "/blog/dubai-golden-visa-real-estate.webp", destination: "/images/blogs/dubai-golden-visa-real-estate.webp", permanent: true },
+      { source: "/blog/goldenvisa.webp", destination: "/images/blogs/goldenvisa.png", permanent: true },
+      { source: "/blog/investment-migration-startups.webp", destination: "/images/blogs/investment-migration-startups.webp", permanent: true },
+      { source: "/blog/abroad-jobs-indian-graduates-2024.webp", destination: "/images/blogs/jobs-foreign-countries.webp", permanent: true },
+      { source: "/blog/best-country-to-work-abroad-2024.webp", destination: "/images/blogs/jobs-foreign-countries.webp", permanent: true },
+      { source: "/blog/Most-Powerful-Passports-in-2023.png", destination: "/images/blogs/powerful-passport.webp", permanent: true },
+      { source: "/blog/Digital-Nomad-Visa-1024x576.png", destination: "/images/blogs/digital-nomad-visa.webp", permanent: true },
+      { source: "/blog/real-estate-investments-2022.jpg", destination: "/images/blogs/real-estate-investments.webp", permanent: true },
+
     ];
   },
 
@@ -200,3 +239,4 @@ const nextConfig = {
 };
 
 export default nextConfig;
+

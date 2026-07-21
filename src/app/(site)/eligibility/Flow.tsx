@@ -12,7 +12,7 @@ import { LeadGate } from "@/components/Eligibility/LeadGate";
 import { ResultCard } from "@/components/Eligibility/ResultCard";
 import { getQuestionsForTrack } from "@/lib/eligibility/questions";
 import { scoreAssessment } from "@/lib/eligibility/scoring";
-import type { Track, AnswerMap } from "@/lib/eligibility/types";
+import type { Track, AnswerMap, Result } from "@/lib/eligibility/types";
 import { trackEvent } from "@/lib/eligibility/analytics";
 
 type Stage = "select" | "quiz" | "lead" | "result";
@@ -48,6 +48,7 @@ export default function Flow() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [serverResult, setServerResult] = useState<Result | null>(null);
 
   /* -------------------- autosave -------------------- */
   const saveTimer = useRef<number | null>(null);
@@ -159,6 +160,7 @@ export default function Flow() {
   const resetState = useCallback(() => {
     setAnswers({});
     setStepIndex(0);
+    setServerResult(null);
   }, []);
 
   const startTrack = useCallback(
@@ -208,6 +210,7 @@ export default function Flow() {
     (key: string, value: unknown) => {
       setAnswers(prev => {
         const nextAnswers = { ...prev, [key]: value };
+        setServerResult(null);
         // IMPORTANT: derive next question list from UPDATED answers
         const nextQs = track ? getQuestionsForTrack(track, nextAnswers) : [];
         const nextIndex = stepIndex + 1;
@@ -286,6 +289,12 @@ export default function Flow() {
         } catch {}
         alert(message);
         return;
+      }
+      try {
+        const data = (await res.json()) as { result?: Result };
+        if (data?.result) setServerResult(data.result);
+      } catch {
+        setServerResult(null);
       }
     } catch {
       alert("We couldn't submit your details. Please check your connection and try again.");
@@ -433,8 +442,10 @@ export default function Flow() {
                   <div className="relative z-10 pointer-events-auto">
                     <ResultCard
                       track={track}
-                      result={scoreAssessment(track, answers)}
+                      result={serverResult ?? scoreAssessment(track, answers)}
                       name={name}
+                      email={email}
+                      phone={phone}
                       answers={answers}
                       onBackAction={back}
                     />
